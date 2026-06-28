@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management — SESMine Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <style>
+    /* Reuse admin layout styles */
+    .admin-layout { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+    .admin-sidebar { background:rgba(4,10,24,0.98); border-right:1px solid rgba(212,175,55,0.08); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .admin-sidebar-logo { padding:20px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:10px; }
+    .admin-sidebar-logo img { height:32px; filter:drop-shadow(0 0 8px rgba(212,175,55,0.3)); }
+    .admin-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:99px; font-size:0.58rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); color:#D4AF37; margin-left:auto; }
+    .admin-nav { padding:12px 10px; flex:1; }
+    .admin-nav-section { font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#4A6478; padding:10px 10px 6px; }
+    .admin-nav-item { display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:9px; font-size:0.82rem; font-weight:600; color:var(--text-500); text-decoration:none; transition:all 0.2s ease; margin-bottom:2px; }
+    .admin-nav-item:hover { background:rgba(255,255,255,0.04); color:var(--text-200); }
+    .admin-nav-item.active { background:rgba(212,175,55,0.08); color:#D4AF37; border:1px solid rgba(212,175,55,0.12); }
+    .admin-nav-item i { width:16px; text-align:center; font-size:0.82rem; }
+    .admin-nav-badge { margin-left:auto; min-width:18px; height:18px; border-radius:99px; padding:0 5px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.2); font-size:0.6rem; font-weight:800; color:#FCA5A5; display:flex; align-items:center; justify-content:center; }
+    .admin-sidebar-footer { padding:12px 10px; border-top:1px solid rgba(255,255,255,0.05); }
+    .admin-main { background:var(--bg-900); overflow-x:hidden; }
+    .admin-topbar { background:rgba(4,10,24,0.95); border-bottom:1px solid rgba(255,255,255,0.05); padding:0 28px; height:60px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }
+    .admin-content { padding:28px; }
+    .admin-table { width:100%; border-collapse:collapse; }
+    .admin-table th { padding:10px 14px; font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-600); border-bottom:1px solid var(--border-default); text-align:left; white-space:nowrap; }
+    .admin-table td { padding:12px 14px; font-size:0.82rem; border-bottom:1px solid rgba(255,255,255,0.03); vertical-align:middle; }
+    .admin-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .admin-table tr:last-child td { border-bottom:none; }
+    /* User detail drawer */
+    .user-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 420px; z-index: 500;
+      background: var(--bg-600);
+      border-left: 1px solid var(--border-default);
+      box-shadow: -16px 0 48px rgba(0,0,0,0.5);
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      overflow-y: auto;
+    }
+    .user-drawer.open { transform: translateX(0); }
+    .drawer-overlay {
+      position: fixed; inset: 0; z-index: 499;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      display: none;
+    }
+    .drawer-overlay.open { display: block; }
+    /* Hub access chips */
+    .hub-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 99px;
+      font-size: 0.68rem; font-weight: 700;
+      margin: 2px;
+    }
+    /* Filter tabs */
+    .filter-tab {
+      padding: 6px 14px; border-radius: 99px;
+      font-size: 0.78rem; font-weight: 700;
+      border: 1px solid var(--border-default);
+      background: var(--surface-1); color: var(--text-400);
+      cursor: pointer; transition: all 0.2s ease;
+      font-family: var(--font-body);
+    }
+    .filter-tab:hover { background: var(--surface-3); color: var(--text-100); }
+    .filter-tab.active { background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.25); color: #D4AF37; }
+    /* Bulk action bar */
+    .bulk-bar {
+      display: none;
+      align-items: center; gap: 10px;
+      padding: 10px 16px;
+      background: rgba(0,212,255,0.06);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 10px; margin-bottom: 12px;
+    }
+    .bulk-bar.show { display: flex; }
+    @media (max-width:900px) { .admin-layout { grid-template-columns:1fr; } .admin-sidebar { display:none; } .user-drawer { width:100%; } }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- Sidebar (same structure) -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" alt="SESMine" />
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:800;letter-spacing:0.06em;color:#F0F6FF;">SES<em style="color:#D4AF37;font-style:normal;">MINE</em></span>
+      <span class="admin-badge"><i class="fas fa-shield-alt"></i> Admin</span>
+    </div>
+    <nav class="admin-nav">
+      <div class="admin-nav-section">Overview</div>
+      <a href="admin-dashboard.html" class="admin-nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="#" class="admin-nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+      <div class="admin-nav-section">User Management</div>
+      <a href="admin-users.html" class="admin-nav-item active"><i class="fas fa-users"></i> All Users</a>
+      <a href="admin-hub-requests.html" class="admin-nav-item">
+        <i class="fas fa-key"></i> Hub Requests
+        <span class="admin-nav-badge" id="reqBadgeSidebar">0</span>
+      </a>
+      <a href="#" class="admin-nav-item"><i class="fas fa-user-tag"></i> Roles & Permissions</a>
+      <div class="admin-nav-section">Platform</div>
+      <a href="#" class="admin-nav-item"><i class="fas fa-th-large"></i> Hub Management</a>
+      <a href="#" class="admin-nav-item"><i class="fas fa-bell"></i> Notifications</a>
+      <a href="#" class="admin-nav-item"><i class="fas fa-file-alt"></i> Audit Log</a>
+      <a href="#" class="admin-nav-item"><i class="fas fa-cog"></i> Settings</a>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <a href="../index.html" class="admin-nav-item" style="margin-bottom:4px;"><i class="fas fa-external-link-alt"></i> View Site</a>
+      <button onclick="handleAdminLogout()" class="admin-nav-item" style="width:100%;background:none;border:none;cursor:pointer;font-family:inherit;color:var(--text-500);text-align:left;">
+        <i class="fas fa-sign-out-alt" style="color:#EF4444;"></i> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:800;color:#F0F6FF;">User Management</div>
+        <div style="font-size:0.7rem;color:#6688A0;" id="userCountLabel">Loading...</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="exportUsers()" class="btn btn-ghost btn-sm">
+          <i class="fas fa-download"></i> Export CSV
+        </button>
+        <button onclick="openAddUserModal()" class="btn btn-sm" style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);color:#D4AF37;">
+          <i class="fas fa-user-plus"></i> Add User
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Filter & search row -->
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;" class="animate-fade-up">
+        <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-tab" onclick="setFilter('pending',this)">Pending</button>
+        <button class="filter-tab" onclick="setFilter('active',this)">Active</button>
+        <button class="filter-tab" onclick="setFilter('suspended',this)">Suspended</button>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+          <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" id="userSearch"
+                   placeholder="Search users..."
+                   oninput="filterUsers()" />
+          </div>
+          <select class="form-select" id="roleFilter" onchange="filterUsers()"
+                  style="width:140px;font-size:0.8rem;padding:8px 12px;">
+            <option value="">All Roles</option>
+            <option value="viewer">Viewer</option>
+            <option value="analyst">Analyst</option>
+            <option value="engineer">Engineer</option>
+            <option value="manager">Manager</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Bulk action bar -->
+      <div class="bulk-bar" id="bulkBar">
+        <input type="checkbox" id="bulkSelectAll" onchange="toggleSelectAll(this)" />
+        <span style="font-size:0.82rem;color:#F0F6FF;" id="bulkCount">0 selected</span>
+        <div style="margin-left:auto;display:flex;gap:6px;">
+          <button onclick="bulkApprove()" class="btn btn-sm" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#4ADE80;">
+            <i class="fas fa-check"></i> Approve
+          </button>
+          <button onclick="bulkSuspend()" class="btn btn-sm" style="background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);color:#F97316;">
+            <i class="fas fa-ban"></i> Suspend
+          </button>
+          <button onclick="bulkDelete()" class="btn btn-sm" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#FCA5A5;">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+
+      <!-- Table card -->
+      <div style="background:var(--bg-700);border:1px solid var(--border-default);border-radius:16px;overflow:hidden;" class="animate-fade-up">
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width:36px;"><input type="checkbox" id="headerCheck" onchange="toggleSelectAll(this)" /></th>
+                <th>User</th>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Hub Access</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border-default);">
+          <div style="font-size:0.75rem;color:#6688A0;" id="paginationInfo">Showing 0 of 0</div>
+          <div style="display:flex;gap:6px;" id="paginationBtns"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- User Detail Drawer -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="user-drawer" id="userDrawer">
+  <div style="padding:20px;border-bottom:1px solid var(--border-default);display:flex;align-items:center;justify-content:space-between;">
+    <h3 style="font-size:1rem;font-weight:800;">User Details</h3>
+    <button onclick="closeDrawer()" style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border-default);color:var(--text-400);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div id="drawerContent" style="padding:20px;"></div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal" id="addUserModal">
+  <div class="modal-overlay"></div>
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Add New User</h3>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="addUserForm" novalidate>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label">First Name *</label>
+            <input type="text" class="form-input" id="addFirstName" placeholder="James" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name *</label>
+            <input type="text" class="form-input" id="addLastName" placeholder="Whitfield" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input type="email" class="form-input" id="addEmail" placeholder="james@company.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Temporary Password *</label>
+          <input type="text" class="form-input" id="addPassword" value="Temp@2026!" />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label">Company</label>
+            <input type="text" class="form-input" id="addCompany" placeholder="Rio Tinto" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <select class="form-select" id="addRole">
+              <option value="viewer">Viewer</option>
+              <option value="analyst" selected>Analyst</option>
+              <option value="engineer">Engineer</option>
+              <option value="manager">Manager</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hub Access</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+            ${SESConfig.hubs.map(h => `
+              <label style="display:flex;align-items:center;gap:5px;font-size:0.78rem;color:#B0C4D8;cursor:pointer;">
+                <input type="checkbox" name="hubAccess" value="${h.id}" />
+                <i class="fas ${h.icon}" style="color:${h.color};font-size:0.72rem;"></i>
+                ${h.label}
+              </label>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="addAutoApprove" checked />
+            <span class="checkbox-label">Auto-approve account</span>
+          </label>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button onclick="SES.Modal.close('addUserModal')" class="btn btn-ghost">Cancel</button>
+      <button onclick="submitAddUser()" class="btn btn-cyan" id="addUserBtn">
+        <i class="fas fa-user-plus"></i> Create User
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
+<script>
+'use strict';
+
+/* ── Auth guard ── */
+SESAuth.checkAdminAuth();
+
+/* ── State ── */
+let allUsers      = [];
+let filteredUsers = [];
+let currentFilter = 'all';
+let currentPage   = 1;
+const PAGE_SIZE   = 12;
+let selectedIds   = new Set();
+
+/* ── Load & render ── */
+function loadUsers() {
+  allUsers = SESAuth.getAllUsers();
+  const stats = SESAuth.getDashboardStats();
+  const reqBadge = document.getElementById('reqBadgeSidebar');
+  if (reqBadge) reqBadge.textContent = stats.hubRequests;
+  filterUsers();
+}
+
+function filterUsers() {
+  const q      = document.getElementById('userSearch')?.value.toLowerCase() || '';
+  const role   = document.getElementById('roleFilter')?.value || '';
+
+  filteredUsers = allUsers.filter(u => {
+    const matchStatus = currentFilter === 'all' || u.status === currentFilter;
+    const matchRole   = !role || u.role === role;
+    const matchSearch = !q ||
+      `${u.firstName} ${u.lastName} ${u.email} ${u.company}`.toLowerCase().includes(q);
+    return matchStatus && matchRole && matchSearch;
+  });
+
+  currentPage = 1;
+  selectedIds.clear();
+  renderTable();
+  updateBulkBar();
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterUsers();
+}
+
+function renderTable() {
+  const tbody    = document.getElementById('usersTableBody');
+  const label    = document.getElementById('userCountLabel');
+  const pageInfo = document.getElementById('paginationInfo');
+  if (!tbody) return;
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const end   = start + PAGE_SIZE;
+  const page  = filteredUsers.slice(start, end);
+
+  if (label) label.textContent = `${filteredUsers.length} user${filteredUsers.length !== 1 ? 's' : ''} found`;
+
+  if (!page.length) {
+    tbody.innerHTML = `
+      <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-600);">
+        <i class="fas fa-users" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:0.3;"></i>
+        No users found
+      </td></tr>
+    `;
+    if (pageInfo) pageInfo.textContent = 'No results';
+    renderPagination();
+    return;
+  }
+
+  tbody.innerHTML = page.map(u => {
+    const hubChips = (u.hubAccess || []).slice(0,3).map(hId => {
+      const h = SESConfig.hubs.find(x => x.id === hId);
+      return h ? `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:99px;font-size:0.6rem;font-weight:700;background:${h.colorBg};border:1px solid ${h.colorBorder};color:${h.color};">
+        <i class="fas ${h.icon}" style="font-size:0.55rem;"></i>${h.label}
+      </span>` : '';
+    }).join('');
+    const extraHubs = (u.hubAccess || []).length > 3
+      ? `<span style="font-size:0.65rem;color:#6688A0;">+${u.hubAccess.length - 3}</span>` : '';
+
+    return `
+      <tr>
+        <td>
+          <input type="checkbox" class="row-check" data-id="${u.id}"
+                 ${selectedIds.has(u.id) ? 'checked' : ''}
+                 onchange="toggleRowSelect('${u.id}',this)" />
+        </td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${SESAuth.renderUserAvatar(u, 30)}
+            <div>
+              <div style="font-weight:700;font-size:0.82rem;color:#F0F6FF;">${u.firstName} ${u.lastName}</div>
+              <div style="font-size:0.68rem;color:#6688A0;">${u.email}</div>
+            </div>
+          </div>
+        </td>
+        <td style="font-size:0.8rem;color:#B0C4D8;">${u.company || '—'}</td>
+        <td>${SESAuth.getRoleBadge(u.role)}</td>
+        <td>${SESAuth.getStatusBadge(u.status)}</td>
+        <td>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;">
+            ${hubChips || '<span style="font-size:0.72rem;color:#4A6478;">None</span>'}
+            ${extraHubs}
+          </div>
+        </td>
+        <td style="font-size:0.72rem;color:#6688A0;white-space:nowrap;">${SESAuth.formatDate(u.createdAt)}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:4px;">
+            ${u.status === 'pending' ? `
+              <button onclick="approveUser('${u.id}')" data-tooltip="Approve"
+                      class="btn btn-sm" style="padding:5px 8px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#4ADE80;">
+                <i class="fas fa-check"></i>
+              </button>
+            ` : ''}
+            <button onclick="openDrawer('${u.id}')" data-tooltip="View Details"
+                    class="btn btn-sm btn-ghost" style="padding:5px 8px;">
+              <i class="fas fa-eye"></i>
+            </button>
+            <div style="position:relative;" class="action-dropdown-wrap">
+              <button onclick="toggleActionMenu('${u.id}')"
+                      class="btn btn-sm btn-ghost" style="padding:5px 8px;">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <div class="dropdown-menu" id="menu-${u.id}" style="
+                position:absolute;right:0;top:100%;z-index:50;
+                background:var(--bg-500);border:1px solid var(--border-default);
+                border-radius:10px;padding:4px;min-width:160px;
+                box-shadow:0 8px 24px rgba(0,0,0,0.4);
+              ">
+                <button onclick="editUserRole('${u.id}')" class="dropdown-item">
+                  <i class="fas fa-user-tag" style="color:#00D4FF;"></i> Edit Role
+                </button>
+                <button onclick="editHubAccess('${u.id}')" class="dropdown-item">
+                  <i class="fas fa-key" style="color:#A855F7;"></i> Hub Access
+                </button>
+                ${u.status !== 'suspended' ? `
+                  <button onclick="suspendUser('${u.id}')" class="dropdown-item">
+                    <i class="fas fa-ban" style="color:#F97316;"></i> Suspend
+                  </button>
+                ` : `
+                  <button onclick="reactivateUser('${u.id}')" class="dropdown-item">
+                    <i class="fas fa-redo" style="color:#22C55E;"></i> Reactivate
+                  </button>
+                `}
+                <div style="height:1px;background:var(--border-default);margin:4px 0;"></div>
+                <button onclick="deleteUser('${u.id}')" class="dropdown-item" style="color:#FCA5A5;">
+                  <i class="fas fa-trash" style="color:#EF4444;"></i> Delete User
+                </button>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  if (pageInfo) pageInfo.textContent = `Showing ${start + 1}–${Math.min(end, filteredUsers.length)} of ${filteredUsers.length}`;
+  renderPagination();
+  SES.Tooltips.init();
+}
+
+/* ── Pagination ── */
+function renderPagination() {
+  const el    = document.getElementById('paginationBtns');
+  if (!el) return;
+  const total = Math.ceil(filteredUsers.length / PAGE_SIZE);
+  if (total <= 1) { el.innerHTML = ''; return; }
+
+  let html = `
+    <button onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}
+            class="btn btn-ghost btn-sm" style="padding:5px 10px;">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+  `;
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || Math.abs(i - currentPage) <= 1) {
+      html += `
+        <button onclick="goPage(${i})"
+                class="btn btn-sm ${i === currentPage ? 'btn-cyan' : 'btn-ghost'}"
+                style="padding:5px 10px;min-width:32px;">
+          ${i}
+        </button>
+      `;
+    } else if (Math.abs(i - currentPage) === 2) {
+      html += `<span style="color:#4A6478;padding:0 4px;align-self:center;">…</span>`;
+    }
+  }
+  html += `
+    <button onclick="goPage(${currentPage + 1})" ${currentPage === total ? 'disabled' : ''}
+            class="btn btn-ghost btn-sm" style="padding:5px 10px;">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  `;
+  el.innerHTML = html;
+}
+
+function goPage(n) {
+  const total = Math.ceil(filteredUsers.length / PAGE_SIZE);
+  if (n < 1 || n > total) return;
+  currentPage = n;
+  renderTable();
+  document.querySelector('.admin-content')?.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Selection ── */
+function toggleRowSelect(id, cb) {
+  if (cb.checked) selectedIds.add(id);
+  else selectedIds.delete(id);
+  updateBulkBar();
+}
+
+function toggleSelectAll(cb) {
+  const page = filteredUsers.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+  page.forEach(u => {
+    if (cb.checked) selectedIds.add(u.id);
+    else selectedIds.delete(u.id);
+  });
+  document.querySelectorAll('.row-check').forEach(c => c.checked = cb.checked);
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const bar   = document.getElementById('bulkBar');
+  const count = document.getElementById('bulkCount');
+  if (bar)   bar.classList.toggle('show', selectedIds.size > 0);
+  if (count) count.textContent = `${selectedIds.size} selected`;
+}
+
+/* ── User actions ── */
+function approveUser(id) {
+  const result = SESAuth.approveUser(id);
+  if (result.success) { SES.Toast.success('User approved!'); loadUsers(); }
+  else SES.Toast.error(result.error);
+}
+
+function suspendUser(id) {
+  if (!confirm('Suspend this user? They will lose platform access.')) return;
+  const result = SESAuth.suspendUser(id);
+  if (result.success) { SES.Toast.warning('User suspended.'); loadUsers(); }
+  else SES.Toast.error(result.error);
+}
+
+function reactivateUser(id) {
+  const result = SESAuth.approveUser(id);
+  if (result.success) { SES.Toast.success('User reactivated!'); loadUsers(); }
+  else SES.Toast.error(result.error);
+}
+
+function deleteUser(id) {
+  if (!confirm('Permanently delete this user? This cannot be undone.')) return;
+  const result = SESAuth.deleteUser(id);
+  if (result.success) { SES.Toast.success('User deleted.'); loadUsers(); }
+  else SES.Toast.error(result.error);
+}
+
+function editUserRole(id) {
+  const user  = SESAuth.getUserById(id);
+  if (!user) return;
+  const roles = ['viewer','analyst','engineer','manager','admin'];
+  const role  = prompt(`Change role for ${user.firstName} ${user.lastName}\nCurrent: ${user.role}\nOptions: ${roles.join(', ')}`, user.role);
+  if (!role || !roles.includes(role.toLowerCase())) return;
+  const result = SESAuth.updateUserRole(id, role.toLowerCase());
+  if (result.success) { SES.Toast.success(`Role updated to ${role}.`); loadUsers(); openDrawer(id); }
+  else SES.Toast.error(result.error);
+}
+
+function editHubAccess(id) {
+  const user = SESAuth.getUserById(id);
+  if (!user) return;
+  const hubs = SESConfig.hubs.map(h => h.id);
+  const current = (user.hubAccess || []).join(',');
+  const input = prompt(
+    `Hub access for ${user.firstName} ${user.lastName}\nAvailable: ${hubs.join(', ')}\nCurrent: ${current || 'none'}\n\nEnter comma-separated hub IDs:`,
+    current
+  );
+  if (input === null) return;
+  const newAccess = input.split(',').map(s => s.trim()).filter(s => hubs.includes(s));
+  const result    = SESAuth.updateUserHubAccess(id, newAccess);
+  if (result.success) { SES.Toast.success('Hub access updated!'); loadUsers(); openDrawer(id); }
+  else SES.Toast.error(result.error);
+}
+
+/* ── Bulk actions ── */
+function bulkApprove() {
+  if (!selectedIds.size) return;
+  let count = 0;
+  selectedIds.forEach(id => { if (SESAuth.approveUser(id).success) count++; });
+  SES.Toast.success(`${count} user${count > 1 ? 's' : ''} approved.`);
+  selectedIds.clear();
+  loadUsers();
+}
+
+function bulkSuspend() {
+  if (!selectedIds.size) return;
+  if (!confirm(`Suspend ${selectedIds.size} selected users?`)) return;
+  let count = 0;
+  selectedIds.forEach(id => { if (SESAuth.suspendUser(id).success) count++; });
+  SES.Toast.warning(`${count} user${count > 1 ? 's' : ''} suspended.`);
+  selectedIds.clear();
+  loadUsers();
+}
+
+function bulkDelete() {
+  if (!selectedIds.size) return;
+  if (!confirm(`Permanently delete ${selectedIds.size} selected users? This cannot be undone.`)) return;
+  let count = 0;
+  selectedIds.forEach(id => { if (SESAuth.deleteUser(id).success) count++; });
+  SES.Toast.success(`${count} user${count > 1 ? 's' : ''} deleted.`);
+  selectedIds.clear();
+  loadUsers();
+}
+
+/* ── User detail drawer ── */
+function openDrawer(id) {
+  const user    = SESAuth.getUserById(id);
+  if (!user) return;
+  const content = document.getElementById('drawerContent');
+  const role    = SESAuth.getRoleInfo(user.role);
+
+  content.innerHTML = `
+    <!-- Avatar & name -->
+    <div style="text-align:center;padding-bottom:20px;border-bottom:1px solid var(--border-default);margin-bottom:20px;">
+      <div style="display:flex;justify-content:center;margin-bottom:12px;">
+        ${SESAuth.renderUserAvatar(user, 64)}
+      </div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:4px;">
+        ${user.firstName} ${user.lastName}
+      </div>
+      <div style="font-size:0.8rem;color:#8BA4BC;margin-bottom:8px;">${user.email}</div>
+      <div style="display:flex;justify-content:center;gap:6px;">
+        ${SESAuth.getRoleBadge(user.role)}
+        ${SESAuth.getStatusBadge(user.status)}
+      </div>
+    </div>
+
+    <!-- Details grid -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+      ${[
+        { label:'Company',    value:user.company    || '—', icon:'fa-building' },
+        { label:'Job Title',  value:user.jobTitle   || '—', icon:'fa-briefcase' },
+        { label:'Department', value:user.department || '—', icon:'fa-sitemap' },
+        { label:'Country',    value:user.country    || '—', icon:'fa-globe' },
+        { label:'Plan',       value:user.plan       || 'starter', icon:'fa-tag' },
+        { label:'Joined',     value:SESAuth.formatDate(user.createdAt), icon:'fa-calendar' },
+        { label:'Last Login', value:user.lastLogin ? SESAuth.formatDate(user.lastLogin) : 'Never', icon:'fa-clock' }
+      ].map(r => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:8px;">
+          <i class="fas ${r.icon}" style="color:rgba(0,212,255,0.5);font-size:0.78rem;width:14px;text-align:center;"></i>
+          <span style="font-size:0.75rem;color:#6688A0;flex:1;">${r.label}</span>
+          <span style="font-size:0.8rem;font-weight:600;color:#D4E0F0;">${r.value}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Hub access -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#6688A0;margin-bottom:10px;">
+        <i class="fas fa-key" style="margin-right:4px;color:#A855F7;"></i> Hub Access
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;">
+        ${SESConfig.hubs.map(h => {
+          const hasAccess = (user.hubAccess || []).includes(h.id);
+          return `
+            <span style="
+              display:inline-flex;align-items:center;gap:4px;
+              padding:4px 10px;border-radius:99px;
+              font-size:0.68rem;font-weight:700;
+              background:${hasAccess ? h.colorBg : 'rgba(255,255,255,0.03)'};
+              border:1px solid ${hasAccess ? h.colorBorder : 'rgba(255,255,255,0.07)'};
+              color:${hasAccess ? h.color : '#4A6478'};
+              opacity:${hasAccess ? '1' : '0.5'};
+            ">
+              <i class="fas ${h.icon}" style="font-size:0.6rem;"></i>
+              ${h.label}
+              ${hasAccess ? '<i class="fas fa-check" style="font-size:0.55rem;"></i>' : '<i class="fas fa-lock" style="font-size:0.55rem;"></i>'}
+            </span>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${user.status === 'pending' ? `
+        <button onclick="approveUser('${user.id}');closeDrawer();"
+                class="btn btn-full" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#4ADE80;">
+          <i class="fas fa-check-circle"></i> Approve Account
+        </button>
+      ` : ''}
+      <button onclick="editUserRole('${user.id}')" class="btn btn-ghost btn-full">
+        <i class="fas fa-user-tag"></i> Change Role
+      </button>
+      <button onclick="editHubAccess('${user.id}')" class="btn btn-ghost btn-full">
+        <i class="fas fa-key"></i> Edit Hub Access
+      </button>
+      ${user.status !== 'suspended' ? `
+        <button onclick="suspendUser('${user.id}');closeDrawer();"
+                class="btn btn-full" style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.15);color:#F97316;">
+          <i class="fas fa-ban"></i> Suspend User
+        </button>
+      ` : `
+        <button onclick="reactivateUser('${user.id}');closeDrawer();"
+                class="btn btn-full" style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.15);color:#4ADE80;">
+          <i class="fas fa-redo"></i> Reactivate User
+        </button>
+      `}
+      <button onclick="deleteUser('${user.id}');closeDrawer();"
+              class="btn btn-full" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);color:#FCA5A5;">
+        <i class="fas fa-trash"></i> Delete User
+      </button>
+    </div>
+  `;
+
+  document.getElementById('userDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('userDrawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+
+/* ── Action dropdown ── */
+function toggleActionMenu(id) {
+  const menu = document.getElementById(`menu-${id}`);
+  const isOpen = menu.classList.contains('open');
+  document.querySelectorAll('.dropdown-menu.open').forEach(m => m.classList.remove('open'));
+  if (!isOpen) menu.classList.add('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.action-dropdown-wrap')) {
+    document.querySelectorAll('.dropdown-menu.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+/* ── Add user modal ── */
+function openAddUserModal() { SES.Modal.open('addUserModal'); }
+
+async function submitAddUser() {
+  const fn = document.getElementById('addFirstName').value.trim();
+  const ln = document.getElementById('addLastName').value.trim();
+  const em = document.getElementById('addEmail').value.trim();
+  const pw = document.getElementById('addPassword').value;
+  const co = document.getElementById('addCompany').value.trim();
+  const ro = document.getElementById('addRole').value;
+  const aa = document.getElementById('addAutoApprove').checked;
+  const hubs = [...document.querySelectorAll('input[name="hubAccess"]:checked')].map(c => c.value);
+
+  if (!fn || !ln || !em || !pw) { SES.Toast.error('Please fill all required fields.'); return; }
+
+  const btn = document.getElementById('addUserBtn');
+  SES.Form.setLoading(btn, true, 'Creating...');
+  await new Promise(r => setTimeout(r, 600));
+
+  const result = SESAuth.registerUser({
+    firstName:fn, lastName:ln, email:em, password:pw,
+    company:co, role:ro, hubAccess:hubs
+  });
+
+  SES.Form.setLoading(btn, false);
+
+  if (result.success) {
+    if (aa) SESAuth.approveUser(result.userId);
+    SESAuth.updateUserHubAccess(result.userId, hubs);
+    SES.Toast.success(`User ${fn} ${ln} created${aa ? ' and approved' : ''}.`);
+    SES.Modal.close('addUserModal');
+    document.getElementById('addUserForm').reset();
+    loadUsers();
+  } else {
+    SES.Toast.error(result.error || 'Failed to create user.');
+  }
+}
+
+/* ── Export ── */
+function exportUsers() {
+  const data = filteredUsers.map(u => ({
+    ID:         u.id,
+    FirstName:  u.firstName,
+    LastName:   u.lastName,
+    Email:      u.email,
+    Company:    u.company || '',
+    Role:       u.role,
+    Status:     u.status,
+    Plan:       u.plan || '',
+    HubAccess:  (u.hubAccess || []).join(';'),
+    Joined:     u.createdAt
+  }));
+  SES.Export.toCSV(data, `sesmine-users-${new Date().toISOString().slice(0,10)}.csv`);
+  SES.Toast.success('Export started.');
+}
+
+/* ── Logout ── */
+function handleAdminLogout() {
+  if (confirm('Sign out of admin portal?')) SESAuth.logout(true);
+}
+
+/* ── URL param filter ── */
+(function checkURLFilter() {
+  const p = new URLSearchParams(window.location.search).get('filter');
+  if (p) {
+    currentFilter = p;
+    document.querySelectorAll('.filter-tab').forEach(b => {
+      b.classList.toggle('active', b.textContent.trim().toLowerCase() === p);
+    });
+  }
+})();
+
+document.addEventListener('DOMContentLoaded', loadUsers);
+</script>
+</body>
+</html>
