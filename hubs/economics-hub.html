@@ -3,329 +3,1419 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Economics Hub — SESMine</title>
-  <link rel="stylesheet" href="../assets/css/main.css" />
-  <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <title>Economics Hub — SESMine Intelligence Platform</title>
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .hub-hero { background:linear-gradient(135deg,rgba(245,166,35,0.1),rgba(34,197,94,0.06)); border:1px solid rgba(245,166,35,0.2); border-radius:var(--radius-xl); padding:32px; margin-bottom:28px; display:flex; align-items:center; gap:24px; }
-    .hub-hero-icon { width:72px;height:72px;background:rgba(245,166,35,0.15);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--color-accent);flex-shrink:0; }
-    .hub-hero-content h1 { font-size:1.6rem;margin-bottom:6px; }
-    .hub-hero-content p  { color:var(--text-muted);font-size:0.9rem; }
-    .hub-hero-stats { margin-left:auto;display:flex;gap:20px;flex-shrink:0; }
-    .hub-stat { text-align:center; }
-    .hub-stat-value { font-family:var(--font-display);font-size:1.6rem;font-weight:800; }
-    .hub-stat-label { font-size:0.72rem;color:var(--text-muted);margin-top:2px; }
-    .commodity-card {
-      padding:18px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color);
-      border-radius:var(--radius-md); transition:all var(--transition-normal);
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #020810;
+      --bg-card:     rgba(8,18,38,0.95);
+      --bg-surface:  rgba(12,24,48,0.8);
+      --bg-hover:    rgba(255,255,255,0.025);
+      --border:      rgba(255,255,255,0.07);
+      --border-cyan: rgba(0,212,255,0.18);
+      --cyan:        #00D4FF;
+      --cyan-dim:    rgba(0,212,255,0.1);
+      --gold:        #D4AF37;
+      --orange:      #F97316;
+      --green:       #22C55E;
+      --red:         #EF4444;
+      --purple:      #A855F7;
+      --text-100:    #F0F6FF;
+      --text-300:    #D4E0F0;
+      --text-500:    #8BA4BC;
+      --text-700:    #6688A0;
+      --text-900:    #4A6478;
+      --font-body:   'Inter', sans-serif;
+      --font-head:   'Space Grotesk', sans-serif;
+      --font-mono:   'JetBrains Mono', monospace;
+      --sidebar-w:   240px;
+      --topbar-h:    60px;
+      --radius-card: 16px;
+      --radius-sm:   10px;
     }
-    .commodity-card:hover { border-color:rgba(245,166,35,0.3); transform:translateY(-2px); }
-    .commodity-price { font-family:var(--font-display); font-size:1.6rem; font-weight:800; }
-    .commodity-change-up   { color:var(--color-green); font-size:0.82rem; font-weight:600; }
-    .commodity-change-down { color:var(--color-red);   font-size:0.82rem; font-weight:600; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-body);
+      color: var(--text-100);
+      background: var(--bg);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ══ SCROLLBAR ══ */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+
+    /* ══ LAYOUT ══ */
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      min-height: 100vh;
+    }
+
+    /* ══ SIDEBAR ══ */
+    .sidebar {
+      background: rgba(3,8,20,0.98);
+      border-right: 1px solid rgba(0,212,255,0.06);
+      display: flex; flex-direction: column;
+      position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      z-index: 50;
+    }
+    .sidebar-logo {
+      padding: 18px 16px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; gap: 9px;
+      flex-shrink: 0;
+    }
+    .sidebar-logo img { height: 28px; filter: drop-shadow(0 0 8px rgba(0,212,255,0.25)); }
+    .sidebar-logo-text {
+      font-family: var(--font-head);
+      font-size: 0.88rem; font-weight: 800;
+      letter-spacing: 0.06em; color: var(--text-100);
+    }
+    .sidebar-logo-text em { color: var(--cyan); font-style: normal; }
+
+    .nav { padding: 8px; flex: 1; }
+    .nav-section {
+      font-size: 0.56rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--text-900); padding: 10px 8px 5px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 8px;
+      font-size: 0.8rem; font-weight: 600;
+      color: var(--text-700); text-decoration: none;
+      transition: all 0.18s ease; margin-bottom: 1px;
+      border: 1px solid transparent;
+    }
+    .nav-item:hover { background: var(--bg-hover); color: var(--text-300); }
+    .nav-item.active {
+      background: var(--cyan-dim);
+      color: var(--cyan);
+      border-color: rgba(0,212,255,0.12);
+    }
+    .nav-item i { width: 15px; text-align: center; font-size: 0.78rem; flex-shrink: 0; }
+
+    .sidebar-footer {
+      padding: 10px 8px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
+    }
+    .user-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 9px;
+      background: rgba(255,255,255,0.03);
+      margin-bottom: 6px;
+    }
+    .user-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .user-name  { font-size: 0.76rem; font-weight: 700; color: var(--text-100); }
+    .user-role  { font-size: 0.62rem; color: var(--text-700); }
+
+    /* ══ MAIN ══ */
+    .main { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
+
+    /* ══ TOPBAR ══ */
+    .topbar {
+      height: var(--topbar-h);
+      background: rgba(3,8,20,0.96);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 40;
+      backdrop-filter: blur(16px);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-icon {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: var(--cyan-dim);
+      border: 1px solid var(--border-cyan);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--cyan); font-size: 0.85rem;
+    }
+    .topbar-title { font-family: var(--font-head); font-size: 0.92rem; font-weight: 800; }
+    .topbar-sub   { font-size: 0.65rem; color: var(--text-700); margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ══ CONTENT ══ */
+    .content { padding: 22px; }
+
+    /* ══ CARDS ══ */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px;
+    }
+    .card-title { font-size: 0.84rem; font-weight: 700; color: var(--text-100); margin-bottom: 3px; }
+    .card-sub   { font-size: 0.68rem; color: var(--text-700); margin-bottom: 14px; }
+
+    /* ══ HERO ══ */
+    .hub-hero {
+      background: linear-gradient(135deg, rgba(0,212,255,0.07) 0%, rgba(37,99,235,0.05) 100%);
+      border: 1px solid var(--border-cyan);
+      border-radius: 18px; padding: 24px 26px;
+      margin-bottom: 20px;
+      position: relative; overflow: hidden;
+    }
+    .hub-hero::before {
+      content: '';
+      position: absolute; right: -50px; top: -50px;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(0,212,255,0.06), transparent 65%);
+      pointer-events: none;
+    }
+    .hero-tag {
+      font-size: 0.6rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--cyan); margin-bottom: 7px;
+    }
+    .hero-title {
+      font-family: var(--font-head);
+      font-size: 1.15rem; font-weight: 800;
+      margin-bottom: 7px; letter-spacing: -0.01em;
+    }
+    .hero-desc {
+      font-size: 0.8rem; color: var(--text-500);
+      line-height: 1.65; max-width: 520px;
+    }
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 12px; text-align: center;
+    }
+    .hero-stat-val {
+      font-family: var(--font-head);
+      font-size: 1.25rem; font-weight: 800;
+      color: var(--cyan); line-height: 1;
+      margin-bottom: 3px;
+    }
+    .hero-stat-lbl { font-size: 0.65rem; color: var(--text-700); }
+
+    /* ══ GRID LAYOUTS ══ */
+    .grid-2    { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3    { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-6040 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
+    .mb-4 { margin-bottom: 16px; }
+    .mb-5 { margin-bottom: 20px; }
+
+    /* ══ BUTTONS ══ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 8px;
+      font-family: var(--font-body); font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); color: var(--text-500);
+      text-decoration: none; transition: all 0.18s ease;
+    }
+    .btn:hover { background: rgba(255,255,255,0.07); color: var(--text-300); }
+    .btn-cyan {
+      background: var(--cyan-dim);
+      border-color: var(--border-cyan);
+      color: var(--cyan);
+    }
+    .btn-cyan:hover { background: rgba(0,212,255,0.15); }
+    .btn-sm { padding: 5px 10px; font-size: 0.72rem; }
+
+    /* ══ SELECT ══ */
+    select {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px 10px;
+      font-family: var(--font-body); font-size: 0.76rem;
+      color: var(--text-300); outline: none; cursor: pointer;
+      transition: border-color 0.18s ease;
+    }
+    select:focus { border-color: var(--cyan); }
+    select option { background: #0d1b2e; }
+
+    /* ══ SEARCH ══ */
+    .search-wrap {
+      position: relative; display: flex; align-items: center;
+    }
+    .search-wrap i {
+      position: absolute; left: 10px;
+      color: var(--text-900); font-size: 0.75rem; pointer-events: none;
+    }
+    .search-input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 7px 12px 7px 30px;
+      font-family: var(--font-body); font-size: 0.78rem;
+      color: var(--text-300); outline: none; width: 100%;
+      transition: border-color 0.18s ease;
+    }
+    .search-input:focus { border-color: var(--cyan); }
+    .search-input::placeholder { color: var(--text-900); }
+
+    /* ══ LIVE BADGE ══ */
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.62rem; font-weight: 800;
+      color: var(--green); letter-spacing: 0.06em;
+    }
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green);
+      animation: livePulse 2s ease infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ══ PRICE TABLE ══ */
+    .price-table { width: 100%; border-collapse: collapse; }
+    .price-table td {
+      padding: 9px 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: middle;
+    }
+    .price-table tr:last-child td { border-bottom: none; }
+    .price-table tr:hover td { background: var(--bg-hover); }
+
+    /* ══ DATA TABLE ══ */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      padding: 9px 12px;
+      font-size: 0.62rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-700);
+      border-bottom: 1px solid var(--border);
+      text-align: left; white-space: nowrap;
+    }
+    .data-table td {
+      padding: 10px 12px; font-size: 0.78rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: middle;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--bg-hover); }
+
+    /* ══ BADGES ══ */
+    .badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 8px; border-radius: 99px;
+      font-size: 0.62rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* ══ INSIGHT CARD ══ */
+    .insight-item {
+      padding: 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px; cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .insight-item:last-child { margin-bottom: 0; }
+    .insight-item:hover {
+      background: rgba(0,212,255,0.04);
+      border-color: rgba(0,212,255,0.1);
+      transform: translateX(2px);
+    }
+    .insight-title {
+      font-size: 0.78rem; font-weight: 700;
+      color: var(--text-300); line-height: 1.4;
+      margin-bottom: 5px;
+    }
+    .insight-meta {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ══ TOAST ══ */
+    #toastWrap {
+      position: fixed; bottom: 20px; right: 20px;
+      z-index: 9999; display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast {
+      padding: 11px 16px; border-radius: 10px;
+      font-size: 0.8rem; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      animation: toastIn 0.3s ease both;
+      max-width: 300px;
+    }
+    .toast-success { background:#0d2b1a; border:1px solid rgba(34,197,94,0.3); color:#86EFAC; }
+    .toast-info    { background:#0a1f30; border:1px solid rgba(0,212,255,0.3); color:#67E8F9; }
+    .toast-warn    { background:#2b1a08; border:1px solid rgba(249,115,22,0.3); color:#FED7AA; }
+    @keyframes toastIn {
+      from { opacity:0; transform:translateX(20px); }
+      to   { opacity:1; transform:translateX(0); }
+    }
+
+    /* ══ CHART CONTAINER ══ */
+    .chart-wrap { position: relative; }
+
+    /* ══ FADE IN ══ */
+    .fade-up {
+      animation: fadeUp 0.4s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .fade-up:nth-child(2) { animation-delay:0.05s; }
+    .fade-up:nth-child(3) { animation-delay:0.10s; }
+    .fade-up:nth-child(4) { animation-delay:0.15s; }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .grid-6040, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
-<body class="bg-primary">
-  <div class="app-layout">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <a href="../index.html" class="nav-logo">
-          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
-          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
-        </a>
-      </div>
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Overview</div>
-          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
-          <a href="../dashboard/esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Products</div>
-          <a href="../products/ai-predictor.html" class="sidebar-link"><i class="fas fa-brain"></i> AI Predictor</a>
-          <a href="../products/cost-calculator.html" class="sidebar-link"><i class="fas fa-calculator"></i> Cost Calculator</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Hubs</div>
-          <a href="engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
-          <a href="safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
-          <a href="sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
-          <a href="procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
-          <a href="innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
-          <a href="economics-hub.html" class="sidebar-link active"><i class="fas fa-chart-line"></i> Economics</a>
-        </div>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="user-avatar">JS</div>
-          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
-        </div>
-      </div>
-    </aside>
+<body>
 
-    <div class="main-content">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+<div class="layout">
+
+  <!-- ══════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" alt="SESMine" />
+      <span class="sidebar-logo-text">SES<em>MINE</em></span>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <a href="../dashboard/main-dashboard.html" class="nav-item">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a href="../dashboard/analytics.html" class="nav-item">
+        <i class="fas fa-chart-line"></i> Analytics
+      </a>
+      <a href="../dashboard/esg-dashboard.html" class="nav-item">
+        <i class="fas fa-leaf"></i> ESG Dashboard
+      </a>
+
+      <div class="nav-section">Intelligence Hubs</div>
+      <a href="economics-hub.html" class="nav-item active">
+        <i class="fas fa-chart-bar" style="color:var(--cyan);"></i> Economics
+      </a>
+      <a href="engineering-hub.html" class="nav-item">
+        <i class="fas fa-cogs" style="color:var(--orange);"></i> Engineering
+      </a>
+      <a href="procurement-hub.html" class="nav-item">
+        <i class="fas fa-boxes" style="color:var(--purple);"></i> Procurement
+      </a>
+      <a href="safety-hub.html" class="nav-item">
+        <i class="fas fa-hard-hat" style="color:var(--red);"></i> Safety
+      </a>
+      <a href="sustainability-hub.html" class="nav-item">
+        <i class="fas fa-seedling" style="color:var(--green);"></i> Sustainability
+      </a>
+      <a href="innovation-hub.html" class="nav-item">
+        <i class="fas fa-lightbulb" style="color:var(--gold);"></i> Innovation
+      </a>
+
+      <div class="nav-section">Tools</div>
+      <a href="../products/ai-predictor.html" class="nav-item">
+        <i class="fas fa-brain" style="color:var(--purple);"></i> AI Predictor
+      </a>
+      <a href="../products/cost-calculator.html" class="nav-item">
+        <i class="fas fa-calculator" style="color:var(--cyan);"></i> Cost Calculator
+      </a>
+      <a href="../products/equipment-database.html" class="nav-item">
+        <i class="fas fa-database" style="color:var(--orange);"></i> Equipment DB
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar" id="sidebarAvatar"
+             style="background:rgba(0,212,255,0.15);color:var(--cyan);">
+          <i class="fas fa-user"></i>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div class="user-name" id="sidebarName">User</div>
+          <div class="user-role" id="sidebarRole">Member</div>
+        </div>
+      </div>
+      <a href="../dashboard/main-dashboard.html" class="nav-item" style="margin-bottom:2px;">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+      <button onclick="handleLogout()" class="nav-item"
+              style="width:100%;background:none;border:none;cursor:pointer;font-family:var(--font-body);text-align:left;color:var(--text-700);">
+        <i class="fas fa-sign-out-alt" style="color:var(--red);"></i> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════
+       MAIN
+  ══════════════════════════════════════ -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-icon">
+          <i class="fas fa-chart-bar"></i>
+        </div>
+        <div>
           <div class="topbar-title">Economics Hub</div>
+          <div class="topbar-sub">Commodity intelligence · Market analysis · Cost benchmarking</div>
         </div>
-        <div class="topbar-right">
-          <span style="font-size:0.8rem;color:var(--color-green);display:flex;align-items:center;gap:6px;">
-            <span style="width:7px;height:7px;border-radius:50%;background:var(--color-green);animation:pulse 2s infinite;"></span>
-            Live Market Data
-          </span>
-          <button class="topbar-btn"><i class="fas fa-sync-alt"></i></button>
+      </div>
+      <div class="topbar-right">
+        <div class="live-badge">
+          <div class="live-dot"></div> LIVE DATA
         </div>
-      </header>
-
-      <main class="page-content">
-
-        <div class="hub-hero animate-fade-up">
-          <div class="hub-hero-icon"><i class="fas fa-chart-line"></i></div>
-          <div class="hub-hero-content">
-            <h1>Economics Hub</h1>
-            <p>Live commodity prices, NPV analysis, market forecasting, hedging scenarios, and global mining market intelligence.</p>
-          </div>
-          <div class="hub-hero-stats">
-            <div class="hub-stat"><div class="hub-stat-value" style="color:var(--color-accent);">$3,142</div><div class="hub-stat-label">Gold ($/oz)</div></div>
-            <div class="hub-stat"><div class="hub-stat-value" style="color:var(--color-blue);">$9,847</div><div class="hub-stat-label">Copper ($/t)</div></div>
-            <div class="hub-stat"><div class="hub-stat-value" style="color:var(--color-green);">$142</div><div class="hub-stat-label">Iron Ore ($/t)</div></div>
-          </div>
+        <button class="btn btn-sm" onclick="exportData()">
+          <i class="fas fa-download"></i> Export CSV
+        </button>
+        <div id="topbarAvatar"
+             style="width:34px;height:34px;border-radius:50%;background:rgba(0,212,255,0.15);border:2px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:0.72rem;font-weight:800;cursor:pointer;"
+             onclick="window.location.href='../dashboard/main-dashboard.html'">
+          <i class="fas fa-user"></i>
         </div>
+      </div>
+    </div>
 
-        <!-- Live Commodity Prices -->
-        <div style="margin-bottom:28px;">
-          <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:14px;">
-            <i class="fas fa-bolt" style="color:var(--color-accent);margin-right:6px;"></i>Live Commodity Prices — Jun 28, 2026 01:12 AM
-          </div>
-          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
-            <div class="commodity-card animate-fade-up">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Gold</span>
-                <span style="font-size:0.72rem;color:var(--text-muted);">XAU/USD</span>
-              </div>
-              <div class="commodity-price" style="color:var(--color-accent);">$3,142.40</div>
-              <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
-                <span class="commodity-change-up"><i class="fas fa-arrow-up"></i> +$18.20 (+0.58%)</span>
-              </div>
-              <canvas id="goldSparkline" width="160" height="36" style="margin-top:10px;"></canvas>
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── Hero ── -->
+      <div class="hub-hero fade-up">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+          <div>
+            <div class="hero-tag">
+              <i class="fas fa-chart-bar" style="margin-right:5px;"></i>Economics Hub
             </div>
-            <div class="commodity-card animate-fade-up delay-1">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Copper</span>
-                <span style="font-size:0.72rem;color:var(--text-muted);">$/tonne</span>
-              </div>
-              <div class="commodity-price" style="color:var(--color-blue);">$9,847.00</div>
-              <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
-                <span class="commodity-change-down"><i class="fas fa-arrow-down"></i> -$124.00 (-1.24%)</span>
-              </div>
-              <canvas id="copperSparkline" width="160" height="36" style="margin-top:10px;"></canvas>
-            </div>
-            <div class="commodity-card animate-fade-up delay-2">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Iron Ore</span>
-                <span style="font-size:0.72rem;color:var(--text-muted);">$/tonne</span>
-              </div>
-              <div class="commodity-price" style="color:var(--color-green);">$142.30</div>
-              <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
-                <span class="commodity-change-up"><i class="fas fa-arrow-up"></i> +$3.10 (+2.22%)</span>
-              </div>
-              <canvas id="ironSparkline" width="160" height="36" style="margin-top:10px;"></canvas>
-            </div>
-            <div class="commodity-card animate-fade-up delay-3">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Lithium</span>
-                <span style="font-size:0.72rem;color:var(--text-muted);">$/tonne</span>
-              </div>
-              <div class="commodity-price" style="color:var(--color-teal);">$24,180</div>
-              <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
-                <span class="commodity-change-up"><i class="fas fa-arrow-up"></i> +$480 (+2.02%)</span>
-              </div>
-              <canvas id="lithiumSparkline" width="160" height="36" style="margin-top:10px;"></canvas>
+            <div class="hero-title">Commodity Intelligence & Market Analysis</div>
+            <div class="hero-desc">
+              Real-time commodity pricing, CAPEX benchmarks, cost curves, project economics,
+              and AI-powered market forecasts for mining professionals worldwide.
             </div>
           </div>
-        </div>
-
-        <!-- Charts Row -->
-        <div style="display:grid; grid-template-columns:2fr 1fr; gap:20px; margin-bottom:20px;">
-          <div class="chart-card animate-fade-up delay-2">
-            <div class="chart-card-header" style="margin-bottom:16px;">
-              <div>
-                <div class="chart-card-title"><i class="fas fa-chart-area" style="color:var(--color-accent);margin-right:6px;"></i>Gold Price — 12 Month Trend</div>
-                <div class="chart-card-subtitle">USD per troy ounce</div>
-              </div>
-              <select class="form-select" style="width:auto;padding:6px 28px 6px 10px;font-size:0.8rem;" onchange="updateCommodityChart(this.value)">
-                <option value="gold">Gold</option>
-                <option value="copper">Copper</option>
-                <option value="iron">Iron Ore</option>
-                <option value="lithium">Lithium</option>
-              </select>
-            </div>
-            <canvas id="commodityChart" width="500" height="200"></canvas>
-          </div>
-
-          <div class="chart-card animate-fade-up delay-2">
-            <div class="chart-card-header" style="margin-bottom:16px;">
-              <div class="chart-card-title"><i class="fas fa-globe" style="color:var(--color-blue);margin-right:6px;"></i>Market Sentiment</div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:12px;">
-              <div>
-                <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;">
-                  <span>Gold Outlook</span><span style="color:var(--color-green);font-weight:700;">Bullish</span>
-                </div>
-                <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
-                  <div style="width:72%;height:100%;background:var(--color-green);border-radius:4px;"></div>
-                </div>
-              </div>
-              <div>
-                <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;">
-                  <span>Copper Outlook</span><span style="color:var(--color-accent);font-weight:700;">Neutral</span>
-                </div>
-                <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
-                  <div style="width:50%;height:100%;background:var(--color-accent);border-radius:4px;"></div>
-                </div>
-              </div>
-              <div>
-                <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;">
-                  <span>Iron Ore Outlook</span><span style="color:var(--color-green);font-weight:700;">Bullish</span>
-                </div>
-                <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
-                  <div style="width:65%;height:100%;background:var(--color-green);border-radius:4px;"></div>
-                </div>
-              </div>
-              <div>
-                <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;">
-                  <span>Lithium Outlook</span><span style="color:var(--color-teal);font-weight:700;">Strong Buy</span>
-                </div>
-                <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
-                  <div style="width:84%;height:100%;background:var(--color-teal);border-radius:4px;"></div>
-                </div>
-              </div>
-              <div>
-                <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;">
-                  <span>Nickel Outlook</span><span style="color:var(--color-red);font-weight:700;">Bearish</span>
-                </div>
-                <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
-                  <div style="width:28%;height:100%;background:var(--color-red);border-radius:4px;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- NPV Analysis Table -->
-        <div class="data-table-card animate-fade-up delay-3">
-          <div class="data-table-header">
+          <div class="hero-stats">
             <div>
-              <div class="chart-card-title">NPV & Financial Analysis — Active Projects</div>
-              <div class="chart-card-subtitle">Based on current commodity prices and project parameters</div>
+              <div class="hero-stat-val">47</div>
+              <div class="hero-stat-lbl">Commodities tracked</div>
             </div>
-            <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="window.SESMine.exportToCSV(npvData,'npv-analysis.csv')">
-              <i class="fas fa-download"></i> Export
+            <div>
+              <div class="hero-stat-val">12k+</div>
+              <div class="hero-stat-lbl">Cost data points</div>
+            </div>
+            <div>
+              <div class="hero-stat-val">Live</div>
+              <div class="hero-stat-lbl">Price feeds</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── KPI cards ── -->
+      <div class="grid-3 mb-5 fade-up" id="kpiRow"></div>
+
+      <!-- ── Price chart + live table ── -->
+      <div class="grid-6040 mb-5">
+
+        <!-- Price chart -->
+        <div class="card fade-up">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div>
+              <div class="card-title">Commodity Price Index</div>
+              <div class="card-sub" style="margin-bottom:0;">12-month rolling · USD</div>
+            </div>
+            <select id="commoditySelect" onchange="updatePriceChart()">
+              <option value="iron_ore">Iron Ore</option>
+              <option value="copper">Copper</option>
+              <option value="gold">Gold</option>
+              <option value="lithium">Lithium</option>
+              <option value="nickel">Nickel</option>
+              <option value="silver">Silver</option>
+              <option value="zinc">Zinc</option>
+            </select>
+          </div>
+          <div class="chart-wrap" style="height:230px;">
+            <canvas id="priceChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Live prices -->
+        <div class="card fade-up">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="card-title">Live Spot Prices</div>
+            <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+          </div>
+          <table class="price-table" id="priceTable"></table>
+        </div>
+      </div>
+
+      <!-- ── CAPEX + Cost curve ── -->
+      <div class="grid-2 mb-5">
+        <div class="card fade-up">
+          <div class="card-title">CAPEX Intensity Benchmarks</div>
+          <div class="card-sub">Global mining capital intensity · $/t installed capacity</div>
+          <div class="chart-wrap" style="height:210px;">
+            <canvas id="capexChart"></canvas>
+          </div>
+        </div>
+        <div class="card fade-up">
+          <div class="card-title">C1 Cash Cost Curve</div>
+          <div class="card-sub">Industry cost distribution by percentile · USD/t</div>
+          <div class="chart-wrap" style="height:210px;">
+            <canvas id="costCurveChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Project economics table ── -->
+      <div class="card mb-5 fade-up">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="card-title">Project Economics Database</div>
+            <div class="card-sub" style="margin-bottom:0;">Benchmarked NPV, IRR, payback, and C1 cost data</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <div class="search-wrap" style="width:200px;">
+              <i class="fas fa-search"></i>
+              <input type="text" class="search-input" id="projectSearch"
+                     placeholder="Search projects..."
+                     oninput="filterProjects()" />
+            </div>
+            <select id="stageFilter" onchange="filterProjects()" style="width:130px;">
+              <option value="">All Stages</option>
+              <option value="Production">Production</option>
+              <option value="Development">Development</option>
+              <option value="Feasibility">Feasibility</option>
+              <option value="Scoping">Scoping</option>
+            </select>
+            <button class="btn btn-sm" onclick="exportData()">
+              <i class="fas fa-file-csv"></i> CSV
             </button>
           </div>
-          <div style="overflow-x:auto;">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Project</th>
-                  <th>Commodity</th>
-                  <th>CAPEX</th>
-                  <th>Annual Revenue</th>
-                  <th>NPV (10yr)</th>
-                  <th>IRR</th>
-                  <th>Payback</th>
-                  <th>Sensitivity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong style="color:var(--text-primary);">Alpha Gold Mine</strong></td>
-                  <td><span style="color:var(--color-accent);">Gold</span></td>
-                  <td>$42.3M</td>
-                  <td style="color:var(--color-green);">$38.2M</td>
-                  <td style="color:var(--color-green);font-weight:700;">$284M</td>
-                  <td style="color:var(--color-green);font-weight:700;">42%</td>
-                  <td>14 months</td>
-                  <td><span class="status-badge status-active">Low Risk</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color:var(--text-primary);">Copper Ridge</strong></td>
-                  <td><span style="color:var(--color-blue);">Copper</span></td>
-                  <td>$28.7M</td>
-                  <td style="color:var(--color-green);">$22.4M</td>
-                  <td style="color:var(--color-green);font-weight:700;">$148M</td>
-                  <td style="color:var(--color-accent);font-weight:700;">31%</td>
-                  <td>18 months</td>
-                  <td><span class="status-badge status-warning">Med Risk</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color:var(--text-primary);">Iron Valley</strong></td>
-                  <td><span style="color:var(--color-green);">Iron Ore</span></td>
-                  <td>$67.1M</td>
-                  <td style="color:var(--color-green);">$54.8M</td>
-                  <td style="color:var(--color-green);font-weight:700;">$392M</td>
-                  <td style="color:var(--color-green);font-weight:700;">38%</td>
-                  <td>16 months</td>
-                  <td><span class="status-badge status-active">Low Risk</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color:var(--text-primary);">Lithium Star</strong></td>
-                  <td><span style="color:var(--color-teal);">Lithium</span></td>
-                  <td>$89.4M</td>
-                  <td style="color:var(--color-green);">$112.6M</td>
-                  <td style="color:var(--color-green);font-weight:700;">$847M</td>
-                  <td style="color:var(--color-green);font-weight:700;">58%</td>
-                  <td>10 months</td>
-                  <td><span class="status-badge status-active">Low Risk</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Commodity</th>
+                <th>Country</th>
+                <th>Stage</th>
+                <th>CAPEX $M</th>
+                <th>NPV $M</th>
+                <th>IRR %</th>
+                <th>Payback yrs</th>
+                <th>C1 USD/t</th>
+                <th>Outlook</th>
+              </tr>
+            </thead>
+            <tbody id="projectsBody"></tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border);margin-top:4px;">
+          <div style="font-size:0.72rem;color:var(--text-700);" id="tableInfo">Showing 0 projects</div>
+          <div style="display:flex;gap:6px;" id="tablePagination"></div>
+        </div>
+      </div>
+
+      <!-- ── Insights + Forecast ── -->
+      <div class="grid-2 mb-5">
+
+        <!-- Market insights -->
+        <div class="card fade-up">
+          <div class="card-title">Market Intelligence Briefs</div>
+          <div class="card-sub">AI-generated commodity insights · updated hourly</div>
+          <div id="insightsList"></div>
         </div>
 
-      </main>
-    </div>
-  </div>
+        <!-- 12-month forecast -->
+        <div class="card fade-up">
+          <div class="card-title">12-Month Price Forecasts</div>
+          <div class="card-sub">Consensus analyst outlook · normalised index</div>
+          <div class="chart-wrap" style="height:240px;">
+            <canvas id="forecastChart"></canvas>
+          </div>
+        </div>
+      </div>
 
-  <script src="../js/main.js"></script>
-  <script>
-    const npvData = [
-      {project:'Alpha Gold',commodity:'Gold',capex:'$42.3M',revenue:'$38.2M',npv:'$284M',irr:'42%',payback:'14mo'},
-      {project:'Copper Ridge',commodity:'Copper',capex:'$28.7M',revenue:'$22.4M',npv:'$148M',irr:'31%',payback:'18mo'},
-      {project:'Iron Valley',commodity:'Iron Ore',capex:'$67.1M',revenue:'$54.8M',npv:'$392M',irr:'38%',payback:'16mo'},
-      {project:'Lithium Star',commodity:'Lithium',capex:'$89.4M',revenue:'$112.6M',npv:'$847M',irr:'58%',payback:'10mo'}
-    ];
+      <!-- ── Multi-commodity comparison ── -->
+      <div class="card fade-up">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div class="card-title">Multi-Commodity Price Comparison</div>
+            <div class="card-sub" style="margin-bottom:0;">Normalised to 100 · base Jan 2025 · 18-month view</div>
+          </div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;" id="toggleBtns"></div>
+        </div>
+        <div class="chart-wrap" style="height:260px;">
+          <canvas id="multiChart"></canvas>
+        </div>
+      </div>
 
-    const commodityData = {
-      gold:    [2840,2890,2920,2980,3010,3050,3080,3100,3090,3120,3130,3142],
-      copper:  [9200,9350,9180,9420,9500,9680,9720,9800,9750,9900,9971,9847],
-      iron:    [118,122,125,128,130,132,135,138,136,140,139,142],
-      lithium: [19200,19800,20400,21000,21600,22200,22800,23200,23600,24000,23800,24180]
-    };
+    </div><!-- /.content -->
+  </main>
+</div><!-- /.layout -->
 
-    document.addEventListener('DOMContentLoaded', () => {
-      window.SESMine.initSidebar();
-      renderCommoditySparklines();
-      updateCommodityChart('gold');
+<div id="toastWrap"></div>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT — fully self-contained
+══════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ════════════════════════════════════
+   AUTH CHECK
+   ════════════════════════════════════ */
+const SESSION_KEY = 'sesmine_session_v5';
+const ADMIN_KEY   = 'sesmine_admin_session_v5';
+
+function getSession() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (s && s.expires > Date.now()) return s;
+    const a = JSON.parse(localStorage.getItem(ADMIN_KEY) || 'null');
+    if (a && a.expires > Date.now()) return a;
+  } catch(e) {}
+  return null;
+}
+
+function checkHubAccess() {
+  const session = getSession();
+  if (!session) {
+    window.location.replace('../auth/login.html');
+    return null;
+  }
+  /* Check hub access — admins bypass */
+  const isAdmin = session.role === 'admin' || session.role === 'superadmin';
+  const hubs    = session.hubAccess || [];
+  if (!isAdmin && !hubs.includes('economics')) {
+    window.location.replace('../hub-preview.html?hub=economics');
+    return null;
+  }
+  return session;
+}
+
+const currentUser = checkHubAccess();
+if (!currentUser) throw new Error('Redirecting...');
+
+/* ════════════════════════════════════
+   POPULATE USER INFO
+   ════════════════════════════════════ */
+function populateUser() {
+  const name   = currentUser.name || `${currentUser.firstName||''} ${currentUser.lastName||''}`.trim() || 'User';
+  const role   = currentUser.role || 'member';
+  const initials = name.split(' ').map(n => n[0]||'').join('').slice(0,2).toUpperCase() || 'U';
+  const colors = { admin:'#D4AF37', superadmin:'#D4AF37', analyst:'#00D4FF', engineer:'#F97316', manager:'#A855F7', viewer:'#22C55E' };
+  const color  = colors[role] || '#00D4FF';
+
+  const avatarHTML = `
+    <div style="width:30px;height:30px;border-radius:50%;background:rgba(0,212,255,0.15);border:1.5px solid rgba(0,212,255,0.25);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:${color};">
+      ${initials}
+    </div>`;
+
+  const sbAvatar = document.getElementById('sidebarAvatar');
+  const tbAvatar = document.getElementById('topbarAvatar');
+  if (sbAvatar) sbAvatar.outerHTML = avatarHTML.replace('30px', '30px');
+  if (tbAvatar) tbAvatar.innerHTML = `<span style="font-size:0.65rem;font-weight:800;color:${color};">${initials}</span>`;
+
+  const sbName = document.getElementById('sidebarName');
+  const sbRole = document.getElementById('sidebarRole');
+  if (sbName) sbName.textContent = name;
+  if (sbRole) sbRole.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+}
+
+/* ════════════════════════════════════
+   DATA
+   ════════════════════════════════════ */
+const COMMODITIES = [
+  { id:'iron_ore', name:'Iron Ore',  icon:'fa-mountain',  color:'#00D4FF', unit:'USD/t',   price:108.40, change:+1.25, change7:+3.40, ytd:+8.20  },
+  { id:'copper',   name:'Copper',    icon:'fa-circle',    color:'#F97316', unit:'USD/t',   price:9840,   change:+2.10, change7:+5.80, ytd:+12.40 },
+  { id:'gold',     name:'Gold',      icon:'fa-coins',     color:'#D4AF37', unit:'USD/oz',  price:3240,   change:+0.80, change7:+1.20, ytd:+14.60 },
+  { id:'lithium',  name:'Lithium',   icon:'fa-bolt',      color:'#A855F7', unit:'USD/t',   price:14200,  change:-1.40, change7:-3.20, ytd:-8.50  },
+  { id:'nickel',   name:'Nickel',    icon:'fa-atom',      color:'#22C55E', unit:'USD/t',   price:18600,  change:+0.55, change7:+2.10, ytd:+4.30  },
+  { id:'silver',   name:'Silver',    icon:'fa-circle',    color:'#94A3B8', unit:'USD/oz',  price:32.40,  change:+1.10, change7:+2.80, ytd:+6.70  },
+  { id:'zinc',     name:'Zinc',      icon:'fa-circle',    color:'#60A5FA', unit:'USD/t',   price:2840,   change:-0.30, change7:+1.50, ytd:+2.10  }
+];
+
+const PROJECTS = [
+  { name:'Pilbara Iron Ridge',     commodity:'Iron Ore', country:'Australia', stage:'Feasibility', capex:2840, npv:1920, irr:18.4, payback:5.2, c1:38,   outlook:'bullish'  },
+  { name:'Atacama Copper Belt',    commodity:'Copper',   country:'Chile',     stage:'Production',  capex:4200, npv:3100, irr:22.1, payback:4.8, c1:1840, outlook:'bullish'  },
+  { name:'Kalgoorlie Gold Ridge',  commodity:'Gold',     country:'Australia', stage:'Production',  capex:680,  npv:890,  irr:28.6, payback:3.1, c1:1240, outlook:'bullish'  },
+  { name:'Greenbushes Lithium X',  commodity:'Lithium',  country:'Australia', stage:'Development', capex:1100, npv:740,  irr:15.2, payback:6.8, c1:4200, outlook:'neutral'  },
+  { name:'Sudbury Nickel Deep',    commodity:'Nickel',   country:'Canada',    stage:'Feasibility', capex:920,  npv:610,  irr:16.8, payback:5.9, c1:8400, outlook:'neutral'  },
+  { name:'Escondida Phase 7',      commodity:'Copper',   country:'Chile',     stage:'Production',  capex:3600, npv:4200, irr:24.3, payback:4.2, c1:1620, outlook:'bullish'  },
+  { name:'Olympic Dam Expansion',  commodity:'Copper',   country:'Australia', stage:'Development', capex:7200, npv:5800, irr:19.8, payback:5.6, c1:1780, outlook:'bullish'  },
+  { name:'Wodgina Lithium',        commodity:'Lithium',  country:'Australia', stage:'Production',  capex:840,  npv:520,  irr:14.6, payback:7.2, c1:3900, outlook:'neutral'  },
+  { name:'Oyu Tolgoi UG',          commodity:'Copper',   country:'Mongolia',  stage:'Production',  capex:6900, npv:5200, irr:21.4, payback:4.9, c1:1540, outlook:'bullish'  },
+  { name:'Winu Copper-Gold',       commodity:'Copper',   country:'Australia', stage:'Scoping',     capex:1800, npv:1100, irr:17.2, payback:6.1, c1:1920, outlook:'neutral'  },
+  { name:'Jadar Lithium',          commodity:'Lithium',  country:'Serbia',    stage:'Development', capex:2400, npv:1600, irr:16.1, payback:6.4, c1:3600, outlook:'neutral'  },
+  { name:'Havieron Gold-Copper',   commodity:'Gold',     country:'Australia', stage:'Development', capex:1200, npv:980,  irr:24.8, payback:3.8, c1:1180, outlook:'bullish'  }
+];
+
+const INSIGHTS = [
+  { title:'Iron ore demand resilient despite China property slowdown',     tag:'Iron Ore', color:'#00D4FF', icon:'fa-mountain', time:'2h ago',  sentiment:'bullish' },
+  { title:'Copper supply deficit widens on Chilean mine disruptions',      tag:'Copper',   color:'#F97316', icon:'fa-circle',   time:'4h ago',  sentiment:'bullish' },
+  { title:'Lithium price floor forming as EV demand accelerates in H2',   tag:'Lithium',  color:'#A855F7', icon:'fa-bolt',     time:'6h ago',  sentiment:'neutral' },
+  { title:'Gold hits record high on US dollar weakness and rate cut bets', tag:'Gold',     color:'#D4AF37', icon:'fa-coins',    time:'8h ago',  sentiment:'bullish' },
+  { title:'Nickel inventory builds at LME warehouses — supply overhang',  tag:'Nickel',   color:'#22C55E', icon:'fa-atom',     time:'10h ago', sentiment:'bearish' },
+  { title:'Silver outperforms gold on industrial demand surge',            tag:'Silver',   color:'#94A3B8', icon:'fa-circle',   time:'12h ago', sentiment:'bullish' }
+];
+
+/* ════════════════════════════════════
+   KPI CARDS
+   ════════════════════════════════════ */
+function renderKPIs() {
+  const el = document.getElementById('kpiRow');
+  if (!el) return;
+  const top3 = COMMODITIES.slice(0, 3);
+  el.innerHTML = top3.map(c => {
+    const up = c.change >= 0;
+    return `
+      <div class="card fade-up" style="border-color:rgba(${hexToRgb(c.color)},0.15);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:34px;height:34px;border-radius:9px;background:rgba(${hexToRgb(c.color)},0.1);border:1px solid rgba(${hexToRgb(c.color)},0.2);display:flex;align-items:center;justify-content:center;color:${c.color};font-size:0.82rem;">
+            <i class="fas ${c.icon}"></i>
+          </div>
+          <div style="font-size:0.72rem;font-weight:700;color:var(--text-700);">${c.name}</div>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:1.25rem;font-weight:700;color:var(--text-100);margin-bottom:4px;">
+          $${c.price.toLocaleString()}
+        </div>
+        <div style="font-size:0.68rem;color:var(--text-700);margin-bottom:6px;">${c.unit}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.72rem;font-weight:700;color:${up?'#4ADE80':'#FCA5A5'};">
+            ${up?'▲':'▼'} ${Math.abs(c.change)}%
+          </span>
+          <span style="font-size:0.65rem;color:var(--text-900);">24h</span>
+          <span style="font-size:0.72rem;font-weight:700;color:${c.ytd>=0?'#4ADE80':'#FCA5A5'};margin-left:auto;">
+            YTD ${c.ytd>=0?'+':''}${c.ytd}%
+          </span>
+        </div>
+        <div style="margin-top:8px;height:2px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden;">
+          <div style="width:${Math.min(100,Math.abs(c.ytd)*3)}%;height:100%;background:${c.color};border-radius:99px;transition:width 1s ease;"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ════════════════════════════════════
+   LIVE PRICE TABLE
+   ════════════════════════════════════ */
+function renderPriceTable() {
+  const el = document.getElementById('priceTable');
+  if (!el) return;
+  el.innerHTML = COMMODITIES.map(c => {
+    const up = c.change >= 0;
+    return `
+      <tr>
+        <td style="width:22px;">
+          <i class="fas ${c.icon}" style="color:rgba(${hexToRgb(c.color)},0.6);font-size:0.7rem;"></i>
+        </td>
+        <td style="font-weight:600;color:var(--text-300);font-size:0.8rem;padding-right:8px;">${c.name}</td>
+        <td style="font-family:var(--font-mono);color:var(--text-100);font-size:0.8rem;text-align:right;">
+          $${c.price.toLocaleString()}
+        </td>
+        <td style="text-align:right;font-weight:700;font-size:0.72rem;color:${up?'#4ADE80':'#FCA5A5'};padding-left:8px;">
+          ${up?'▲':'▼'} ${Math.abs(c.change)}%
+        </td>
+        <td style="font-size:0.62rem;color:var(--text-900);text-align:right;padding-left:6px;">${c.unit}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* ════════════════════════════════════
+   PRICE CHART
+   ════════════════════════════════════ */
+let priceChartInst = null;
+function updatePriceChart() {
+  const id    = document.getElementById('commoditySelect')?.value || 'iron_ore';
+  const comm  = COMMODITIES.find(c => c.id === id) || COMMODITIES[0];
+  const base  = comm.price * 0.85;
+  const labels = [];
+  const data   = [];
+
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    labels.push(d.toLocaleDateString('en-AU', { month:'short', year:'2-digit' }));
+    data.push(+(base * (0.92 + Math.random() * 0.22)).toFixed(2));
+  }
+  data[data.length - 1] = comm.price; /* Anchor last point to current price */
+
+  if (priceChartInst) priceChartInst.destroy();
+
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  const grad = ctx.createLinearGradient(0, 0, 0, 230);
+  grad.addColorStop(0, `rgba(${hexToRgb(comm.color)},0.25)`);
+  grad.addColorStop(1, `rgba(${hexToRgb(comm.color)},0)`);
+
+  priceChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: comm.name,
+        data,
+        borderColor: comm.color,
+        borderWidth: 2,
+        backgroundColor: grad,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 3,
+        pointBackgroundColor: comm.color,
+        pointBorderColor: '#020810',
+        pointBorderWidth: 1.5
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0d1b2e',
+          borderColor: `rgba(${hexToRgb(comm.color)},0.3)`,
+          borderWidth: 1,
+          titleColor: '#8BA4BC',
+          bodyColor: '#F0F6FF',
+          callbacks: {
+            label: ctx => ` $${ctx.parsed.y.toLocaleString()} ${comm.unit}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6688A0', font: { size: 10 } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: {
+            color: '#6688A0', font: { size: 10 }, maxTicksLimit: 5,
+            callback: v => `$${v.toLocaleString()}`
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ════════════════════════════════════
+   CAPEX CHART
+   ════════════════════════════════════ */
+function renderCapex() {
+  const ctx = document.getElementById('capexChart').getContext('2d');
+  const colors = ['#00D4FF','#F97316','#D4AF37','#A855F7','#22C55E','#60A5FA'];
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Iron Ore','Copper','Gold','Lithium','Nickel','Coal'],
+      datasets: [{
+        label: '$/t capacity',
+        data: [180, 420, 380, 290, 340, 95],
+        backgroundColor: colors.map(c => `rgba(${hexToRgb(c)},0.7)`),
+        borderColor: colors,
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0d1b2e',
+          borderColor: 'rgba(0,212,255,0.2)',
+          borderWidth: 1,
+          titleColor: '#8BA4BC',
+          bodyColor: '#F0F6FF',
+          callbacks: { label: ctx => ` $${ctx.parsed.y} /t capacity` }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#6688A0', font: { size: 10 } } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6688A0', font: { size: 10 }, maxTicksLimit: 5, callback: v => `$${v}` }
+        }
+      }
+    }
+  });
+}
+
+/* ════════════════════════════════════
+   COST CURVE CHART
+   ════════════════════════════════════ */
+function renderCostCurve() {
+  const ctx = document.getElementById('costCurveChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['P10','P25','P50','P75','P90'],
+      datasets: [{
+        label: 'C1 Cost USD/t',
+        data: [28, 38, 52, 68, 88],
+        backgroundColor: [
+          'rgba(34,197,94,0.7)',
+          'rgba(34,197,94,0.6)',
+          'rgba(212,175,55,0.7)',
+          'rgba(249,115,22,0.7)',
+          'rgba(239,68,68,0.7)'
+        ],
+        borderColor: ['#22C55E','#22C55E','#D4AF37','#F97316','#EF4444'],
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0d1b2e',
+          borderColor: 'rgba(0,212,255,0.2)',
+          borderWidth: 1,
+          titleColor: '#8BA4BC',
+          bodyColor: '#F0F6FF',
+          callbacks: { label: ctx => ` $${ctx.parsed.y} USD/t` }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#6688A0', font: { size: 10 } } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6688A0', font: { size: 10 }, maxTicksLimit: 5, callback: v => `$${v}` }
+        }
+      }
+    }
+  });
+}
+
+/* ════════════════════════════════════
+   PROJECTS TABLE
+   ════════════════════════════════════ */
+let currentPage = 1;
+const PAGE_SIZE = 8;
+let filtered    = [...PROJECTS];
+
+const STAGE_CFG = {
+  'Production':  { color:'#22C55E', bg:'rgba(34,197,94,0.1)',  border:'rgba(34,197,94,0.2)' },
+  'Development': { color:'#00D4FF', bg:'rgba(0,212,255,0.1)',  border:'rgba(0,212,255,0.2)' },
+  'Feasibility': { color:'#F97316', bg:'rgba(249,115,22,0.1)', border:'rgba(249,115,22,0.2)' },
+  'Scoping':     { color:'#A855F7', bg:'rgba(168,85,247,0.1)', border:'rgba(168,85,247,0.2)' }
+};
+const OUTLOOK_CFG = {
+  bullish: { color:'#4ADE80', bg:'rgba(34,197,94,0.1)',  border:'rgba(34,197,94,0.2)',  icon:'fa-arrow-trend-up' },
+  neutral: { color:'#D4AF37', bg:'rgba(212,175,55,0.1)', border:'rgba(212,175,55,0.2)', icon:'fa-minus' },
+  bearish: { color:'#FCA5A5', bg:'rgba(239,68,68,0.1)',  border:'rgba(239,68,68,0.2)',  icon:'fa-arrow-trend-down' }
+};
+
+function filterProjects() {
+  const q     = (document.getElementById('projectSearch')?.value || '').toLowerCase();
+  const stage = document.getElementById('stageFilter')?.value || '';
+  filtered = PROJECTS.filter(p => {
+    const matchQ     = !q || `${p.name} ${p.commodity} ${p.country}`.toLowerCase().includes(q);
+    const matchStage = !stage || p.stage === stage;
+    return matchQ && matchStage;
+  });
+  currentPage = 1;
+  renderProjectsTable();
+}
+
+function renderProjectsTable() {
+  const tbody = document.getElementById('projectsBody');
+  const info  = document.getElementById('tableInfo');
+  const pag   = document.getElementById('tablePagination');
+  if (!tbody) return;
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page  = filtered.slice(start, start + PAGE_SIZE);
+
+  if (!page.length) {
+    tbody.innerHTML = `
+      <tr><td colspan="10" style="text-align:center;padding:32px;color:var(--text-700);">
+        <i class="fas fa-search" style="font-size:1.4rem;display:block;margin-bottom:8px;opacity:0.3;"></i>
+        No projects match your filter
+      </td></tr>`;
+    if (info) info.textContent = 'No results';
+    if (pag) pag.innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = page.map(p => {
+    const sc = STAGE_CFG[p.stage]   || STAGE_CFG['Scoping'];
+    const oc = OUTLOOK_CFG[p.outlook] || OUTLOOK_CFG['neutral'];
+    return `
+      <tr>
+        <td style="font-weight:700;color:var(--text-100);">${p.name}</td>
+        <td style="color:var(--text-500);">${p.commodity}</td>
+        <td style="color:var(--text-500);">${p.country}</td>
+        <td>
+          <span class="badge" style="background:${sc.bg};border:1px solid ${sc.border};color:${sc.color};">
+            ${p.stage}
+          </span>
+        </td>
+        <td style="font-family:var(--font-mono);color:var(--text-100);">$${p.capex.toLocaleString()}</td>
+        <td style="font-family:var(--font-mono);color:#4ADE80;">$${p.npv.toLocaleString()}</td>
+        <td style="font-family:var(--font-mono);color:var(--cyan);">${p.irr}%</td>
+        <td style="font-family:var(--font-mono);color:var(--text-300);">${p.payback}</td>
+        <td style="font-family:var(--font-mono);color:var(--text-300);">$${p.c1.toLocaleString()}</td>
+        <td>
+          <span class="badge" style="background:${oc.bg};border:1px solid ${oc.border};color:${oc.color};">
+            <i class="fas ${oc.icon}" style="font-size:0.55rem;"></i> ${p.outlook}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  if (info) info.textContent = `Showing ${start+1}–${Math.min(start+PAGE_SIZE, filtered.length)} of ${filtered.length} projects`;
+
+  /* Pagination */
+  const total = Math.ceil(filtered.length / PAGE_SIZE);
+  if (pag) {
+    if (total <= 1) { pag.innerHTML = ''; return; }
+    let html = `<button onclick="changePage(${currentPage-1})" class="btn btn-sm" ${currentPage===1?'disabled style="opacity:0.3;"':''}>
+        <i class="fas fa-chevron-left"></i>
+      </button>`;
+    for (let i = 1; i <= total; i++) {
+      html += `<button onclick="changePage(${i})" class="btn btn-sm"
+        style="${i===currentPage?'background:var(--cyan-dim);border-color:var(--border-cyan);color:var(--cyan);':''}">${i}</button>`;
+    }
+    html += `<button onclick="changePage(${currentPage+1})" class="btn btn-sm" ${currentPage===total?'disabled style="opacity:0.3;"':''}>
+        <i class="fas fa-chevron-right"></i>
+      </button>`;
+    pag.innerHTML = html;
+  }
+}
+
+function changePage(p) {
+  const total = Math.ceil(filtered.length / PAGE_SIZE);
+  if (p < 1 || p > total) return;
+  currentPage = p;
+  renderProjectsTable();
+}
+
+/* ════════════════════════════════════
+   MARKET INSIGHTS
+   ════════════════════════════════════ */
+function renderInsights() {
+  const el = document.getElementById('insightsList');
+  if (!el) return;
+
+  const sentCfg = {
+    bullish: { color:'#4ADE80', bg:'rgba(34,197,94,0.1)',  border:'rgba(34,197,94,0.2)',  icon:'fa-arrow-trend-up' },
+    neutral: { color:'#D4AF37', bg:'rgba(212,175,55,0.1)', border:'rgba(212,175,55,0.2)', icon:'fa-minus' },
+    bearish: { color:'#FCA5A5', bg:'rgba(239,68,68,0.1)',  border:'rgba(239,68,68,0.2)',  icon:'fa-arrow-trend-down' }
+  };
+
+  el.innerHTML = INSIGHTS.map(ins => {
+    const sc = sentCfg[ins.sentiment];
+    return `
+      <div class="insight-item" onclick="showInsightDetail('${ins.tag}')">
+        <div class="insight-title">${ins.title}</div>
+        <div class="insight-meta">
+          <span class="badge" style="background:rgba(${hexToRgb(ins.color)},0.1);border:1px solid rgba(${hexToRgb(ins.color)},0.2);color:${ins.color};">
+            <i class="fas ${ins.icon}" style="font-size:0.55rem;"></i> ${ins.tag}
+          </span>
+          <span class="badge" style="background:${sc.bg};border:1px solid ${sc.border};color:${sc.color};">
+            <i class="fas ${sc.icon}" style="font-size:0.55rem;"></i> ${ins.sentiment}
+          </span>
+          <span style="font-size:0.65rem;color:var(--text-900);margin-left:auto;">
+            <i class="fas fa-clock" style="margin-right:3px;"></i>${ins.time}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function showInsightDetail(tag) {
+  toast(`Opening full brief: ${tag} market analysis`, 'info');
+}
+
+/* ════════════════════════════════════
+   FORECAST CHART
+   ════════════════════════════════════ */
+function renderForecast() {
+  const ctx = document.getElementById('forecastChart').getContext('2d');
+  const labels = [];
+  for (let i = 0; i < 12; i++) {
+    const d = new Date();
+    d.setMonth(d.getMonth() + i);
+    labels.push(d.toLocaleDateString('en-AU', { month:'short', year:'2-digit' }));
+  }
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Iron Ore',
+          data: [100,103,106,108,110,112,109,111,114,116,118,120],
+          borderColor: '#00D4FF', borderWidth: 2,
+          backgroundColor: 'transparent',
+          tension: 0.4, pointRadius: 2, pointBackgroundColor: '#00D4FF'
+        },
+        {
+          label: 'Copper',
+          data: [100,102,105,108,112,115,113,116,119,122,125,128],
+          borderColor: '#F97316', borderWidth: 2,
+          backgroundColor: 'transparent',
+          tension: 0.4, pointRadius: 2, pointBackgroundColor: '#F97316'
+        },
+        {
+          label: 'Gold',
+          data: [100,101,103,105,107,110,112,114,116,118,120,122],
+          borderColor: '#D4AF37', borderWidth: 2,
+          backgroundColor: 'transparent',
+          tension: 0.4, pointRadius: 2, pointBackgroundColor: '#D4AF37'
+        },
+        {
+          label: 'Lithium',
+          data: [100,98,97,99,101,103,105,107,108,110,112,114],
+          borderColor: '#A855F7', borderWidth: 2,
+          backgroundColor: 'transparent',
+          borderDash: [4,3],
+          tension: 0.4, pointRadius: 2, pointBackgroundColor: '#A855F7'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true, position: 'top',
+          labels: { color: '#8BA4BC', font: { size: 10 }, boxWidth: 12, padding: 12 }
+        },
+        tooltip: {
+          backgroundColor: '#0d1b2e',
+          borderColor: 'rgba(0,212,255,0.2)',
+          borderWidth: 1,
+          titleColor: '#8BA4BC',
+          bodyColor: '#F0F6FF',
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} (index)` }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6688A0', font: { size: 9 } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6688A0', font: { size: 10 }, maxTicksLimit: 5 }
+        }
+      }
+    }
+  });
+}
+
+/* ════════════════════════════════════
+   MULTI-COMMODITY CHART
+   ════════════════════════════════════ */
+let multiChartInst = null;
+const MULTI_VISIBLE = {
+  iron_ore: true,
+  copper:   true,
+  gold:     true,
+  lithium:  false,
+  nickel:   false,
+  silver:   false
+};
+
+function renderMultiChart() {
+  const ctx = document.getElementById('multiChart').getContext('2d');
+  const labels = [];
+  for (let i = 17; i >= 0; i--) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    labels.push(d.toLocaleDateString('en-AU', { month:'short', year:'2-digit' }));
+  }
+
+  /* Simulate normalised price series (base = 100 at month 0) */
+  const series = {
+    iron_ore: [100,102,104,101,105,108,106,110,112,109,113,115,112,116,118,120,119,122],
+    copper:   [100,103,106,109,112,108,111,115,118,122,125,121,124,128,132,130,134,138],
+    gold:     [100,101,103,105,107,110,112,108,111,114,116,119,122,120,123,126,124,128],
+    lithium:  [100,96, 92, 88, 85, 82, 84, 87, 90, 88, 91, 94, 92, 95, 98, 96, 99, 102],
+    nickel:   [100,102,104,103,106,108,107,110,112,111,114,116,115,118,120,119,122,124],
+    silver:   [100,101,103,102,105,107,106,109,111,110,113,115,114,117,119,118,121,123]
+  };
+
+  const datasets = COMMODITIES.map(c => ({
+    label:           c.name,
+    data:            series[c.id] || [],
+    borderColor:     c.color,
+    borderWidth:     MULTI_VISIBLE[c.id] ? 2 : 0,
+    backgroundColor: 'transparent',
+    tension:         0.4,
+    pointRadius:     0,
+    hidden:          !MULTI_VISIBLE[c.id]
+  }));
+
+  if (multiChartInst) multiChartInst.destroy();
+  multiChartInst = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0d1b2e',
+          borderColor: 'rgba(0,212,255,0.15)',
+          borderWidth: 1,
+          titleColor: '#8BA4BC',
+          bodyColor: '#F0F6FF',
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} (index)` }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6688A0', font: { size: 9 }, maxTicksLimit: 9 }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6688A0', font: { size: 10 }, maxTicksLimit: 5 }
+        }
+      }
+    }
+  });
+
+  renderToggleButtons();
+}
+
+function renderToggleButtons() {
+  const el = document.getElementById('toggleBtns');
+  if (!el) return;
+  el.innerHTML = COMMODITIES.map(c => {
+    const active = MULTI_VISIBLE[c.id];
+    return `
+      <button onclick="toggleSeries('${c.id}')" class="btn btn-sm"
+        style="${active
+          ? `background:rgba(${hexToRgb(c.color)},0.12);border-color:rgba(${hexToRgb(c.color)},0.3);color:${c.color};`
+          : 'opacity:0.4;'}">
+        <span style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block;"></span>
+        ${c.name}
+      </button>
+    `;
+  }).join('');
+}
+
+function toggleSeries(id) {
+  MULTI_VISIBLE[id] = !MULTI_VISIBLE[id];
+  renderMultiChart();
+}
+
+/* ════════════════════════════════════
+   EXPORT
+   ════════════════════════════════════ */
+function exportData() {
+  const headers = ['Project','Commodity','Country','Stage','CAPEX_$M','NPV_$M','IRR_%','Payback_yrs','C1_USD_t','Outlook'];
+  const rows    = filtered.map(p =>
+    [p.name, p.commodity, p.country, p.stage, p.capex, p.npv, p.irr, p.payback, p.c1, p.outlook].join(',')
+  );
+  const csv  = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `sesmine-economics-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Project economics data exported.', 'success');
+}
+
+/* ════════════════════════════════════
+   LOGOUT
+   ════════════════════════════════════ */
+function handleLogout() {
+  try {
+    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(ADMIN_KEY);
+  } catch(e) {}
+  window.location.replace('../auth/login.html');
+}
+
+/* ════════════════════════════════════
+   TOAST
+   ════════════════════════════════════ */
+function toast(msg, type = 'info') {
+  const icons = { success:'fa-check-circle', info:'fa-info-circle', warn:'fa-exclamation-triangle' };
+  const wrap  = document.getElementById('toastWrap');
+  if (!wrap) return;
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<i class="fas ${icons[type]||icons.info}"></i><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateX(20px)';
+    setTimeout(() => el.remove(), 320);
+  }, 3000);
+}
+
+/* ════════════════════════════════════
+   LIVE PRICE TICK
+   Simulates real-time price movement
+   ════════════════════════════════════ */
+function startLiveTick() {
+  setInterval(() => {
+    COMMODITIES.forEach(c => {
+      const delta   = (Math.random() - 0.49) * c.price * 0.0008;
+      c.price       = +(c.price + delta).toFixed(2);
+      c.change      = +(c.change + (Math.random() - 0.5) * 0.04).toFixed(2);
     });
+    renderPriceTable();
+  }, 4000);
+}
 
-    function renderCommoditySparklines() {
-      window.SESMine.renderSparkline('goldSparkline',    commodityData.gold,    '#F5A623');
-      window.SESMine.renderSparkline('copperSparkline',  commodityData.copper,  '#3B82F6');
-      window.SESMine.renderSparkline('ironSparkline',    commodityData.iron,    '#22C55E');
-      window.SESMine.renderSparkline('lithiumSparkline', commodityData.lithium, '#14B8A6');
-    }
+/* ════════════════════════════════════
+   UTILITY
+   ════════════════════════════════════ */
+function hexToRgb(hex) {
+  const clean = hex.replace('#', '');
+  const r = parseInt(clean.slice(0,2), 16);
+  const g = parseInt(clean.slice(2,4), 16);
+  const b = parseInt(clean.slice(4,6), 16);
+  return `${r},${g},${b}`;
+}
 
-    function updateCommodityChart(commodity) {
-      const colors = { gold:'#F5A623', copper:'#3B82F6', iron:'#22C55E', lithium:'#14B8A6' };
-      window.SESMine.renderLineChart('commodityChart',
-        [{ data: commodityData[commodity], color: colors[commodity] }],
-        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-      );
-    }
-  </script>
+/* ════════════════════════════════════
+   INIT
+   ════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  populateUser();
+  renderKPIs();
+  renderPriceTable();
+  updatePriceChart();
+  renderCapex();
+  renderCostCurve();
+  renderProjectsTable();
+  renderInsights();
+  renderForecast();
+  renderMultiChart();
+  startLiveTick();
+});
+</script>
 </body>
 </html>
