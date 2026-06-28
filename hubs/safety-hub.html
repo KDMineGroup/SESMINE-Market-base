@@ -3,561 +3,527 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Safety Hub — SESMine</title>
+  <title>Safety Hub — SESMine Intelligence Platform</title>
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .hub-hero {
-      background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(239,68,68,0.06));
-      border: 1px solid rgba(249,115,22,0.2);
-      border-radius: var(--radius-xl);
-      padding: 32px;
-      margin-bottom: 28px;
-      display: flex;
-      align-items: center;
-      gap: 24px;
+    .dash-layout { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+    .dash-sidebar { background:rgba(4,10,24,0.98); border-right:1px solid rgba(0,212,255,0.06); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .dash-sidebar-logo { padding:18px 18px 14px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:10px; }
+    .dash-sidebar-logo img { height:30px; }
+    .dash-nav { padding:10px; flex:1; }
+    .dash-nav-section { font-size:0.58rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#4A6478; padding:10px 10px 5px; }
+    .dash-nav-item { display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:9px; font-size:0.82rem; font-weight:600; color:var(--text-500); text-decoration:none; transition:all 0.2s ease; margin-bottom:2px; }
+    .dash-nav-item:hover { background:rgba(255,255,255,0.04); color:var(--text-200); }
+    .dash-nav-item.active { background:rgba(239,68,68,0.08); color:#EF4444; border:1px solid rgba(239,68,68,0.12); }
+    .dash-nav-item i { width:16px; text-align:center; }
+    .dash-sidebar-footer { padding:12px 10px; border-top:1px solid rgba(255,255,255,0.05); }
+    .dash-main { background:var(--bg-900); }
+    .dash-topbar { background:rgba(4,10,24,0.95); border-bottom:1px solid rgba(255,255,255,0.05); padding:0 24px; height:60px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }
+    .dash-content { padding:24px; }
+    .hub-card { background:var(--bg-700); border:1px solid var(--border-default); border-radius:16px; padding:20px; }
+    .hub-hero { background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(249,115,22,0.05)); border:1px solid rgba(239,68,68,0.12); border-radius:18px; padding:24px 28px; margin-bottom:22px; position:relative; overflow:hidden; }
+    .hub-hero::before { content:''; position:absolute; right:-40px; top:-40px; width:220px; height:220px; border-radius:50%; background:radial-gradient(ellipse,rgba(239,68,68,0.07),transparent); pointer-events:none; }
+    .hub-table { width:100%; border-collapse:collapse; }
+    .hub-table th { padding:9px 12px; font-size:0.65rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-600); border-bottom:1px solid var(--border-default); text-align:left; }
+    .hub-table td { padding:10px 12px; font-size:0.8rem; border-bottom:1px solid rgba(255,255,255,0.03); vertical-align:middle; }
+    .hub-table tr:last-child td { border-bottom:none; }
+    .hub-table tr:hover td { background:rgba(255,255,255,0.02); }
+    /* Safety severity */
+    .severity-critical { color:#EF4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); }
+    .severity-high     { color:#F97316; background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.2); }
+    .severity-medium   { color:#D4AF37; background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); }
+    .severity-low      { color:#22C55E; background:rgba(34,197,94,0.1);  border:1px solid rgba(34,197,94,0.2); }
+    .severity-badge { padding:2px 8px; border-radius:99px; font-size:0.62rem; font-weight:800; text-transform:uppercase; }
+    /* Alert card */
+    .safety-alert {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px; margin-bottom: 8px;
+      border-left: 3px solid;
+      transition: all 0.2s ease;
     }
-    .hub-hero-icon {
-      width: 72px; height: 72px;
-      background: rgba(249,115,22,0.15);
-      border-radius: var(--radius-lg);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; color: var(--color-orange); flex-shrink: 0;
-    }
-    .hub-hero-content h1 { font-size: 1.6rem; margin-bottom: 6px; }
-    .hub-hero-content p  { color: var(--text-muted); font-size: 0.9rem; }
-    .hub-hero-stats { margin-left: auto; display: flex; gap: 20px; flex-shrink: 0; }
-    .hub-stat { text-align: center; }
-    .hub-stat-value { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; }
-    .hub-stat-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
-    .incident-card {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 16px; border-radius: var(--radius-md);
-      border: 1px solid var(--border-color);
-      background: rgba(255,255,255,0.02);
-      margin-bottom: 10px;
-      transition: all var(--transition-fast);
-    }
-    .incident-card:hover { border-color: var(--border-color-hover); background: rgba(255,255,255,0.04); }
-    .incident-severity {
-      width: 8px; height: 8px; border-radius: 50%;
-      margin-top: 6px; flex-shrink: 0;
-    }
-    .sev-critical { background: var(--color-red); box-shadow: 0 0 8px rgba(239,68,68,0.5); }
-    .sev-high     { background: var(--color-orange); }
-    .sev-medium   { background: var(--color-accent); }
-    .sev-low      { background: var(--color-green); }
-    .training-card {
-      padding: 16px; background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color); border-radius: var(--radius-md);
-      transition: all var(--transition-normal);
-    }
-    .training-card:hover { border-color: rgba(249,115,22,0.3); transform: translateY(-2px); }
-    .training-progress { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin: 10px 0 6px; }
-    .training-fill { height: 100%; border-radius: 3px; background: var(--color-orange); }
+    .safety-alert:hover { transform: translateX(3px); }
+    @media (max-width:900px) { .dash-layout { grid-template-columns:1fr; } .dash-sidebar { display:none; } }
   </style>
 </head>
-<body class="bg-primary">
-  <div class="app-layout">
+<body>
+<div class="dash-layout">
 
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <a href="../index.html" class="nav-logo">
-          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
-          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
-        </a>
-      </div>
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Overview</div>
-          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
-          <a href="../dashboard/analytics.html" class="sidebar-link"><i class="fas fa-chart-bar"></i> Analytics</a>
-          <a href="../dashboard/esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Products</div>
-          <a href="../products/ai-predictor.html" class="sidebar-link"><i class="fas fa-brain"></i> AI Predictor</a>
-          <a href="../products/cost-calculator.html" class="sidebar-link"><i class="fas fa-calculator"></i> Cost Calculator</a>
-          <a href="../products/equipment-database.html" class="sidebar-link"><i class="fas fa-database"></i> Equipment DB</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Hubs</div>
-          <a href="engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
-          <a href="safety-hub.html" class="sidebar-link active"><i class="fas fa-hard-hat"></i> Safety <span class="link-badge">3</span></a>
-          <a href="sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
-          <a href="procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
-          <a href="innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
-          <a href="economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Admin</div>
-          <a href="../admin/admin-dashboard.html" class="sidebar-link"><i class="fas fa-cog"></i> Admin Panel</a>
-        </div>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="user-avatar">JS</div>
-          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
+  <aside class="dash-sidebar">
+    <div class="dash-sidebar-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" alt="SESMine" />
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:800;color:#F0F6FF;">SES<em style="color:#00D4FF;font-style:normal;">MINE</em></span>
+    </div>
+    <nav class="dash-nav">
+      <div class="dash-nav-section">Main</div>
+      <a href="../dashboard/main-dashboard.html" class="dash-nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="../dashboard/analytics.html"      class="dash-nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+      <a href="../dashboard/esg-dashboard.html"  class="dash-nav-item"><i class="fas fa-leaf"></i> ESG</a>
+      <div class="dash-nav-section">Hubs</div>
+      <a href="economics-hub.html"      class="dash-nav-item"><i class="fas fa-chart-bar"  style="color:#00D4FF;"></i> Economics</a>
+      <a href="engineering-hub.html"    class="dash-nav-item"><i class="fas fa-cogs"       style="color:#F97316;"></i> Engineering</a>
+      <a href="procurement-hub.html"    class="dash-nav-item"><i class="fas fa-boxes"      style="color:#A855F7;"></i> Procurement</a>
+      <a href="safety-hub.html"         class="dash-nav-item active"><i class="fas fa-hard-hat" style="color:#EF4444;"></i> Safety</a>
+      <a href="sustainability-hub.html" class="dash-nav-item"><i class="fas fa-seedling"   style="color:#22C55E;"></i> Sustainability</a>
+      <a href="innovation-hub.html"     class="dash-nav-item"><i class="fas fa-lightbulb"  style="color:#D4AF37;"></i> Innovation</a>
+    </nav>
+    <div class="dash-sidebar-footer">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.03);margin-bottom:8px;">
+        <div id="sidebarAvatarSafety"></div>
+        <div>
+          <div style="font-size:0.78rem;font-weight:700;color:#F0F6FF;" id="sidebarNameSafety">User</div>
+          <div style="font-size:0.65rem;color:#6688A0;" id="sidebarRoleSafety">Member</div>
         </div>
       </div>
-    </aside>
+      <button onclick="SESAuth.logout()" class="dash-nav-item" style="width:100%;background:none;border:none;cursor:pointer;font-family:inherit;color:var(--text-500);text-align:left;">
+        <i class="fas fa-sign-out-alt" style="color:#EF4444;"></i> Sign Out
+      </button>
+    </div>
+  </aside>
 
-    <div class="main-content">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-          <div class="topbar-title">Safety Hub</div>
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);display:flex;align-items:center;justify-content:center;color:#EF4444;">
+          <i class="fas fa-hard-hat"></i>
         </div>
-        <div class="topbar-right">
-          <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="openIncidentForm()">
-            <i class="fas fa-plus"></i> Report Incident
-          </button>
-          <button class="topbar-btn"><i class="fas fa-bell"></i><span class="notif-dot"></span></button>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:800;color:#F0F6FF;">Safety Hub</div>
+          <div style="font-size:0.68rem;color:#6688A0;">Incident tracking · Risk management · Compliance · TRIFR benchmarks</div>
         </div>
-      </header>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="openIncidentModal()" class="btn btn-sm" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#EF4444;">
+          <i class="fas fa-plus"></i> Log Incident
+        </button>
+        <div id="topbarAvatarSafety"></div>
+      </div>
+    </div>
 
-      <main class="page-content">
+    <div class="dash-content">
 
-        <!-- Hub Hero -->
-        <div class="hub-hero animate-fade-up">
-          <div class="hub-hero-icon"><i class="fas fa-hard-hat"></i></div>
-          <div class="hub-hero-content">
-            <h1>Safety Hub</h1>
-            <p>Real-time hazard monitoring, incident reporting, LTIFR tracking, and safety training management across all active sites.</p>
-          </div>
-          <div class="hub-hero-stats">
-            <div class="hub-stat">
-              <div class="hub-stat-value" style="color:var(--color-green);">247</div>
-              <div class="hub-stat-label">Days Since LTI</div>
+      <!-- Hero -->
+      <div class="hub-hero animate-fade-up">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+          <div>
+            <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#EF4444;margin-bottom:6px;">
+              <i class="fas fa-hard-hat" style="margin-right:4px;"></i> Safety Hub
             </div>
-            <div class="hub-stat">
-              <div class="hub-stat-value" style="color:var(--color-accent);">0.42</div>
-              <div class="hub-stat-label">LTIFR</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:6px;">
+              Workforce Safety Intelligence
             </div>
-            <div class="hub-stat">
-              <div class="hub-stat-value" style="color:var(--color-red);">3</div>
-              <div class="hub-stat-label">Open Alerts</div>
+            <div style="font-size:0.82rem;color:#8BA4BC;max-width:520px;line-height:1.6;">
+              Real-time incident tracking, TRIFR benchmarking, risk register management,
+              and regulatory compliance monitoring across all site operations.
             </div>
           </div>
-        </div>
-
-        <!-- KPI Row -->
-        <div class="kpi-grid animate-fade-up delay-1" style="margin-bottom:28px;">
-          <div class="kpi-card">
-            <div class="kpi-card-header">
-              <span class="kpi-card-label">Total Recordable Rate</span>
-              <div class="kpi-card-icon icon-green"><i class="fas fa-shield-alt"></i></div>
-            </div>
-            <div class="kpi-card-value" style="color:var(--color-green);">1.84</div>
-            <div class="kpi-card-trend trend-down"><i class="fas fa-arrow-down"></i> -22% vs industry avg (2.36)</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-card-header">
-              <span class="kpi-card-label">Near Misses (YTD)</span>
-              <div class="kpi-card-icon icon-orange"><i class="fas fa-exclamation"></i></div>
-            </div>
-            <div class="kpi-card-value" style="color:var(--color-orange);">18</div>
-            <div class="kpi-card-trend trend-down"><i class="fas fa-arrow-down"></i> -6 vs same period last year</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-card-header">
-              <span class="kpi-card-label">Training Completion</span>
-              <div class="kpi-card-icon icon-blue"><i class="fas fa-graduation-cap"></i></div>
-            </div>
-            <div class="kpi-card-value" style="color:var(--color-blue);">98.7%</div>
-            <div class="kpi-card-trend trend-up"><i class="fas fa-arrow-up"></i> All mandatory modules complete</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-card-header">
-              <span class="kpi-card-label">Hazard Inspections</span>
-              <div class="kpi-card-icon icon-purple"><i class="fas fa-clipboard-list"></i></div>
-            </div>
-            <div class="kpi-card-value" style="color:var(--color-purple);">142</div>
-            <div class="kpi-card-trend trend-up"><i class="fas fa-arrow-up"></i> This month — 100% completed</div>
-          </div>
-        </div>
-
-        <!-- Main Grid -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
-
-          <!-- Active Alerts -->
-          <div class="chart-card animate-fade-up delay-2">
-            <div class="chart-card-header" style="margin-bottom:16px;">
-              <div>
-                <div class="chart-card-title"><i class="fas fa-bell" style="color:var(--color-red);margin-right:6px;"></i>Active Safety Alerts</div>
-                <div class="chart-card-subtitle">3 alerts require immediate attention</div>
-              </div>
-              <button class="btn btn-ghost" style="padding:5px 10px;font-size:0.78rem;">View all</button>
-            </div>
-            <div id="alertsList">
-              <div class="incident-card">
-                <span class="incident-severity sev-critical"></span>
-                <div style="flex:1;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-                    <strong style="font-size:0.875rem; color:var(--color-red);">CRITICAL — Ventilation Failure</strong>
-                    <span style="font-size:0.72rem;color:var(--text-muted);">18 min ago</span>
-                  </div>
-                  <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Copper Ridge Mine, Level 4 — Ventilation system offline. Evacuation protocol initiated.</p>
-                  <div style="display:flex;gap:8px;">
-                    <button class="btn btn-ghost" style="padding:4px 10px;font-size:0.75rem;" onclick="resolveAlert(this)"><i class="fas fa-check"></i> Resolve</button>
-                    <button class="btn btn-ghost" style="padding:4px 10px;font-size:0.75rem;"><i class="fas fa-user"></i> Assign</button>
-                  </div>
-                </div>
-              </div>
-              <div class="incident-card">
-                <span class="incident-severity sev-high"></span>
-                <div style="flex:1;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-                    <strong style="font-size:0.875rem; color:var(--color-orange);">HIGH — Equipment Overdue</strong>
-                    <span style="font-size:0.72rem;color:var(--text-muted);">2 hrs ago</span>
-                  </div>
-                  <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Alpha Gold Mine — CAT 793F (Unit #AG-07) maintenance overdue by 12 days. Operational risk elevated.</p>
-                  <div style="display:flex;gap:8px;">
-                    <button class="btn btn-ghost" style="padding:4px 10px;font-size:0.75rem;" onclick="resolveAlert(this)"><i class="fas fa-check"></i> Resolve</button>
-                    <button class="btn btn-ghost" style="padding:4px 10px;font-size:0.75rem;"><i class="fas fa-user"></i> Assign</button>
-                  </div>
-                </div>
-              </div>
-              <div class="incident-card">
-                <span class="incident-severity sev-medium"></span>
-                <div style="flex:1;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-                    <strong style="font-size:0.875rem; color:var(--color-accent);">MEDIUM — Permit Expiry</strong>
-                    <span style="font-size:0.72rem;color:var(--text-muted);">5 hrs ago</span>
-                  </div>
-                  <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Iron Valley — Environmental permit expires in 14 days. Renewal submission required immediately.</p>
-                  <div style="display:flex;gap:8px;">
-                    <button class="btn btn-ghost" style="padding:4px 10px;font-size:0.75rem;" onclick="resolveAlert(this)"><i class="fas fa-check"></i> Resolve</button>
-                    <button class="btn btn-ghost" style="padding:4px 10px;font-size:0.75rem;"><i class="fas fa-user"></i> Assign</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- LTIFR Chart -->
-          <div class="chart-card animate-fade-up delay-2">
-            <div class="chart-card-header" style="margin-bottom:16px;">
-              <div>
-                <div class="chart-card-title"><i class="fas fa-chart-line" style="color:var(--color-orange);margin-right:6px;"></i>LTIFR Trend</div>
-                <div class="chart-card-subtitle">12-month rolling — vs industry benchmark</div>
-              </div>
-            </div>
-            <canvas id="ltifr-chart" width="400" height="200"></canvas>
-            <div style="display:flex;gap:16px;margin-top:12px;font-size:0.78rem;">
-              <span style="display:flex;align-items:center;gap:5px;">
-                <span style="width:12px;height:2px;background:var(--color-orange);display:inline-block;"></span>SESMine Sites
-              </span>
-              <span style="display:flex;align-items:center;gap:5px;">
-                <span style="width:12px;height:2px;background:rgba(255,255,255,0.3);display:inline-block;border-top:2px dashed rgba(255,255,255,0.3);"></span>Industry Avg
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Training Modules -->
-        <div class="chart-card animate-fade-up delay-3" style="margin-bottom:20px;">
-          <div class="chart-card-header" style="margin-bottom:20px;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
             <div>
-              <div class="chart-card-title"><i class="fas fa-graduation-cap" style="color:var(--color-blue);margin-right:6px;"></i>Safety Training Modules</div>
-              <div class="chart-card-subtitle">Completion rates across all active personnel</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:#4ADE80;">847</div>
+              <div style="font-size:0.68rem;color:#6688A0;">Days LTI-free</div>
             </div>
-            <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;">
-              <i class="fas fa-plus"></i> Assign Training
-            </button>
-          </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
-            <div class="training-card">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                <strong style="font-size:0.875rem;">Emergency Response</strong>
-                <span class="status-badge status-active">Mandatory</span>
-              </div>
-              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;">Annual recertification — all personnel</div>
-              <div class="training-progress"><div class="training-fill" style="width:100%;background:var(--color-green);"></div></div>
-              <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);">
-                <span>248/248 completed</span><span style="color:var(--color-green);font-weight:700;">100%</span>
-              </div>
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:#EF4444;">2.4</div>
+              <div style="font-size:0.68rem;color:#6688A0;">TRIFR (per Mhrs)</div>
             </div>
-            <div class="training-card">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                <strong style="font-size:0.875rem;">Hazardous Materials</strong>
-                <span class="status-badge status-active">Mandatory</span>
-              </div>
-              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;">HAZMAT handling and spill response</div>
-              <div class="training-progress"><div class="training-fill" style="width:97%;background:var(--color-blue);"></div></div>
-              <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);">
-                <span>241/248 completed</span><span style="color:var(--color-blue);font-weight:700;">97%</span>
-              </div>
-            </div>
-            <div class="training-card">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                <strong style="font-size:0.875rem;">Ground Control</strong>
-                <span class="status-badge status-active">Mandatory</span>
-              </div>
-              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;">Underground stope stability assessment</div>
-              <div class="training-progress"><div class="training-fill" style="width:89%;background:var(--color-orange);"></div></div>
-              <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);">
-                <span>221/248 completed</span><span style="color:var(--color-orange);font-weight:700;">89%</span>
-              </div>
-            </div>
-            <div class="training-card">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                <strong style="font-size:0.875rem;">Explosives Handling</strong>
-                <span class="status-badge status-warning">Specialist</span>
-              </div>
-              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;">Licensed blasting personnel only</div>
-              <div class="training-progress"><div class="training-fill" style="width:100%;background:var(--color-green);"></div></div>
-              <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);">
-                <span>32/32 certified</span><span style="color:var(--color-green);font-weight:700;">100%</span>
-              </div>
-            </div>
-            <div class="training-card">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                <strong style="font-size:0.875rem;">First Aid & CPR</strong>
-                <span class="status-badge status-active">Mandatory</span>
-              </div>
-              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;">Biennial recertification required</div>
-              <div class="training-progress"><div class="training-fill" style="width:94%;background:var(--color-teal);"></div></div>
-              <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);">
-                <span>233/248 completed</span><span style="color:var(--color-teal);font-weight:700;">94%</span>
-              </div>
-            </div>
-            <div class="training-card">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                <strong style="font-size:0.875rem;">Equipment Operation</strong>
-                <span class="status-badge status-info">Role-based</span>
-              </div>
-              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;">Heavy machinery competency assessment</div>
-              <div class="training-progress"><div class="training-fill" style="width:82%;background:var(--color-purple);"></div></div>
-              <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);">
-                <span>98/120 operators</span><span style="color:var(--color-purple);font-weight:700;">82%</span>
-              </div>
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:#F97316;">94%</div>
+              <div style="font-size:0.68rem;color:#6688A0;">Compliance rate</div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Incident Report Table -->
-        <div class="data-table-card animate-fade-up delay-4">
-          <div class="data-table-header">
+      <!-- KPI cards -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;" id="safetyKPIs"></div>
+
+      <!-- Charts row -->
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:18px;">
+        <div class="hub-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">TRIFR Trend</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">Total Recordable Injury Frequency Rate · per million hours</div>
+          <div style="height:200px;"><canvas id="trifrChart"></canvas></div>
+        </div>
+        <div class="hub-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Incident Types</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">YTD distribution by category</div>
+          <div style="height:200px;"><canvas id="incidentTypeChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Active alerts + incident log -->
+      <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:16px;margin-bottom:18px;">
+
+        <!-- Active safety alerts -->
+        <div class="hub-card animate-fade-up">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
             <div>
-              <div class="chart-card-title">Incident Register</div>
-              <div class="chart-card-subtitle">All recorded incidents — YTD 2026</div>
+              <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;">Active Alerts</div>
+              <div style="font-size:0.7rem;color:#6688A0;">Open safety items requiring action</div>
             </div>
-            <div style="display:flex;gap:10px;">
-              <input type="text" id="incidentSearch" placeholder="Search incidents..."
-                style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:7px 12px;color:var(--text-primary);font-size:0.82rem;outline:none;width:200px;"
-                oninput="window.SESMine.initTableSearch('incidentSearch','incidentTable')" />
-              <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="window.SESMine.exportToCSV(incidentData,'incidents.csv')">
-                <i class="fas fa-download"></i> Export
-              </button>
+            <span style="padding:3px 9px;border-radius:99px;font-size:0.65rem;font-weight:800;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#EF4444;" id="alertCount">0 open</span>
+          </div>
+          <div id="safetyAlerts"></div>
+        </div>
+
+        <!-- Incident log -->
+        <div class="hub-card animate-fade-up">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div>
+              <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;">Incident Register</div>
+              <div style="font-size:0.7rem;color:#6688A0;">All recorded safety events</div>
             </div>
+            <button onclick="exportSafety()" class="btn btn-ghost btn-sm"><i class="fas fa-file-csv"></i> Export</button>
           </div>
           <div style="overflow-x:auto;">
-            <table class="data-table" id="incidentTable">
+            <table class="hub-table" id="incidentTable">
               <thead>
                 <tr>
                   <th>ID</th>
                   <th>Date</th>
-                  <th>Site</th>
                   <th>Type</th>
                   <th>Severity</th>
-                  <th>Description</th>
+                  <th>Location</th>
                   <th>Status</th>
-                  <th>Assigned To</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td style="color:var(--color-accent);font-weight:600;">#INC-2026-047</td>
-                  <td>Jun 15, 2026</td>
-                  <td>Copper Ridge</td>
-                  <td>Equipment</td>
-                  <td><span class="status-badge status-critical">Critical</span></td>
-                  <td style="max-width:200px;">Ventilation fan failure on Level 4</td>
-                  <td><span class="status-badge status-warning">Open</span></td>
-                  <td>M. Torres</td>
-                </tr>
-                <tr>
-                  <td style="color:var(--color-accent);font-weight:600;">#INC-2026-046</td>
-                  <td>Jun 12, 2026</td>
-                  <td>Alpha Gold</td>
-                  <td>Near Miss</td>
-                  <td><span class="status-badge status-warning">Medium</span></td>
-                  <td style="max-width:200px;">Haul truck near-miss with light vehicle at intersection</td>
-                  <td><span class="status-badge status-active">Closed</span></td>
-                  <td>R. Patel</td>
-                </tr>
-                <tr>
-                  <td style="color:var(--color-accent);font-weight:600;">#INC-2026-045</td>
-                  <td>Jun 8, 2026</td>
-                  <td>Iron Valley</td>
-                  <td>Environmental</td>
-                  <td><span class="status-badge status-warning">Medium</span></td>
-                  <td style="max-width:200px;">Minor fuel spill — 40L diesel, contained immediately</td>
-                  <td><span class="status-badge status-active">Closed</span></td>
-                  <td>L. Nkosi</td>
-                </tr>
-                <tr>
-                  <td style="color:var(--color-accent);font-weight:600;">#INC-2026-044</td>
-                  <td>May 28, 2026</td>
-                  <td>Lithium Star</td>
-                  <td>First Aid</td>
-                  <td><span class="status-badge status-info">Low</span></td>
-                  <td style="max-width:200px;">Worker laceration — treated on site, no lost time</td>
-                  <td><span class="status-badge status-active">Closed</span></td>
-                  <td>S. Kim</td>
-                </tr>
-                <tr>
-                  <td style="color:var(--color-accent);font-weight:600;">#INC-2026-043</td>
-                  <td>May 20, 2026</td>
-                  <td>Copper Ridge</td>
-                  <td>Near Miss</td>
-                  <td><span class="status-badge status-info">Low</span></td>
-                  <td style="max-width:200px;">Loose rock detected before blast — area cleared safely</td>
-                  <td><span class="status-badge status-active">Closed</span></td>
-                  <td>A. Okonkwo</td>
-                </tr>
-              </tbody>
+              <tbody id="incidentTableBody"></tbody>
             </table>
           </div>
-          <div style="padding:16px 24px; border-top:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between;">
-            <span style="font-size:0.8rem; color:var(--text-muted);">Showing 5 of 47 incidents — YTD 2026</span>
-            <div style="display:flex; gap:6px;">
-              <button class="topbar-btn"><i class="fas fa-chevron-left"></i></button>
-              <button class="topbar-btn" style="background:rgba(245,166,35,0.15);border-color:rgba(245,166,35,0.3);color:var(--color-accent);">1</button>
-              <button class="topbar-btn">2</button>
-              <button class="topbar-btn">3</button>
-              <button class="topbar-btn"><i class="fas fa-chevron-right"></i></button>
-            </div>
-          </div>
         </div>
-
-      </main>
-    </div>
-  </div>
-
-  <!-- Incident Report Modal -->
-  <div class="modal" id="incidentModal">
-    <div class="modal-overlay" id="incidentOverlay"></div>
-    <div class="modal-content" style="max-width:560px;">
-      <div style="padding:24px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between;">
-        <h2 style="font-size:1.1rem;"><i class="fas fa-exclamation-triangle" style="color:var(--color-orange);margin-right:8px;"></i>Report New Incident</h2>
-        <button class="modal-close" id="incidentModalClose" style="position:static;"><i class="fas fa-times"></i></button>
       </div>
-      <form id="incidentForm" style="padding:24px;">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Site</label>
-            <select class="form-select" required>
-              <option value="">Select site...</option>
-              <option>Alpha Gold Mine</option>
-              <option>Copper Ridge</option>
-              <option>Iron Valley</option>
-              <option>Lithium Star</option>
-              <option>Northern Nickel</option>
-            </select>
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Incident Type</label>
-            <select class="form-select" required>
-              <option value="">Select type...</option>
-              <option>Near Miss</option>
-              <option>First Aid</option>
-              <option>Medical Treatment</option>
-              <option>Lost Time Injury</option>
-              <option>Equipment Damage</option>
-              <option>Environmental</option>
-              <option>Fire/Explosion</option>
-            </select>
-          </div>
+
+      <!-- Risk register + compliance -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="hub-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Risk Register</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">Top identified risks by likelihood × consequence</div>
+          <div style="height:200px;"><canvas id="riskMatrixChart"></canvas></div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Severity</label>
-            <select class="form-select" required>
-              <option value="">Select severity...</option>
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-              <option>Critical</option>
-            </select>
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Date & Time</label>
-            <input type="datetime-local" class="form-input" required />
-          </div>
+        <div class="hub-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Compliance Status</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">Regulatory requirements by category</div>
+          <div id="complianceList"></div>
         </div>
-        <div class="form-group" style="margin-top:16px;">
-          <label class="form-label">Description</label>
-          <textarea class="form-textarea" placeholder="Describe what happened, where, and immediate actions taken..." required style="min-height:100px;"></textarea>
-        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Log Incident Modal -->
+<div class="modal" id="incidentModal">
+  <div class="modal-overlay"></div>
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-header">
+      <h3 class="modal-title" style="color:#EF4444;"><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i>Log Safety Incident</h3>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="form-group">
-          <label class="form-label">Assign To</label>
-          <select class="form-select">
-            <option>M. Torres — Safety Manager</option>
-            <option>R. Patel — Site Supervisor</option>
-            <option>L. Nkosi — Environmental Officer</option>
-            <option>A. Okonkwo — Safety Officer</option>
+          <label class="form-label">Incident Type *</label>
+          <select class="form-select" id="incType">
+            <option>Near Miss</option>
+            <option>First Aid</option>
+            <option>Medical Treatment</option>
+            <option>Lost Time Injury</option>
+            <option>Dangerous Occurrence</option>
           </select>
         </div>
-        <div style="display:flex; gap:10px; margin-top:8px;">
-          <button type="button" class="btn btn-ghost btn-full" onclick="closeIncidentModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary btn-full">
-            <i class="fas fa-paper-plane"></i> Submit Report
-          </button>
+        <div class="form-group">
+          <label class="form-label">Severity *</label>
+          <select class="form-select" id="incSeverity">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
         </div>
-      </form>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location / Site *</label>
+        <input type="text" class="form-input" id="incLocation" placeholder="e.g. Pit 3 — Crusher Area" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description *</label>
+        <textarea class="form-textarea" id="incDesc" rows="3" placeholder="Describe what happened..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Immediate Actions Taken</label>
+        <textarea class="form-textarea" id="incActions" rows="2" placeholder="e.g. Area isolated, first aid administered..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="SES.Modal.close('incidentModal')" class="btn btn-ghost">Cancel</button>
+      <button onclick="submitIncident()" class="btn btn-sm" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#EF4444;">
+        <i class="fas fa-save"></i> Log Incident
+      </button>
     </div>
   </div>
+</div>
 
-  <script src="../js/main.js"></script>
-  <script>
-    const incidentData = [
-      { id:'#INC-2026-047', date:'Jun 15 2026', site:'Copper Ridge', type:'Equipment', severity:'Critical', status:'Open' },
-      { id:'#INC-2026-046', date:'Jun 12 2026', site:'Alpha Gold', type:'Near Miss', severity:'Medium', status:'Closed' },
-      { id:'#INC-2026-045', date:'Jun 8 2026', site:'Iron Valley', type:'Environmental', severity:'Medium', status:'Closed' }
-    ];
+<div id="toastContainer"></div>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
+<script>
+'use strict';
 
-    document.addEventListener('DOMContentLoaded', () => {
-      window.SESMine.initSidebar();
-      window.SESMine.renderLineChart('ltifr-chart',
-        [
-          { data:[0.68,0.62,0.58,0.55,0.52,0.49,0.47,0.45,0.44,0.43,0.42,0.42], color:'#F97316' },
-          { data:[0.55,0.54,0.53,0.54,0.52,0.53,0.51,0.52,0.51,0.51,0.50,0.51], color:'rgba(255,255,255,0.25)' }
-        ],
-        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-      );
-    });
+const currentUser = SESAuth.checkAuth();
+SESAuth.checkHubAccess('safety');
 
-    function openIncidentForm() {
-      document.getElementById('incidentModal').classList.add('active');
-      document.body.style.overflow = 'hidden';
+document.getElementById('sidebarAvatarSafety').innerHTML = SESAuth.renderUserAvatar(currentUser, 32);
+document.getElementById('sidebarNameSafety').textContent  = `${currentUser.firstName} ${currentUser.lastName}`;
+document.getElementById('sidebarRoleSafety').textContent  = SESAuth.getRoleInfo(currentUser.role)?.label || currentUser.role;
+document.getElementById('topbarAvatarSafety').innerHTML   = SESAuth.renderUserAvatar(currentUser, 34);
+
+/* ── KPIs ── */
+function renderSafetyKPIs() {
+  const el = document.getElementById('safetyKPIs');
+  if (!el) return;
+  const kpis = [
+    { label:'LTI-Free Days',    value:'847',  icon:'fa-calendar-check', color:'#22C55E', bg:'rgba(34,197,94,0.1)',  border:'rgba(34,197,94,0.2)',  delta:'↑ 12 days vs last month' },
+    { label:'TRIFR',            value:'2.4',  icon:'fa-chart-line',     color:'#F97316', bg:'rgba(249,115,22,0.1)', border:'rgba(249,115,22,0.2)', delta:'↓ 0.3 vs industry avg 2.7' },
+    { label:'Open Incidents',   value:'7',    icon:'fa-exclamation',    color:'#EF4444', bg:'rgba(239,68,68,0.1)',  border:'rgba(239,68,68,0.2)',  delta:'3 critical, 4 high' },
+    { label:'Compliance Rate',  value:'94%',  icon:'fa-clipboard-check',color:'#00D4FF', bg:'rgba(0,212,255,0.1)', border:'rgba(0,212,255,0.2)',  delta:'↑ 2% vs last quarter' }
+  ];
+  el.innerHTML = kpis.map(k => `
+    <div style="background:var(--bg-700);border:1px solid ${k.border};border-radius:14px;padding:16px;" class="animate-fade-up">
+      <div style="width:36px;height:36px;border-radius:9px;background:${k.bg};border:1px solid ${k.border};display:flex;align-items:center;justify-content:center;color:${k.color};font-size:0.85rem;margin-bottom:10px;">
+        <i class="fas ${k.icon}"></i>
+      </div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;color:${k.color};margin-bottom:2px;">${k.value}</div>
+      <div style="font-size:0.75rem;font-weight:700;color:#B0C4D8;margin-bottom:4px;">${k.label}</div>
+      <div style="font-size:0.68rem;color:#6688A0;">${k.delta}</div>
+    </div>
+  `).join('');
+}
+
+/* ── TRIFR chart ── */
+function renderTRIFR() {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  SES.Charts.line('trifrChart', months, [
+    { label:'Your TRIFR',    data:[3.2,3.0,2.9,2.8,2.7,2.6,2.5,2.5,2.4,2.4,2.4,2.4], color:'#EF4444' },
+    { label:'Industry Avg',  data:[4.1,4.0,3.9,3.8,3.7,3.6,3.5,3.4,3.3,3.2,3.1,3.0], color:'rgba(148,163,184,0.5)' }
+  ], { plugins:{ legend:{ display:true, position:'top' } } });
+}
+
+/* ── Incident type doughnut ── */
+function renderIncidentTypes() {
+  SES.Charts.doughnut('incidentTypeChart',
+    ['Near Miss','First Aid','Medical Treatment','LTI','Dangerous Occurrence'],
+    [42, 28, 14, 3, 8],
+    ['#D4AF37','#F97316','#EF4444','#A855F7','#00D4FF']
+  );
+}
+
+/* ── Incidents table ── */
+const incidents = [
+  { id:'INC-2026-041', date:'2026-06-25', type:'Near Miss',          severity:'medium',   location:'Pit 3 — Haul Road',   status:'open' },
+  { id:'INC-2026-040', date:'2026-06-22', type:'First Aid',          severity:'low',      location:'Workshop Bay 2',      status:'closed' },
+  { id:'INC-2026-039', date:'2026-06-20', type:'Dangerous Occurrence',severity:'critical', location:'Crusher Feed Zone',   status:'investigating' },
+  { id:'INC-2026-038', date:'2026-06-18', type:'Medical Treatment',  severity:'high',     location:'Pit 1 — Blast Area',  status:'investigating' },
+  { id:'INC-2026-037', date:'2026-06-15', type:'Near Miss',          severity:'medium',   location:'ROM Pad',             status:'closed' },
+  { id:'INC-2026-036', date:'2026-06-12', type:'First Aid',          severity:'low',      location:'Admin Building',      status:'closed' },
+  { id:'INC-2026-035', date:'2026-06-10', type:'Dangerous Occurrence',severity:'high',    location:'Tailings Dam Access', status:'open' },
+  { id:'INC-2026-034', date:'2026-06-08', type:'Near Miss',          severity:'low',      location:'Conveyor Belt 4',     status:'closed' }
+];
+
+function renderIncidentTable() {
+  const tbody = document.getElementById('incidentTableBody');
+  if (!tbody) return;
+  const sevCfg = {
+    critical:{ label:'Critical', cls:'severity-critical' },
+    high:    { label:'High',     cls:'severity-high' },
+    medium:  { label:'Medium',   cls:'severity-medium' },
+    low:     { label:'Low',      cls:'severity-low' }
+  };
+  const statusCfg = {
+    open:          { color:'#EF4444', bg:'rgba(239,68,68,0.1)',  border:'rgba(239,68,68,0.2)',  label:'Open' },
+    investigating: { color:'#F97316', bg:'rgba(249,115,22,0.1)', border:'rgba(249,115,22,0.2)', label:'Investigating' },
+    closed:        { color:'#22C55E', bg:'rgba(34,197,94,0.1)',  border:'rgba(34,197,94,0.2)',  label:'Closed' }
+  };
+  tbody.innerHTML = incidents.map(inc => {
+    const sc = sevCfg[inc.severity];
+    const st = statusCfg[inc.status];
+    return `
+      <tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:#6688A0;">${inc.id}</td>
+        <td style="font-size:0.75rem;color:#8BA4BC;white-space:nowrap;">${inc.date}</td>
+        <td style="font-size:0.78rem;color:#D4E0F0;">${inc.type}</td>
+        <td><span class="severity-badge ${sc.cls}">${sc.label}</span></td>
+        <td style="font-size:0.75rem;color:#8BA4BC;">${inc.location}</td>
+        <td>
+          <span style="padding:2px 8px;border-radius:99px;font-size:0.62rem;font-weight:800;
+                       background:${st.bg};border:1px solid ${st.border};color:${st.color};">
+            ${st.label}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* ── Active alerts ── */
+function renderSafetyAlerts() {
+  const el    = document.getElementById('safetyAlerts');
+  const badge = document.getElementById('alertCount');
+  if (!el) return;
+
+  const alerts = [
+    { title:'Crusher Feed Zone — Dangerous Occurrence',  severity:'critical', time:'2 days ago',  action:'Investigation in progress' },
+    { title:'Tailings Dam Access — Unauthorised Entry',  severity:'high',     time:'4 days ago',  action:'Access controls being reviewed' },
+    { title:'Haul Road Near Miss — Speed Compliance',    severity:'medium',   time:'5 days ago',  action:'Driver counselling scheduled' },
+    { title:'Overdue Safety Induction — 3 contractors',  severity:'medium',   time:'6 days ago',  action:'HR follow-up required' },
+    { title:'Fire Extinguisher Inspection Overdue',      severity:'low',      time:'1 week ago',  action:'Maintenance team notified' }
+  ];
+
+  const sevColors = {
+    critical:{ color:'#EF4444', bg:'rgba(239,68,68,0.06)',  border:'#EF4444' },
+    high:    { color:'#F97316', bg:'rgba(249,115,22,0.06)', border:'#F97316' },
+    medium:  { color:'#D4AF37', bg:'rgba(212,175,55,0.06)', border:'#D4AF37' },
+    low:     { color:'#22C55E', bg:'rgba(34,197,94,0.06)',  border:'#22C55E' }
+  };
+
+  const openCount = alerts.filter(a => a.severity === 'critical' || a.severity === 'high').length;
+  if (badge) badge.textContent = `${alerts.length} open`;
+
+  el.innerHTML = alerts.map(a => {
+    const sc = sevColors[a.severity];
+    return `
+      <div class="safety-alert" style="background:${sc.bg};border-left-color:${sc.border};">
+        <div style="width:8px;height:8px;border-radius:50%;background:${sc.color};flex-shrink:0;margin-top:5px;
+                    ${a.severity==='critical'?'box-shadow:0 0 8px '+sc.color+';animation:pulse 2s infinite;':''}">
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.78rem;font-weight:700;color:#F0F6FF;margin-bottom:3px;">${a.title}</div>
+          <div style="font-size:0.68rem;color:#8BA4BC;margin-bottom:3px;">${a.action}</div>
+          <div style="font-size:0.65rem;color:#4A6478;">${a.time}</div>
+        </div>
+        <span class="severity-badge severity-${a.severity}" style="flex-shrink:0;align-self:flex-start;">${a.severity}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ── Risk matrix bubble chart ── */
+function renderRiskMatrix() {
+  const canvas = document.getElementById('riskMatrixChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  new Chart(ctx, {
+    type: 'bubble',
+    data: {
+      datasets: [{
+        label: 'Critical',
+        data: [{ x:4, y:5, r:14 }, { x:5, y:4, r:10 }],
+        backgroundColor: 'rgba(239,68,68,0.5)', borderColor:'#EF4444', borderWidth:1
+      },{
+        label: 'High',
+        data: [{ x:3, y:4, r:12 }, { x:4, y:3, r:9 }, { x:5, y:2, r:7 }],
+        backgroundColor: 'rgba(249,115,22,0.5)', borderColor:'#F97316', borderWidth:1
+      },{
+        label: 'Medium',
+        data: [{ x:2, y:3, r:10 }, { x:3, y:2, r:8 }, { x:2, y:4, r:6 }],
+        backgroundColor: 'rgba(212,175,55,0.5)', borderColor:'#D4AF37', borderWidth:1
+      },{
+        label: 'Low',
+        data: [{ x:1, y:2, r:8 }, { x:2, y:1, r:6 }, { x:1, y:3, r:5 }],
+        backgroundColor: 'rgba(34,197,94,0.5)', borderColor:'#22C55E', borderWidth:1
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display:true, position:'top', labels:{ color:'#8BA4BC', font:{ size:11 } } }
+      },
+      scales: {
+        x: {
+          min:0, max:6,
+          title: { display:true, text:'Likelihood', color:'#6688A0', font:{ size:11 } },
+          grid: { color:'rgba(255,255,255,0.04)' },
+          ticks: { color:'#6688A0', font:{ size:10 } }
+        },
+        y: {
+          min:0, max:6,
+          title: { display:true, text:'Consequence', color:'#6688A0', font:{ size:11 } },
+          grid: { color:'rgba(255,255,255,0.04)' },
+          ticks: { color:'#6688A0', font:{ size:10 } }
+        }
+      }
     }
+  });
+}
 
-    function closeIncidentModal() {
-      document.getElementById('incidentModal').classList.remove('active');
-      document.body.style.overflow = '';
-    }
+/* ── Compliance list ── */
+function renderCompliance() {
+  const el = document.getElementById('complianceList');
+  if (!el) return;
+  const items = [
+    { label:'Work Health & Safety Act',           pct:98, color:'#22C55E' },
+    { label:'Mine Safety Management Plan',        pct:94, color:'#22C55E' },
+    { label:'Emergency Response Plan',            pct:100,color:'#22C55E' },
+    { label:'Hazardous Substances Register',      pct:88, color:'#D4AF37' },
+    { label:'Contractor Induction Compliance',    pct:76, color:'#F97316' },
+    { label:'Equipment Inspection Schedule',      pct:91, color:'#22C55E' },
+    { label:'Environmental Licence Conditions',   pct:96, color:'#22C55E' }
+  ];
+  el.innerHTML = items.map(item => `
+    <div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-size:0.75rem;color:#B0C4D8;">${item.label}</span>
+        <span style="font-size:0.75rem;font-weight:800;color:${item.color};">${item.pct}%</span>
+      </div>
+      <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+        <div style="width:${item.pct}%;height:100%;background:${item.color};border-radius:99px;transition:width 1s ease;"></div>
+      </div>
+    </div>
+  `).join('');
+}
 
-    document.getElementById('incidentOverlay')?.addEventListener('click', closeIncidentModal);
-    document.getElementById('incidentModalClose')?.addEventListener('click', closeIncidentModal);
+/* ── Log incident ── */
+function openIncidentModal() { SES.Modal.open('incidentModal'); }
 
-    document.getElementById('incidentForm')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      closeIncidentModal();
-      window.SESMine.showToast('Incident #INC-2026-048 reported successfully', 'success');
-    });
+function submitIncident() {
+  const type     = document.getElementById('incType')?.value;
+  const severity = document.getElementById('incSeverity')?.value;
+  const location = document.getElementById('incLocation')?.value.trim();
+  const desc     = document.getElementById('incDesc')?.value.trim();
+  if (!location || !desc) { SES.Toast.error('Please fill all required fields.'); return; }
 
-    function resolveAlert(btn) {
-      const card = btn.closest('.incident-card');
-      card.style.opacity = '0';
-      card.style.transform = 'translateX(20px)';
-      card.style.transition = 'all 0.3s ease';
-      setTimeout(() => { card.remove(); window.SESMine.showToast('Alert resolved and logged', 'success'); }, 300);
-    }
-  </script>
+  const newInc = {
+    id:       `INC-2026-${String(incidents.length + 42).padStart(3,'0')}`,
+    date:     new Date().toISOString().slice(0,10),
+    type, severity, location, status:'open'
+  };
+  incidents.unshift(newInc);
+  SES.Toast.success(`Incident ${newInc.id} logged successfully.`);
+  SES.Modal.close('incidentModal');
+  renderIncidentTable();
+  renderSafetyAlerts();
+  SESAuth.auditLog('incident_logged', { incidentId:newInc.id, severity, userId:currentUser.id });
+}
+
+function exportSafety() {
+  SES.Export.toCSV(incidents, `sesmine-safety-incidents-${new Date().toISOString().slice(0,10)}.csv`);
+  SES.Toast.success('Safety data exported.');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderSafetyKPIs();
+  renderTRIFR();
+  renderIncidentTypes();
+  renderIncidentTable();
+  renderSafetyAlerts();
+  renderRiskMatrix();
+  renderCompliance();
+});
+</script>
 </body>
 </html>
