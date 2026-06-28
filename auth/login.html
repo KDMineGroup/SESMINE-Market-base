@@ -4,405 +4,618 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In — SESMine</title>
+  <meta name="description" content="Sign in to your SESMine account — AI-powered mining cost intelligence platform." />
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    body { min-height: 100vh; display: flex; overflow: hidden; }
+    /* ══════════════════════════════════════════════
+       AUTH LAYOUT
+    ══════════════════════════════════════════════ */
+    html, body { height: 100%; overflow: hidden; }
+
+    .auth-root {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
 
     /* ── Left Panel ── */
     .auth-left {
       width: 52%;
-      min-height: 100vh;
       position: relative;
       overflow: hidden;
       flex-shrink: 0;
     }
-    .auth-left-bg {
-      position: absolute;
-      inset: 0;
-    }
-    .auth-left-bg img {
+
+    .auth-left-bg { position: absolute; inset: 0; }
+    .auth-left-bg-img {
       width: 100%; height: 100%;
       object-fit: cover;
-      filter: saturate(0.5) brightness(0.5);
+      filter: saturate(0.45) brightness(0.4);
+      transform: scale(1.04);
+      transition: transform 8s ease;
     }
+    .auth-left:hover .auth-left-bg-img { transform: scale(1.0); }
+
     .auth-left-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg,
-        rgba(6,14,30,0.92) 0%,
-        rgba(6,14,30,0.75) 50%,
-        rgba(6,14,30,0.88) 100%
+      position: absolute; inset: 0;
+      background: linear-gradient(150deg,
+        rgba(2,8,16,0.97) 0%,
+        rgba(4,12,26,0.88) 40%,
+        rgba(4,12,26,0.82) 70%,
+        rgba(2,8,16,0.96) 100%
       );
     }
     .auth-left-grid {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(0,212,255,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,212,255,0.05) 1px, transparent 1px);
-      background-size: 48px 48px;
+        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 56px 56px;
     }
+    .auth-left-glow-1 {
+      position: absolute;
+      top: -100px; left: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(ellipse, rgba(0,212,255,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .auth-left-glow-2 {
+      position: absolute;
+      bottom: -80px; right: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(ellipse, rgba(245,166,35,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
     .auth-left-content {
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
       height: 100%;
       display: flex;
       flex-direction: column;
-      padding: 40px;
+      padding: 36px 48px;
     }
-    .auth-left-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+
+    /* Logo */
+    .auth-logo {
+      display: flex; align-items: center; gap: 10px;
       text-decoration: none;
       margin-bottom: auto;
+      width: fit-content;
     }
-    .auth-left-logo img {
-      width: 48px; height: 48px;
+    .auth-logo-img {
+      height: 44px; width: auto;
       object-fit: contain;
       filter: drop-shadow(0 0 10px rgba(0,212,255,0.5));
+      transition: filter var(--ease-normal);
     }
-    .auth-left-logo-text {
+    .auth-logo:hover .auth-logo-img { filter: drop-shadow(0 0 18px rgba(0,212,255,0.8)); }
+    .auth-logo-name {
       font-family: var(--font-display);
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      color: var(--text-primary);
+      font-size: 1.1rem; font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--text-100);
     }
-    .auth-left-logo-text span { color: var(--brand-cyan); }
+    .auth-logo-name em { color: var(--cyan-400); font-style: normal; }
 
-    .auth-left-main { margin-bottom: auto; padding: 40px 0; }
+    /* Main copy */
+    .auth-left-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 0;
+    }
+
     .auth-left-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 12px;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px;
       background: rgba(0,212,255,0.08);
       border: 1px solid rgba(0,212,255,0.2);
       border-radius: var(--r-full);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--brand-cyan);
-      margin-bottom: 20px;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cyan-400);
+      margin-bottom: 22px;
+      width: fit-content;
     }
+    .auth-left-eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan-400);
+      box-shadow: 0 0 6px var(--cyan-400);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
     .auth-left-title {
       font-family: var(--font-display);
-      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-size: clamp(1.9rem, 3vw, 2.8rem);
       font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 16px;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      margin-bottom: 18px;
     }
+
     .auth-left-subtitle {
       font-size: 0.95rem;
-      color: var(--text-muted);
-      line-height: 1.7;
+      color: var(--text-500);
+      line-height: 1.75;
       max-width: 400px;
       margin-bottom: 36px;
     }
-    .auth-left-stats {
+
+    /* Stats row */
+    .auth-stats {
       display: flex;
       gap: 28px;
+      margin-bottom: 36px;
       flex-wrap: wrap;
     }
-    .auth-stat-val   { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--text-primary); }
-    .auth-stat-val span { color: var(--brand-cyan); }
-    .auth-stat-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .auth-stat-val {
+      font-family: var(--font-display);
+      font-size: 1.6rem; font-weight: 800;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .auth-stat-val em { color: var(--cyan-400); font-style: normal; }
+    .auth-stat-label { font-size: 0.72rem; color: var(--text-500); }
 
-    .auth-left-testimonial {
+    /* Testimonial card */
+    .auth-testimonial {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(0,212,255,0.1);
-      border-radius: var(--r-lg);
-      padding: 20px;
-      backdrop-filter: blur(8px);
+      border-radius: var(--r-xl);
+      padding: 20px 22px;
+      backdrop-filter: blur(12px);
+      position: relative;
     }
-    .auth-left-testimonial p {
+    .auth-testimonial::before {
+      content: '\201C';
+      position: absolute;
+      top: 12px; right: 18px;
+      font-size: 3.5rem;
+      color: var(--cyan-400);
+      opacity: 0.15;
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    .auth-testimonial-text {
       font-size: 0.875rem;
-      color: var(--text-secondary);
-      line-height: 1.65;
+      color: var(--text-400);
+      line-height: 1.72;
       font-style: italic;
       margin-bottom: 14px;
     }
     .auth-testimonial-author { display: flex; align-items: center; gap: 10px; }
-    .auth-testimonial-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(0,212,255,0.2); }
-    .auth-testimonial-name  { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); }
-    .auth-testimonial-role  { font-size: 0.72rem; color: var(--text-muted); }
+    .auth-testimonial-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(0,212,255,0.2);
+    }
+    .auth-testimonial-name { font-size: 0.82rem; font-weight: 700; color: var(--text-100); }
+    .auth-testimonial-role { font-size: 0.7rem; color: var(--text-500); margin-top: 1px; }
 
     /* ── Right Panel ── */
     .auth-right {
       flex: 1;
-      min-height: 100vh;
-      background: var(--bg-secondary);
+      background: var(--bg-700);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 32px;
+      padding: 32px 40px;
       overflow-y: auto;
       position: relative;
     }
+
+    /* Subtle left border glow */
     .auth-right::before {
       content: '';
       position: absolute;
       top: 0; left: 0;
       width: 1px; height: 100%;
-      background: linear-gradient(to bottom, transparent, var(--brand-cyan), transparent);
-      opacity: 0.3;
+      background: linear-gradient(to bottom,
+        transparent 0%,
+        rgba(0,212,255,0.4) 30%,
+        rgba(0,212,255,0.4) 70%,
+        transparent 100%
+      );
     }
 
+    /* ── Form Card ── */
     .auth-form-card {
       width: 100%;
       max-width: 420px;
     }
 
-    .auth-form-header { text-align: center; margin-bottom: 32px; }
-    .auth-form-header img {
+    /* Step panels */
+    .auth-step { display: none; }
+    .auth-step.active { display: block; animation: fadeInUp 0.4s cubic-bezier(0.4,0,0.2,1) both; }
+
+    /* Form header */
+    .auth-form-logo {
+      display: flex; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .auth-form-logo img {
       width: 52px; height: 52px;
       object-fit: contain;
-      margin: 0 auto 16px;
-      filter: drop-shadow(0 0 12px rgba(0,212,255,0.4));
+      filter: drop-shadow(0 0 14px rgba(0,212,255,0.45));
     }
-    .auth-form-title    { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
-    .auth-form-subtitle { font-size: 0.875rem; color: var(--text-muted); }
+    .auth-form-title {
+      font-family: var(--font-display);
+      font-size: 1.65rem; font-weight: 800;
+      text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+    .auth-form-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-500);
+      text-align: center;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
 
-    /* SSO Buttons */
-    .sso-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+    /* SSO buttons */
+    .sso-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
     .sso-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
       padding: 10px 14px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-color);
-      border-radius: var(--r-sm);
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-md);
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--text-300);
       cursor: pointer;
-      transition: all var(--t-fast);
-      text-decoration: none;
+      transition: all var(--ease-fast);
+      font-family: var(--font-body);
     }
     .sso-btn:hover {
       background: rgba(255,255,255,0.07);
-      border-color: var(--border-hover);
-      color: var(--text-primary);
+      border-color: var(--border-medium);
+      color: var(--text-100);
+      transform: translateY(-1px);
     }
-    .sso-btn img { width: 16px; height: 16px; object-fit: contain; }
+    .sso-btn:active { transform: translateY(0); }
+    .sso-btn svg { flex-shrink: 0; }
 
+    /* Divider */
     .auth-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 22px;
     }
-    .auth-divider-line { flex: 1; height: 1px; background: var(--border-color); }
-    .auth-divider-text { font-size: 0.75rem; color: var(--text-dim); white-space: nowrap; }
+    .auth-divider-line { flex: 1; height: 1px; background: var(--border-subtle); }
+    .auth-divider-text { font-size: 0.72rem; color: var(--text-600); white-space: nowrap; }
 
-    /* Password toggle */
-    .input-password-wrap { position: relative; }
-    .input-password-wrap .form-input { padding-right: 42px; }
-    .password-toggle {
-      position: absolute;
-      right: 12px; top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.875rem;
-      padding: 4px;
-      transition: color var(--t-fast);
+    /* Remember / Forgot row */
+    .auth-meta-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
     }
-    .password-toggle:hover { color: var(--brand-cyan); }
-
-    /* Remember + Forgot row */
-    .auth-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .auth-checkbox { display: flex; align-items: center; gap: 7px; cursor: pointer; }
-    .auth-checkbox input { accent-color: var(--brand-cyan); cursor: pointer; }
-    .auth-checkbox span  { font-size: 0.82rem; color: var(--text-secondary); }
-    .auth-forgot { font-size: 0.82rem; color: var(--brand-cyan); text-decoration: none; transition: opacity var(--t-fast); }
+    .auth-remember { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+    .auth-remember input { accent-color: var(--cyan-400); cursor: pointer; width: 14px; height: 14px; }
+    .auth-remember span { font-size: 0.82rem; color: var(--text-400); }
+    .auth-forgot {
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--cyan-400);
+      text-decoration: none;
+      transition: opacity var(--ease-fast);
+    }
     .auth-forgot:hover { opacity: 0.75; }
 
-    /* Submit */
+    /* Submit button */
     .auth-submit {
       width: 100%;
       padding: 13px;
-      background: linear-gradient(135deg, var(--brand-cyan), #0080FF);
+      background: linear-gradient(135deg, var(--cyan-400) 0%, #0080FF 100%);
       border: none;
-      border-radius: var(--r-sm);
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--bg-primary);
+      border-radius: var(--r-md);
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--bg-900);
       cursor: pointer;
-      transition: all var(--t-fast);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 4px 20px rgba(0,212,255,0.3);
-      margin-bottom: 20px;
+      transition: all var(--ease-fast);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,212,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+      margin-bottom: 18px;
       font-family: var(--font-body);
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-submit::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background var(--ease-fast);
     }
     .auth-submit:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 28px rgba(0,212,255,0.45);
-      filter: brightness(1.06);
+      box-shadow: 0 6px 28px rgba(0,212,255,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
     }
+    .auth-submit:hover::before { background: rgba(255,255,255,0.07); }
     .auth-submit:active { transform: translateY(0); }
+    .auth-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
     .auth-submit .spinner { display: none; }
-    .auth-submit.loading .spinner { display: inline-block; }
-    .auth-submit.loading .btn-text { display: none; }
+    .auth-submit.loading .spinner { display: inline-flex; align-items: center; gap: 6px; }
+    .auth-submit.loading .btn-label { display: none; }
 
-    .auth-footer-text { text-align: center; font-size: 0.82rem; color: var(--text-muted); }
-    .auth-footer-text a { color: var(--brand-cyan); text-decoration: none; font-weight: 600; }
-    .auth-footer-text a:hover { text-decoration: underline; }
-
-    /* Input states */
-    .form-input.error  { border-color: var(--color-red);  background: rgba(239,68,68,0.05); }
-    .form-input.success{ border-color: var(--color-green); background: rgba(34,197,94,0.05); }
-    .input-error-msg   { font-size: 0.75rem; color: var(--color-red); margin-top: 4px; display: none; }
-    .input-error-msg.show { display: block; }
+    /* Footer text */
+    .auth-footer-text {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-500);
+    }
+    .auth-footer-text a {
+      color: var(--cyan-400);
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity var(--ease-fast);
+    }
+    .auth-footer-text a:hover { opacity: 0.8; }
 
     /* Trust badges */
-    .trust-badges {
-      display: flex;
-      align-items: center;
+    .trust-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 18px; flex-wrap: wrap;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.68rem; font-weight: 600;
+      color: var(--text-600);
+    }
+    .trust-item i { color: var(--cyan-400); font-size: 0.72rem; }
+
+    /* ── OTP Grid ── */
+    .otp-grid {
+      display: flex; gap: 10px;
       justify-content: center;
-      gap: 16px;
-      margin-top: 24px;
-      flex-wrap: wrap;
+      margin: 20px 0;
     }
-    .trust-badge {
-      display: flex      align-items: center;
-      gap: 5px;
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      font-weight: 600;
-    }
-    .trust-badge i { color: var(--brand-cyan); font-size: 0.75rem; }
-
-    /* 2FA Step */
-    .auth-step { display: none; }
-    .auth-step.active { display: block; }
-
-    /* OTP Input */
-    .otp-grid { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
     .otp-input {
-      width: 48px; height: 56px;
-      background: var(--bg-input);
-      border: 1px solid var(--border-color);
-      border-radius: var(--r-sm);
-      font-size: 1.4rem;
-      font-weight: 800;
+      width: 50px; height: 58px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-md);
       font-family: var(--font-display);
-      color: var(--brand-cyan);
+      font-size: 1.5rem; font-weight: 800;
+      color: var(--cyan-400);
       text-align: center;
       outline: none;
-      transition: all var(--t-fast);
+      transition: all var(--ease-fast);
+      caret-color: var(--cyan-400);
     }
     .otp-input:focus {
-      border-color: var(--brand-cyan);
-      background: var(--bg-input-focus);
+      border-color: var(--cyan-400);
+      background: rgba(0,212,255,0.06);
       box-shadow: 0 0 0 3px rgba(0,212,255,0.12);
+      transform: scale(1.05);
     }
-    .otp-input.filled { border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.06); }
+    .otp-input.filled {
+      border-color: rgba(0,212,255,0.4);
+      background: rgba(0,212,255,0.06);
+    }
+    .otp-input.error {
+      border-color: var(--red-400);
+      background: rgba(239,68,68,0.06);
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%,100%{ transform: translateX(0); }
+      20%    { transform: translateX(-4px); }
+      40%    { transform: translateX(4px); }
+      60%    { transform: translateX(-3px); }
+      80%    { transform: translateX(3px); }
+    }
+
+    /* ── 2FA timer ── */
+    .otp-timer {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-500);
+      margin-bottom: 16px;
+    }
+    .otp-timer strong { color: var(--cyan-400); font-family: var(--font-mono); }
+
+    /* ── Password strength ── */
+    .pw-strength-bar {
+      display: flex; gap: 4px;
+      margin-top: 8px; margin-bottom: 4px;
+    }
+    .pw-seg {
+      flex: 1; height: 3px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.07);
+      transition: background var(--ease-normal);
+    }
+    .pw-strength-label {
+      font-size: 0.7rem;
+      color: var(--text-500);
+      transition: color var(--ease-fast);
+    }
+
+    /* ── Alert box ── */
+    .auth-alert {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      margin-bottom: 18px;
+      display: none;
+    }
+    .auth-alert.show { display: flex; }
+    .auth-alert-error {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      color: var(--red-400);
+    }
+    .auth-alert-success {
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.2);
+      color: var(--green-400);
+    }
+    .auth-alert-info {
+      background: rgba(0,212,255,0.06);
+      border: 1px solid rgba(0,212,255,0.15);
+      color: var(--cyan-400);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      html, body { overflow: auto; }
+      .auth-root  { flex-direction: column; height: auto; }
+      .auth-left  { display: none; }
+      .auth-right { padding: 40px 24px; min-height: 100vh; }
+      .auth-right::before { display: none; }
+    }
+    @media (max-width: 480px) {
+      .sso-grid { grid-template-columns: 1fr; }
+      .otp-input { width: 42px; height: 50px; font-size: 1.2rem; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- ── LEFT PANEL ── -->
+<div class="auth-root">
+
+  <!-- ══════════════════════════════════════════════
+       LEFT PANEL
+  ══════════════════════════════════════════════ -->
   <div class="auth-left">
     <div class="auth-left-bg">
-      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80&auto=format&fit=crop"
-           alt="Mining operations at night" />
+      <img class="auth-left-bg-img"
+           src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=80&auto=format&fit=crop"
+           alt="Mining operations" />
       <div class="auth-left-overlay"></div>
       <div class="auth-left-grid"></div>
+      <div class="auth-left-glow-1"></div>
+      <div class="auth-left-glow-2"></div>
     </div>
-    <div class="auth-left-content">
 
+    <div class="auth-left-content">
       <!-- Logo -->
-      <a href="../index.html" class="auth-left-logo">
+      <a href="../index.html" class="auth-logo hero-anim-1">
         <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png"
-             alt="SESMine Logo" />
-        <span class="auth-left-logo-text">SES<span>_</span>MINE</span>
+             alt="SESMine" class="auth-logo-img" />
+        <span class="auth-logo-name">SES<em>_</em>MINE</span>
       </a>
 
-      <!-- Main Copy -->
-      <div class="auth-left-main animate-fade-up">
-        <div class="auth-left-eyebrow">
-          <span style="width:6px;height:6px;border-radius:50%;background:var(--brand-cyan);box-shadow:0 0 6px var(--brand-cyan);animation:pulse 2s ease-in-out infinite;"></span>
+      <!-- Main copy -->
+      <div class="auth-left-main">
+        <div class="auth-left-eyebrow hero-anim-1">
+          <div class="auth-left-eyebrow-dot"></div>
           Smart Engineering Solutions
         </div>
-        <h1 class="auth-left-title">
+
+        <h1 class="auth-left-title hero-anim-2">
           The World's Most<br/>
-          <span class="text-gradient-cyan">Accurate</span> Mining<br/>
+          <span class="gradient-cyan">Accurate</span> Mining<br/>
           Cost Platform
         </h1>
-        <p class="auth-left-subtitle">
-          Join 1,200+ mining professionals who use SESMine to predict CAPEX with 94.2% accuracy, track ESG performance, and make smarter investment decisions — every day.
+
+        <p class="auth-left-subtitle hero-anim-3">
+          Join 1,200+ mining professionals who use SESMine to predict CAPEX with 94.2% accuracy, track ESG performance, and make smarter investment decisions — every single day.
         </p>
-        <div class="auth-left-stats">
+
+        <div class="auth-stats hero-anim-4">
           <div>
-            <div class="auth-stat-val">$4.2<span>B</span></div>
+            <div class="auth-stat-val">$4.2<em>B</em></div>
             <div class="auth-stat-label">CAPEX Estimated</div>
           </div>
-          <div style="width:1px;background:var(--border-color);align-self:stretch;"></div>
+          <div style="width:1px;background:var(--border-subtle);align-self:stretch;"></div>
           <div>
-            <div class="auth-stat-val">94.2<span>%</span></div>
+            <div class="auth-stat-val">94.2<em>%</em></div>
             <div class="auth-stat-label">AI Accuracy</div>
           </div>
-          <div style="width:1px;background:var(--border-color);align-self:stretch;"></div>
+          <div style="width:1px;background:var(--border-subtle);align-self:stretch;"></div>
           <div>
-            <div class="auth-stat-val">40<span>+</span></div>
+            <div class="auth-stat-val">40<em>+</em></div>
             <div class="auth-stat-label">Countries</div>
           </div>
         </div>
-      </div>
 
-      <!-- Testimonial -->
-      <div class="auth-left-testimonial animate-fade-up delay-2">
-        <div style="color:var(--color-accent);font-size:0.75rem;letter-spacing:2px;margin-bottom:10px;">★★★★★</div>
-        <p>"SESMine reduced our pre-feasibility study time from 6 weeks to 4 days. The AI accuracy is genuinely world-class — we're within 3% of actuals on every project."</p>
-        <div class="auth-testimonial-author">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop&crop=face"
-               alt="James Whitfield" class="auth-testimonial-avatar" />
-          <div>
-            <div class="auth-testimonial-name">James Whitfield</div>
-            <div class="auth-testimonial-role">Chief Engineer, Rio Tinto Copper</div>
+        <!-- Testimonial -->
+        <div class="auth-testimonial hero-anim-5">
+          <div style="color:var(--gold-400);font-size:0.75rem;letter-spacing:2px;margin-bottom:10px;">★★★★★</div>
+          <p class="auth-testimonial-text">
+            "SESMine reduced our pre-feasibility study time from 6 weeks to 4 days. The AI accuracy is genuinely world-class — we're within 3% of actuals on every project."
+          </p>
+          <div class="auth-testimonial-author">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop&crop=face"
+                 alt="James Whitfield" class="auth-testimonial-avatar" />
+            <div>
+              <div class="auth-testimonial-name">James Whitfield</div>
+              <div class="auth-testimonial-role">Chief Engineer, Rio Tinto Copper</div>
+            </div>
+            <div style="margin-left:auto;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-600);">Rio Tinto</div>
           </div>
         </div>
       </div>
 
+      <!-- Bottom badges -->
+      <div style="display:flex;gap:16px;flex-wrap:wrap;" class="hero-anim-5">
+        <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:600;color:var(--text-600);">
+          <i class="fas fa-shield-alt" style="color:var(--cyan-400);"></i> SOC 2 Type II
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:600;color:var(--text-600);">
+          <i class="fas fa-lock" style="color:var(--cyan-400);"></i> ISO 27001
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:600;color:var(--text-600);">
+          <i class="fas fa-globe" style="color:var(--cyan-400);"></i> GDPR Compliant
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:600;color:var(--text-600);">
+          <i class="fas fa-certificate" style="color:var(--cyan-400);"></i> AES-256
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ── RIGHT PANEL ── -->
+  <!-- ══════════════════════════════════════════════
+       RIGHT PANEL
+  ══════════════════════════════════════════════ -->
   <div class="auth-right">
-    <div class="auth-form-card animate-fade-up delay-1">
+    <div class="auth-form-card">
 
-      <!-- ── STEP 1: Login Form ── -->
+      <!-- ════════════════════════════
+           STEP 1 — Sign In
+      ════════════════════════════ -->
       <div class="auth-step active" id="step-login">
 
-        <div class="auth-form-header">
+        <div class="auth-form-logo">
           <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png"
                alt="SESMine" />
-          <h2 class="auth-form-title">Welcome Back</h2>
-          <p class="auth-form-subtitle">Sign in to your SESMine account</p>
+        </div>
+        <h2 class="auth-form-title">Welcome Back</h2>
+        <p class="auth-form-subtitle">Sign in to your SESMine account to continue</p>
+
+        <!-- Error alert -->
+        <div class="auth-alert auth-alert-error" id="loginAlert">
+          <i class="fas fa-exclamation-circle" style="flex-shrink:0;margin-top:1px;"></i>
+          <span id="loginAlertMsg">Invalid email or password. Please try again.</span>
         </div>
 
-        <!-- SSO Options -->
+        <!-- SSO -->
         <div class="sso-grid">
-          <button class="sso-btn" onclick="handleSSO('google')">
-            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          <button class="sso-btn" id="googleBtn" onclick="handleSSO('google',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
             Continue with Google
           </button>
-          <button class="sso-btn" onclick="handleSSO('microsoft')">
-            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#f25022" d="M1 1h10v10H1z"/><path fill="#00a4ef" d="M13 1h10v10H13z"/><path fill="#7fba00" d="M1 13h10v10H1z"/><path fill="#ffb900" d="M13 13h10v10H13z"/></svg>
+          <button class="sso-btn" id="msBtn" onclick="handleSSO('microsoft',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path fill="#f25022" d="M1 1h10v10H1z"/>
+              <path fill="#00a4ef" d="M13 1h10v10H13z"/>
+              <path fill="#7fba00" d="M1 13h10v10H1z"/>
+              <path fill="#ffb900" d="M13 13h10v10H13z"/>
+            </svg>
             Continue with Microsoft
           </button>
         </div>
@@ -413,330 +626,544 @@
           <div class="auth-divider-line"></div>
         </div>
 
-        <!-- Login Form -->
-        <form id="loginForm" novalidate>
+        <!-- Login form -->
+        <form id="loginForm" novalidate autocomplete="on">
           <div class="form-group">
-            <label class="form-label" for="loginEmail">Work Email</label>
-            <div style="position:relative;">
+            <label class="form-label" for="loginEmail">
+              Work Email <span class="form-label-required">*</span>
+            </label>
+            <div class="input-icon-wrap">
               <input type="email" class="form-input" id="loginEmail"
-                placeholder="you@company.com"
-                autocomplete="email"
-                style="padding-left:38px;" />
-              <i class="fas fa-envelope" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.8rem;pointer-events:none;"></i>
+                     placeholder="you@company.com"
+                     autocomplete="email"
+                     required />
+              <i class="fas fa-envelope input-icon"></i>
             </div>
-            <div class="input-error-msg" id="emailError">Please enter a valid email address.</div>
+            <div class="field-error" id="loginEmailErr">
+              <i class="fas fa-exclamation-circle"></i> Please enter a valid email address.
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="loginPassword">Password</label>
+            <label class="form-label" for="loginPassword">
+              Password <span class="form-label-required">*</span>
+            </label>
             <div class="input-password-wrap">
               <input type="password" class="form-input" id="loginPassword"
-                placeholder="Enter your password"
-                autocomplete="current-password" />
-              <button type="button" class="password-toggle" id="pwToggle" onclick="togglePassword('loginPassword','pwToggle')">
+                     placeholder="Enter your password"
+                     autocomplete="current-password"
+                     required />
+              <button type="button" class="pw-toggle" id="loginPwToggle"
+                      onclick="togglePw('loginPassword','loginPwToggle')"
+                      aria-label="Toggle password visibility">
                 <i class="fas fa-eye"></i>
               </button>
             </div>
-            <div class="input-error-msg" id="passwordError">Password must be at least 8 characters.</div>
+            <div class="field-error" id="loginPasswordErr">
+              <i class="fas fa-exclamation-circle"></i> Password must be at least 8 characters.
+            </div>
           </div>
 
-          <div class="auth-row">
-            <label class="auth-checkbox">
+          <div class="auth-meta-row">
+            <label class="auth-remember">
               <input type="checkbox" id="rememberMe" />
               <span>Remember me for 30 days</span>
             </label>
-            <a href="#" class="auth-forgot" onclick="showForgotPassword()">Forgot password?</a>
+            <a href="#" class="auth-forgot" onclick="showStep('step-forgot');return false;">
+              Forgot password?
+            </a>
           </div>
 
-          <button type="submit" class="auth-submit" id="loginBtn">
-            <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Sign In to SESMine</span>
+          <button type="submit" class="auth-submit" id="loginSubmitBtn">
+            <span class="btn-label"><i class="fas fa-sign-in-alt"></i> Sign In to SESMine</span>
             <span class="spinner"><i class="fas fa-spinner fa-spin"></i> Signing in...</span>
           </button>
         </form>
 
-        <p class="auth-footer-text" style="margin-bottom:16px;">
-          Don't have an account? <a href="signup.html">Start your free trial</a>
+        <p class="auth-footer-text" style="margin-bottom:0;">
+          Don't have an account?
+          <a href="signup.html">Start your free trial</a>
         </p>
 
-        <div class="trust-badges">
-          <div class="trust-badge"><i class="fas fa-shield-alt"></i> SOC 2 Type II</div>
-          <div class="trust-badge"><i class="fas fa-lock"></i> AES-256</div>
-          <div class="trust-badge"><i class="fas fa-user-shield"></i> GDPR</div>
-          <div class="trust-badge"><i class="fas fa-certificate"></i> ISO 27001</div>
+        <div class="trust-row">
+          <div class="trust-item"><i class="fas fa-shield-alt"></i> SOC 2 Type II</div>
+          <div class="trust-item"><i class="fas fa-lock"></i> AES-256 Encrypted</div>
+          <div class="trust-item"><i class="fas fa-user-shield"></i> GDPR Compliant</div>
         </div>
       </div>
 
-      <!-- ── STEP 2: 2FA Verification ── -->
+      <!-- ════════════════════════════
+           STEP 2 — 2FA Verification
+      ════════════════════════════ -->
       <div class="auth-step" id="step-2fa">
-        <div class="auth-form-header">
-          <div style="width:52px;height:52px;border-radius:50%;background:rgba(0,212,255,0.1);border:2px solid rgba(0,212,255,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.3rem;color:var(--brand-cyan);">
+        <div class="auth-form-logo">
+          <div style="width:56px;height:56px;border-radius:50%;background:rgba(0,212,255,0.1);border:2px solid rgba(0,212,255,0.3);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--cyan-400);box-shadow:0 0 20px rgba(0,212,255,0.15);">
             <i class="fas fa-mobile-alt"></i>
           </div>
-          <h2 class="auth-form-title">Two-Factor Auth</h2>
-          <p class="auth-form-subtitle">Enter the 6-digit code sent to your authenticator app or <strong id="twoFaEmail" style="color:var(--text-primary);">your email</strong></p>
+        </div>
+        <h2 class="auth-form-title">Two-Factor Authentication</h2>
+        <p class="auth-form-subtitle">
+          Enter the 6-digit verification code sent to<br/>
+          <strong id="twoFaEmailDisplay" style="color:var(--text-100);"></strong>
+        </p>
+
+        <div class="auth-alert auth-alert-error" id="otpAlert">
+          <i class="fas fa-exclamation-circle" style="flex-shrink:0;"></i>
+          <span id="otpAlertMsg">Invalid code. Please try again.</span>
         </div>
 
         <div class="otp-grid" id="otpGrid">
-          <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" />
-          <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" />
-          <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" />
-          <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" />
-          <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" />
-          <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" />
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
         </div>
 
-        <button class="auth-submit" id="verifyBtn" onclick="verify2FA()">
-          <span class="btn-text"><i class="fas fa-check-circle"></i> Verify & Sign In</span>
+        <div class="otp-timer">
+          Code expires in <strong id="otpCountdown">05:00</strong>
+        </div>
+
+        <button class="auth-submit" id="otpVerifyBtn" onclick="verifyOTP()">
+          <span class="btn-label"><i class="fas fa-check-circle"></i> Verify & Sign In</span>
           <span class="spinner"><i class="fas fa-spinner fa-spin"></i> Verifying...</span>
         </button>
 
-        <p class="auth-footer-text" style="margin-bottom:12px;">
+        <p class="auth-footer-text" style="margin-bottom:10px;">
           Didn't receive a code?
-          <a href="#" id="resendBtn" onclick="resendCode(event)">Resend code</a>
+          <a href="#" id="resendOtpBtn" onclick="resendOTP(event)">Resend code</a>
         </p>
         <p class="auth-footer-text">
-          <a href="#" onclick="goBackToLogin(event)" style="color:var(--text-muted);">
+          <a href="#" onclick="showStep('step-login');stopOtpTimer();return false;" style="color:var(--text-500);">
             <i class="fas fa-arrow-left"></i> Back to sign in
           </a>
         </p>
       </div>
 
-      <!-- ── STEP 3: Forgot Password ── -->
+      <!-- ════════════════════════════
+           STEP 3 — Forgot Password
+      ════════════════════════════ -->
       <div class="auth-step" id="step-forgot">
-        <div class="auth-form-header">
-          <div style="width:52px;height:52px;border-radius:50%;background:rgba(245,166,35,0.1);border:2px solid rgba(245,166,35,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.3rem;color:var(--color-accent);">
+        <div class="auth-form-logo">
+          <div style="width:56px;height:56px;border-radius:50%;background:rgba(245,166,35,0.1);border:2px solid rgba(245,166,35,0.25);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--gold-400);box-shadow:0 0 20px rgba(245,166,35,0.12);">
             <i class="fas fa-key"></i>
           </div>
-          <h2 class="auth-form-title">Reset Password</h2>
-          <p class="auth-form-subtitle">Enter your work email and we'll send you a secure reset link within 60 seconds.</p>
         </div>
+        <h2 class="auth-form-title">Reset Password</h2>
+        <p class="auth-form-subtitle">
+          Enter your work email and we'll send a secure reset link within 60 seconds.
+        </p>
+
         <form id="forgotForm" novalidate>
           <div class="form-group">
-            <label class="form-label" for="forgotEmail">Work Email</label>
-            <div style="position:relative;">
+            <label class="form-label" for="forgotEmail">
+              Work Email <span class="form-label-required">*</span>
+            </label>
+            <div class="input-icon-wrap">
               <input type="email" class="form-input" id="forgotEmail"
-                placeholder="you@company.com"
-                style="padding-left:38px;" />
-              <i class="fas fa-envelope" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.8rem;pointer-events:none;"></i>
+                     placeholder="you@company.com"
+                     autocomplete="email"
+                     required />
+              <i class="fas fa-envelope input-icon"></i>
+            </div>
+            <div class="field-error" id="forgotEmailErr">
+              <i class="fas fa-exclamation-circle"></i> Please enter a valid email address.
             </div>
           </div>
-          <button type="submit" class="auth-submit">
-            <span class="btn-text"><i class="fas fa-paper-plane"></i> Send Reset Link</span>
+
+          <button type="submit" class="auth-submit" id="forgotSubmitBtn">
+            <span class="btn-label"><i class="fas fa-paper-plane"></i> Send Reset Link</span>
             <span class="spinner"><i class="fas fa-spinner fa-spin"></i> Sending...</span>
           </button>
         </form>
+
         <p class="auth-footer-text">
-          <a href="#" onclick="goBackToLogin(event)" style="color:var(--text-muted);">
+          <a href="#" onclick="showStep('step-login');return false;" style="color:var(--text-500);">
             <i class="fas fa-arrow-left"></i> Back to sign in
           </a>
         </p>
       </div>
 
-      <!-- ── STEP 4: Reset Email Sent ── -->
-      <div class="auth-step" id="step-sent">
-        <div style="text-align:center;padding:20px 0;">
-          <div style="width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.8rem;color:var(--color-green);">
-            <i class="fas fa-check"></i>
+      <!-- ════════════════════════════
+           STEP 4 — Reset Email Sent
+      ════════════════════════════ -->
+      <div class="auth-step" id="step-reset-sent">
+        <div style="text-align:center;padding:10px 0;">
+          <div style="width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.25);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.8rem;color:var(--green-400);box-shadow:0 0 24px rgba(34,197,94,0.15);animation:glowPulse 3s ease-in-out infinite;">
+            <i class="fas fa-envelope-open-text"></i>
           </div>
-          <h2 class="auth-form-title">Check Your Email</h2>
-          <p style="font-size:0.875rem;color:var(--text-muted);line-height:1.7;margin:12px 0 28px;">
+          <h2 class="auth-form-title">Check Your Inbox</h2>
+          <p style="font-size:0.875rem;color:var(--text-500);line-height:1.72;margin:10px 0 28px;">
             We've sent a secure password reset link to<br/>
-            <strong id="sentEmailDisplay" style="color:var(--text-primary);"></strong><br/>
-            The link expires in 15 minutes.
+            <strong id="resetEmailDisplay" style="color:var(--text-100);"></strong><br/>
+            <span style="font-size:0.78rem;color:var(--text-600);">The link expires in 15 minutes.</span>
           </p>
-          <button class="auth-submit" onclick="goBackToLogin(event)">
-            <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Back to Sign In</span>
+
+          <!-- Email client shortcuts -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px;">
+            <a href="https://mail.google.com" target="_blank" class="sso-btn" style="font-size:0.78rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Open Gmail
+            </a>
+            <a href="https://outlook.live.com" target="_blank" class="sso-btn" style="font-size:0.78rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#0078d4" d="M7 6h10v2H7zm0 4h10v2H7zm0 4h7v2H7z"/><rect fill="#0078d4" x="2" y="2" width="20" height="20" rx="2" fill="none" stroke="#0078d4" stroke-width="1.5"/></svg>
+              Open Outlook
+            </a>
+          </div>
+
+          <button class="auth-submit" onclick="showStep('step-login')">
+            <span class="btn-label"><i class="fas fa-sign-in-alt"></i> Back to Sign In</span>
             <span class="spinner"></span>
           </button>
-          <p class="auth-footer-text" style="margin-top:16px;">
-            Didn't receive it? <a href="#" onclick="showForgotPassword()">Try again</a>
+
+          <p class="auth-footer-text" style="margin-top:14px;">
+            Didn't receive it?
+            <a href="#" onclick="showStep('step-forgot');return false;">Try again</a>
           </p>
         </div>
       </div>
 
-    </div>
-  </div>
+      <!-- ════════════════════════════
+           STEP 5 — Success / Redirect
+      ════════════════════════════ -->
+      <div class="auth-step" id="step-success">
+        <div style="text-align:center;padding:20px 0;">
+          <div style="width:80px;height:80px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem;color:var(--green-400);animation:glowPulse 2s ease-in-out infinite;">
+            <i class="fas fa-check"></i>
+          </div>
+          <h2 class="auth-form-title">Signed In!</h2>
+          <p style="font-size:0.875rem;color:var(--text-500);margin:10px 0 24px;line-height:1.65;">
+            Welcome back. Redirecting you to your dashboard...
+          </p>
+          <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:20px;">
+            <div id="redirectBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--cyan-400),#0080FF);border-radius:2px;transition:width 1.8s linear;"></div>
+          </div>
+          <p style="font-size:0.78rem;color:var(--text-600);">
+            Not redirecting?
+            <a href="../dashboard/main-dashboard.html" style="color:var(--cyan-400);font-weight:600;">Click here</a>
+          </p>
+        </div>
+      </div>
 
-  <script src="../js/main.js"></script>
-  <script>
-    'use strict';
+    </div><!-- /auth-form-card -->
+  </div><!-- /auth-right -->
+</div><!-- /auth-root -->
 
-    // ── Step Management ────────────────────────────────────────────
-    function showStep(id) {
-      document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
-      const el = document.getElementById(id);
-      if (el) { el.classList.add('active'); el.style.animation = 'fadeInUp 0.4s ease both'; }
+<!-- Toast container -->
+<div id="toastContainer"></div>
+
+<script src="../js/main.js"></script>
+<script>
+'use strict';
+
+// ── Step management ────────────────────────────────────────────────────────
+function showStep(id) {
+  document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+// ── Password toggle ────────────────────────────────────────────────────────
+function togglePw(inputId, btnId) {
+  const input = document.getElementById(inputId);
+  const btn   = document.getElementById(btnId);
+  if (!input || !btn) return;
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
+
+// ── SSO handler ────────────────────────────────────────────────────────────
+function handleSSO(provider, btn) {
+  const orig = btn.innerHTML;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Connecting...`;
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.innerHTML = orig;
+    btn.disabled = false;
+    showToast(`${provider.charAt(0).toUpperCase()+provider.slice(1)} SSO — configure your identity provider in Admin → Security`, 'info');
+  }, 1800);
+}
+
+// ── Validate helpers ───────────────────────────────────────────────────────
+const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function setFieldState(inputId, errId, valid, msg) {
+  const input = document.getElementById(inputId);
+  const err   = document.getElementById(errId);
+  if (!input) return;
+  input.classList.toggle('error',   !valid);
+  input.classList.toggle('success',  valid);
+  if (err) {
+    if (!valid && msg) err.querySelector('span') && (err.querySelector('span').textContent = msg);
+    err.classList.toggle('show', !valid);
+  }
+  return valid;
+}
+
+function clearField(inputId, errId) {
+  const input = document.getElementById(inputId);
+  const err   = document.getElementById(errId);
+  if (input) input.classList.remove('error','success');
+  if (err)   err.classList.remove('show');
+}
+
+// ── Login form ─────────────────────────────────────────────────────────────
+document.getElementById('loginForm')?.addEventListener('submit', e => {
+  e.preventDefault();
+  hideAlert('loginAlert');
+
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw    = document.getElementById('loginPassword').value;
+  let valid   = true;
+
+  if (!emailRx.test(email)) {
+    setFieldState('loginEmail', 'loginEmailErr', false);
+    valid = false;
+  } else {
+    setFieldState('loginEmail', 'loginEmailErr', true);
+  }
+
+  if (pw.length < 8) {
+    setFieldState('loginPassword', 'loginPasswordErr', false);
+    valid = false;
+  } else {
+    setFieldState('loginPassword', 'loginPasswordErr', true);
+  }
+
+  if (!valid) return;
+
+  const btn = document.getElementById('loginSubmitBtn');
+  setLoading(btn, true);
+
+  // Simulate auth — demo: any valid email + 8+ char password → 2FA
+  setTimeout(() => {
+    setLoading(btn, false);
+
+    // Demo: if password is "wrong123" → show error
+    if (pw === 'wrong123') {
+      showAlert('loginAlert', 'loginAlertMsg', 'Invalid email or password. Please try again.');
+      setFieldState('loginPassword', 'loginPasswordErr', false, 'Incorrect password.');
+      return;
     }
 
-    function showForgotPassword() { showStep('step-forgot'); }
-    function goBackToLogin(e)     { if (e) e.preventDefault(); showStep('step-login'); }
+    // Go to 2FA
+    document.getElementById('twoFaEmailDisplay').textContent = email;
+    showStep('step-2fa');
+    startOtpTimer(300); // 5 minutes
+    setTimeout(() => document.querySelector('.otp-input')?.focus(), 100);
+  }, 1600);
+});
 
-    // ── SSO ────────────────────────────────────────────────────────
-    function handleSSO(provider) {
-      const btn = event.currentTarget;
-      const orig = btn.innerHTML;
-      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Connecting...`;
-      btn.disabled = true;
-      setTimeout(() => {
-        btn.innerHTML = orig;
-        btn.disabled = false;
-        window.SESMine?.showToast(`${provider.charAt(0).toUpperCase()+provider.slice(1)} SSO — connect your identity provider in Admin settings`, 'info');
-      }, 1800);
+// ── OTP / 2FA ──────────────────────────────────────────────────────────────
+let otpTimerInterval = null;
+
+function startOtpTimer(seconds) {
+  stopOtpTimer();
+  const el = document.getElementById('otpCountdown');
+  if (!el) return;
+  let remaining = seconds;
+  function tick() {
+    const m = String(Math.floor(remaining / 60)).padStart(2,'0');
+    const s = String(remaining % 60).padStart(2,'0');
+    el.textContent = `${m}:${s}`;
+    if (remaining <= 0) {
+      stopOtpTimer();
+      el.textContent = '00:00';
+      el.style.color = 'var(--red-400)';
+      showAlert('otpAlert','otpAlertMsg','Your code has expired. Please request a new one.');
     }
+    remaining--;
+  }
+  tick();
+  otpTimerInterval = setInterval(tick, 1000);
+}
 
-    // ── Login Form ─────────────────────────────────────────────────
-    document.getElementById('loginForm')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email    = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      let valid = true;
+function stopOtpTimer() {
+  if (otpTimerInterval) { clearInterval(otpTimerInterval); otpTimerInterval = null; }
+  const el = document.getElementById('otpCountdown');
+  if (el) el.style.color = '';
+}
 
-      // Validate email
-      const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      const emailEl = document.getElementById('loginEmail');
-      const emailErr = document.getElementById('emailError');
-      if (!emailRx.test(email)) {
-        emailEl.classList.add('error');
-        emailErr.classList.add('show');
-        valid = false;
-      } else {
-        emailEl.classList.remove('error');
-        emailEl.classList.add('success');
-        emailErr.classList.remove('show');
-      }
+// OTP input behaviour
+document.addEventListener('DOMContentLoaded', () => {
+  const inputs = Array.from(document.querySelectorAll('.otp-input'));
 
-      // Validate password
-      const pwEl  = document.getElementById('loginPassword');
-      const pwErr = document.getElementById('passwordError');
-      if (password.length < 8) {
-        pwEl.classList.add('error');
-        pwErr.classList.add('show');
-        valid = false;
-      } else {
-        pwEl.classList.remove('error');
-        pwEl.classList.add('success');
-        pwErr.classList.remove('show');
-      }
-
-      if (!valid) return;
-
-      // Loading state
-      const btn = document.getElementById('loginBtn');
-      btn.classList.add('loading');
-      btn.disabled = true;
-
-      // Simulate auth → go to 2FA
-      setTimeout(() => {
-        btn.classList.remove('loading');
-        btn.disabled = false;
-        document.getElementById('twoFaEmail').textContent = email;
-        showStep('step-2fa');
-        setTimeout(() => document.querySelector('.otp-input')?.focus(), 100);
-      }, 1600);
+  inputs.forEach((input, i) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/\D/g,'').slice(0,1);
+      input.classList.toggle('filled', !!input.value);
+      input.classList.remove('error');
+      hideAlert('otpAlert');
+      if (input.value && i < inputs.length - 1) inputs[i+1].focus();
+      // Auto-submit when all 6 filled
+      if (inputs.every(inp => inp.value)) setTimeout(verifyOTP, 300);
     });
 
-    // ── Password Toggle ────────────────────────────────────────────
-    function togglePassword(inputId, btnId) {
-      const input = document.getElementById(inputId);
-      const btn   = document.getElementById(btnId);
-      if (!input || !btn) return;
-      const isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      btn.querySelector('i').className = isHidden ? 'fas fa-eye-slash' : 'fas fa-eye';
-    }
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !input.value && i > 0) {
+        inputs[i-1].value = '';
+        inputs[i-1].classList.remove('filled');
+        inputs[i-1].focus();
+      }
+      if (e.key === 'ArrowLeft'  && i > 0)              inputs[i-1].focus();
+      if (e.key === 'ArrowRight' && i < inputs.length-1) inputs[i+1].focus();
+    });
 
-    // ── OTP Inputs ─────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('.otp-input');
-      inputs.forEach((input, i) => {
-        input.addEventListener('input', () => {
-          input.value = input.value.replace(/\D/g, '').slice(0,1);
-          if (input.value && i < inputs.length - 1) inputs[i+1].focus();
-          input.classList.toggle('filled', !!input.value);
-          // Auto-verify when all filled
-          const code = Array.from(inputs).map(inp => inp.value).join('');
-          if (code.length === 6) setTimeout(verify2FA, 300);
-        });
-        input.addEventListener('keydown', (e) => {
-          if (e.key === 'Backspace' && !input.value && i > 0) inputs[i-1].focus();
-          if (e.key === 'ArrowLeft'  && i > 0) inputs[i-1].focus();
-          if (e.key === 'ArrowRight' && i < inputs.length-1) inputs[i+1].focus();
-        });
-        input.addEventListener('paste', (e) => {
-          e.preventDefault();
-          const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
-          paste.split('').forEach((char, j) => {
-            if (inputs[j]) { inputs[j].value = char; inputs[j].classList.add('filled'); }
-          });
-          if (paste.length === 6) setTimeout(verify2FA, 300);
-          else inputs[Math.min(paste.length, inputs.length-1)].focus();
-        });
+    input.addEventListener('paste', e => {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      text.split('').forEach((ch, j) => {
+        if (inputs[j]) { inputs[j].value = ch; inputs[j].classList.add('filled'); }
       });
+      const next = Math.min(text.length, inputs.length - 1);
+      inputs[next].focus();
+      if (text.length === 6) setTimeout(verifyOTP, 300);
     });
+  });
+});
 
-    // ── 2FA Verify ─────────────────────────────────────────────────
-    function verify2FA() {
-      const inputs = document.querySelectorAll('.otp-input');
-      const code   = Array.from(inputs).map(i => i.value).join('');
-      if (code.length < 6) { window.SESMine?.showToast('Please enter all 6 digits', 'warning'); return; }
+function verifyOTP() {
+  const inputs = Array.from(document.querySelectorAll('.otp-input'));
+  const code   = inputs.map(i => i.value).join('');
+  hideAlert('otpAlert');
 
-      const btn = document.getElementById('verifyBtn');
-      if (btn) { btn.classList.add('loading'); btn.disabled = true; }
+  if (code.length < 6) {
+    showToast('Please enter all 6 digits', 'warning');
+    return;
+  }
 
+  const btn = document.getElementById('otpVerifyBtn');
+  setLoading(btn, true);
+
+  setTimeout(() => {
+    setLoading(btn, false);
+
+    // Demo: code "000000" = wrong, anything else = success
+    if (code === '000000') {
+      inputs.forEach(i => i.classList.add('error'));
+      showAlert('otpAlert','otpAlertMsg','Invalid verification code. Please try again.');
       setTimeout(() => {
-        if (btn) { btn.classList.remove('loading'); btn.disabled = false; }
-        // Demo: any 6-digit code works
-        window.SESMine?.showToast('Authentication successful — redirecting...', 'success');
-        setTimeout(() => window.location.href = '../dashboard/main-dashboard.html', 1000);
-      }, 1400);
+        inputs.forEach(i => { i.value = ''; i.classList.remove('error','filled'); });
+        inputs[0].focus();
+      }, 1200);
+      return;
     }
 
-    // ── Resend Code ────────────────────────────────────────────────
-    function resendCode(e) {
-      e.preventDefault();
-      const btn = document.getElementById('resendBtn');
-      if (!btn) return;
-      let secs = 30;
-      btn.style.pointerEvents = 'none';
-      btn.style.color = 'var(--text-muted)';
-      const tick = setInterval(() => {
-        btn.textContent = `Resend in ${secs}s`;
-        secs--;
-        if (secs < 0) {
-          clearInterval(tick);
-          btn.textContent = 'Resend code';
-          btn.style.pointerEvents = '';
-          btn.style.color = '';
-          window.SESMine?.showToast('New code sent to your email', 'success');
-        }
-      }, 1000);
-      window.SESMine?.showToast('New verification code sent', 'success');
+    stopOtpTimer();
+    showStep('step-success');
+    showToast('Authentication successful!', 'success');
+
+    // Start redirect progress bar
+    setTimeout(() => {
+      const bar = document.getElementById('redirectBar');
+      if (bar) bar.style.width = '100%';
+    }, 100);
+    setTimeout(() => {
+      window.location.href = '../dashboard/main-dashboard.html';
+    }, 2000);
+  }, 1400);
+}
+
+function resendOTP(e) {
+  e.preventDefault();
+  const btn = document.getElementById('resendOtpBtn');
+  if (!btn) return;
+
+  let secs = 30;
+  btn.style.pointerEvents = 'none';
+  btn.style.color = 'var(--text-500)';
+
+  const tick = setInterval(() => {
+    btn.textContent = `Resend in ${secs}s`;
+    secs--;
+    if (secs < 0) {
+      clearInterval(tick);
+      btn.textContent = 'Resend code';
+      btn.style.pointerEvents = '';
+      btn.style.color = '';
     }
+  }, 1000);
 
-    // ── Forgot Password ────────────────────────────────────────────
-    document.getElementById('forgotForm')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = document.getElementById('forgotEmail').value.trim();
-      if (!email) { window.SESMine?.showToast('Please enter your email address', 'error'); return; }
-      const btn = e.target.querySelector('.auth-submit');
-      if (btn) { btn.classList.add('loading'); btn.disabled = true; }
-      setTimeout(() => {
-        if (btn) { btn.classList.remove('loading'); btn.disabled = false; }
-        document.getElementById('sentEmailDisplay').textContent = email;
-        showStep('step-sent');
-      }, 1400);
-    });
+  // Reset OTP inputs
+  document.querySelectorAll('.otp-input').forEach(i => {
+    i.value = ''; i.classList.remove('filled','error');
+  });
+  hideAlert('otpAlert');
+  startOtpTimer(300);
+  document.querySelector('.otp-input')?.focus();
+  showToast('New verification code sent to your email', 'success');
+}
 
-    // ── Clear errors on input ──────────────────────────────────────
-    document.getElementById('loginEmail')?.addEventListener('input', () => {
-      document.getElementById('loginEmail').classList.remove('error','success');
-      document.getElementById('emailError').classList.remove('show');
-    });
-    document.getElementById('loginPassword')?.addEventListener('input', () => {
-      document.getElementById('loginPassword').classList.remove('error','success');
-      document.getElementById('passwordError').classList.remove('show');
-    });
-  </script>
+// ── Forgot password form ───────────────────────────────────────────────────
+document.getElementById('forgotForm')?.addEventListener('submit', e => {
+  e.preventDefault();
+  const email = document.getElementById('forgotEmail').value.trim();
+
+  if (!emailRx.test(email)) {
+    setFieldState('forgotEmail','forgotEmailErr', false);
+    return;
+  }
+  setFieldState('forgotEmail','forgotEmailErr', true);
+
+  const btn = document.getElementById('forgotSubmitBtn');
+  setLoading(btn, true);
+
+  setTimeout(() => {
+    setLoading(btn, false);
+    document.getElementById('resetEmailDisplay').textContent = email;
+    showStep('step-reset-sent');
+  }, 1400);
+});
+
+// ── Alert helpers ──────────────────────────────────────────────────────────
+function showAlert(alertId, msgId, msg) {
+  const alert = document.getElementById(alertId);
+  const msgEl = document.getElementById(msgId);
+  if (alert) alert.classList.add('show');
+  if (msgEl && msg) msgEl.textContent = msg;
+}
+function hideAlert(alertId) {
+  document.getElementById(alertId)?.classList.remove('show');
+}
+
+// ── Loading state helper ───────────────────────────────────────────────────
+function setLoading(btn, state) {
+  if (!btn) return;
+  btn.classList.toggle('loading', state);
+  btn.disabled = state;
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function showToast(msg, type = 'info', duration = 3500) {
+  const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', warning:'fa-exclamation-triangle', info:'fa-info-circle' };
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `
+    <i class="fas ${icons[type]} toast-icon"></i>
+    <span class="toast-msg">${msg}</span>
+    <i class="fas fa-times toast-close" onclick="this.parentElement.remove()"></i>
+    <div class="toast-progress" style="animation-duration:${duration}ms;"></div>
+  `;
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, duration);
+}
+
+// ── Clear errors on input ──────────────────────────────────────────────────
+['loginEmail','loginPassword','forgotEmail'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', () => {
+    clearField(id, id + 'Err');
+    hideAlert('loginAlert');
+  });
+});
+</script>
 </body>
 </html>
-
