@@ -3,678 +3,544 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ESG Dashboard — SESMine</title>
+  <title>ESG Dashboard — SESMine Intelligence Platform</title>
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .esg-tabs {
-      display: flex;
-      gap: 4px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 4px;
-      margin-bottom: 28px;
-      width: fit-content;
+    .dash-layout { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+    .dash-sidebar { background:rgba(4,10,24,0.98); border-right:1px solid rgba(0,212,255,0.06); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .dash-sidebar-logo { padding:18px 18px 14px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:10px; }
+    .dash-sidebar-logo img { height:30px; filter:drop-shadow(0 0 8px rgba(0,212,255,0.3)); }
+    .dash-nav { padding:10px; flex:1; }
+    .dash-nav-section { font-size:0.58rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:#4A6478; padding:10px 10px 5px; }
+    .dash-nav-item { display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:9px; font-size:0.82rem; font-weight:600; color:var(--text-500); text-decoration:none; transition:all 0.2s ease; margin-bottom:2px; }
+    .dash-nav-item:hover { background:rgba(255,255,255,0.04); color:var(--text-200); }
+    .dash-nav-item.active { background:rgba(34,197,94,0.08); color:#22C55E; border:1px solid rgba(34,197,94,0.12); }
+    .dash-nav-item i { width:16px; text-align:center; font-size:0.82rem; }
+    .dash-sidebar-footer { padding:12px 10px; border-top:1px solid rgba(255,255,255,0.05); }
+    .dash-main { background:var(--bg-900); }
+    .dash-topbar { background:rgba(4,10,24,0.95); border-bottom:1px solid rgba(255,255,255,0.05); padding:0 24px; height:60px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }
+    .dash-content { padding:24px; }
+    .chart-card { background:var(--bg-700); border:1px solid var(--border-default); border-radius:16px; padding:20px; }
+    /* ESG score ring */
+    .esg-ring-wrap {
+      position: relative; width: 120px; height: 120px;
+      margin: 0 auto 12px;
     }
-    .esg-tab {
-      padding: 9px 20px;
-      border-radius: var(--radius-sm);
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      border: none;
-      background: none;
-      display: flex;
-      align-items: center;
-      gap: 7px;
+    .esg-ring-label {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
     }
-    .esg-tab.active {
-      background: var(--color-primary-mid);
-      color: var(--text-primary);
-      box-shadow: var(--shadow-sm);
+    /* Progress bars */
+    .esg-progress-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px;
     }
-    .esg-tab-panel { display: none; }
-    .esg-tab-panel.active { display: block; }
-    .esg-score-ring {
-      width: 120px;
-      height: 120px;
-      position: relative;
-      flex-shrink: 0;
+    .esg-progress-label { font-size:0.75rem; color:#8BA4BC; width:120px; flex-shrink:0; }
+    .esg-progress-bar {
+      flex: 1; height: 6px; border-radius: 99px;
+      background: rgba(255,255,255,0.06); overflow: hidden;
     }
-    .esg-score-ring svg { transform: rotate(-90deg); }
-    .esg-score-ring .ring-text {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transform: none;
+    .esg-progress-fill {
+      height: 100%; border-radius: 99px;
+      transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+      width: 0;
     }
-    .metric-progress {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 0;
+    .esg-progress-val { font-size:0.75rem; font-weight:700; color:#F0F6FF; width:28px; text-align:right; flex-shrink:0; }
+    /* Scope cards */
+    .scope-card {
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 14px; padding: 18px;
+      text-align: center;
+    }
+    /* Target row */
+    .target-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 0;
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
-    .metric-progress:last-child { border-bottom: none; }
-    .metric-progress-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      flex-shrink: 0;
+    .target-row:last-child { border-bottom: none; }
+    /* Framework badge */
+    .framework-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 8px;
+      font-size: 0.68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.06em;
     }
-    .metric-progress-info { flex: 1; }
-    .metric-progress-label { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
-    .metric-progress-sub   { font-size: 0.75rem; color: var(--text-muted); }
-    .metric-progress-bar   { flex: 2; }
-    .metric-bar-track {
-      height: 8px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 4px;
-    }
-    .metric-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
-    .metric-bar-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); }
-    .metric-progress-value { font-weight: 700; font-size: 0.9rem; width: 60px; text-align: right; flex-shrink: 0; }
-    .compliance-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-      border-radius: var(--radius-sm);
-      margin-bottom: 8px;
-      border: 1px solid var(--border-color);
+    /* Report download row */
+    .report-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px;
       background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px; margin-bottom: 8px;
+      cursor: pointer; transition: all 0.2s ease;
     }
-    .compliance-item.compliant   { border-color: rgba(34,197,94,0.2); background: rgba(34,197,94,0.04); }
-    .compliance-item.pending     { border-color: rgba(245,166,35,0.2); background: rgba(245,166,35,0.04); }
-    .compliance-item.non-compliant { border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.04); }
+    .report-row:hover { background: rgba(34,197,94,0.04); border-color: rgba(34,197,94,0.12); }
+    @media (max-width:900px) { .dash-layout { grid-template-columns:1fr; } .dash-sidebar { display:none; } }
   </style>
 </head>
-<body class="bg-primary">
-  <div class="app-layout">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <a href="../index.html" class="nav-logo">
-          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
-          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
-        </a>
-      </div>
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Overview</div>
-          <a href="main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
-          <a href="analytics.html" class="sidebar-link"><i class="fas fa-chart-bar"></i> Analytics</a>
-          <a href="esg-dashboard.html" class="sidebar-link active"><i class="fas fa-leaf"></i> ESG Dashboard</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Products</div>
-          <a href="../products/ai-predictor.html" class="sidebar-link"><i class="fas fa-brain"></i> AI Predictor</a>
-          <a href="../products/cost-calculator.html" class="sidebar-link"><i class="fas fa-calculator"></i> Cost Calculator</a>
-          <a href="../products/equipment-database.html" class="sidebar-link"><i class="fas fa-database"></i> Equipment DB</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Hubs</div>
-          <a href="../hubs/engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
-          <a href="../hubs/safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
-          <a href="../hubs/sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
-          <a href="../hubs/procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
-          <a href="../hubs/innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
-          <a href="../hubs/economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
-        </div>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="user-avatar">JS</div>
-          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
-        </div>
-      </div>
-    </aside>
+<body>
+<div class="dash-layout">
 
-    <div class="main-content">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-          <div class="topbar-title">ESG Dashboard</div>
-        </div>
-        <div class="topbar-right">
-          <select class="form-select" style="width:auto;padding:6px 28px 6px 10px;font-size:0.8rem;">
-            <option>All Sites</option>
-            <option>Alpha Gold Mine</option>
-            <option>Copper Ridge</option>
-            <option>Iron Valley</option>
-          </select>
-          <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="window.print()">
-            <i class="fas fa-file-pdf"></i> Export Report
-          </button>
-        </div>
-      </header>
-
-      <main class="page-content">
-        <div style="margin-bottom:24px; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px;">
-          <div>
-            <h1 style="font-size:1.6rem; margin-bottom:6px;">ESG Dashboard</h1>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Environmental, Social & Governance performance across all active sites — Q2 2026</p>
-          </div>
-          <div style="display:flex; align-items:center; gap:16px;">
-            <div style="text-align:center;">
-              <!-- ESG Score Ring -->
-              <div class="esg-score-ring">
-                <svg width="120" height="120" viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
-                  <circle cx="60" cy="60" r="50" fill="none" stroke="url(#esgGrad)" stroke-width="10"
-                    stroke-dasharray="314" stroke-dashoffset="40" stroke-linecap="round"/>
-                  <defs>
-                    <linearGradient id="esgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stop-color="#22C55E"/>
-                      <stop offset="100%" stop-color="#14B8A6"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div class="ring-text">
-                  <span style="font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:var(--color-green);">87</span>
-                  <span style="font-size:0.65rem;color:var(--text-muted);">ESG Score</span>
-                </div>
-              </div>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:6px;">
-              <div style="font-size:0.78rem; color:var(--text-muted);">Score breakdown</div>
-              <div style="display:flex; align-items:center; gap:8px; font-size:0.82rem;">
-                <span style="width:10px;height:10px;border-radius:50%;background:var(--color-green);flex-shrink:0;"></span>
-                <span>Environmental</span>
-                <strong style="color:var(--color-green); margin-left:auto;">89/100</strong>
-              </div>
-              <div style="display:flex; align-items:center; gap:8px; font-size:0.82rem;">
-                <span style="width:10px;height:10px;border-radius:50%;background:var(--color-blue);flex-shrink:0;"></span>
-                <span>Social</span>
-                <strong style="color:var(--color-blue); margin-left:auto;">84/100</strong>
-              </div>
-              
-              <div style="display:flex; align-items:center; gap:8px; font-size:0.82rem;">
-                <span style="width:10px;height:10px;border-radius:50%;background:var(--color-purple);flex-shrink:0;"></span>
-                <span>Governance</span>
-                <strong style="color:var(--color-purple); margin-left:auto;">88/100</strong>
-              </div>
-              <div style="font-size:0.72rem; color:var(--color-green); margin-top:4px; display:flex; align-items:center; gap:4px;">
-                <i class="fas fa-arrow-up"></i> +3.2 pts vs last quarter
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ESG KPI Strip -->
-        <div class="kpi-grid animate-fade-up" style="margin-bottom:28px;">
-          <div class="kpi-card">
-            <div class="kpi-card-header">
-              <span class="kpi-card-label">Carbon Emissions</span>
-              <div class="kpi-card-icon icon-green"><i class="fas fa-cloud"></i></div>
-            </div>
-            <div class="kpi-card-value" style="color:var(--color-green);">12,480</div>
-            <div class="kpi-card-trend trend-down">
-              <i class="fas fa-arrow-down"></i> -8.3% vs target (13,600 tCO₂)
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-card-header">
-              <span class="kpi-card-label">Water Usage</span>
-              <div class="kpi-card-icon icon-blue"><i class="fas fa-tint"></i></div>
-            </div>
-            <div class="kpi-card-value" style="color:var(--color-blue);">2.4M m³</div>
-            <div class="kpi-card-trend trend-up">
-              <i class="fas fa-arrow-up"></i> +2.1% above target — review needed
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-card-header">
-              <span class="kpi-card-label">LTIFR</span>
-              <div class="kpi-card-icon icon-orange"><i class="fas fa-hard-hat"></i></div>
-            </div>
-            <div class="kpi-card-value" style="color:var(--color-accent);">0.42</div>
-            <div class="kpi-card-trend trend-down">
-              <i class="fas fa-arrow-down"></i> -18% vs industry avg (0.51)
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-card-header">
-              <span class="kpi-card-label">Compliance Rate</span>
-              <div class="kpi-card-icon icon-purple"><i class="fas fa-clipboard-check"></i></div>
-            </div>
-            <div class="kpi-card-value" style="color:var(--color-purple);">96.4%</div>
-            <div class="kpi-card-trend trend-up">
-              <i class="fas fa-arrow-up"></i> +1.2% vs last quarter
-            </div>
-          </div>
-        </div>
-
-        <!-- ESG Tabs -->
-        <div class="esg-tabs animate-fade-up delay-1">
-          <button class="esg-tab active" data-tab="environmental" onclick="switchESGTab('environmental')">
-            <i class="fas fa-leaf" style="color:var(--color-green);"></i> Environmental
-          </button>
-          <button class="esg-tab" data-tab="social" onclick="switchESGTab('social')">
-            <i class="fas fa-users" style="color:var(--color-blue);"></i> Social
-          </button>
-          <button class="esg-tab" data-tab="governance" onclick="switchESGTab('governance')">
-            <i class="fas fa-balance-scale" style="color:var(--color-purple);"></i> Governance
-          </button>
-        </div>
-
-        <!-- ── ENVIRONMENTAL TAB ── -->
-        <div class="esg-tab-panel active animate-fade-up delay-2" id="panel-environmental">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-
-            <!-- Carbon Emissions -->
-            <div class="chart-card">
-              <div class="chart-card-header" style="margin-bottom:16px;">
-                <div>
-                  <div class="chart-card-title"><i class="fas fa-cloud" style="color:var(--color-green);margin-right:6px;"></i>Carbon Emissions</div>
-                  <div class="chart-card-subtitle">tCO₂e — monthly tracking vs. target</div>
-                </div>
-                <span class="status-badge status-active">On Track</span>
-              </div>
-              <canvas id="carbonChart" width="400" height="180"></canvas>
-              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:16px;">
-                <div style="text-align:center; padding:10px; background:rgba(34,197,94,0.06); border-radius:var(--radius-sm);">
-                  <div style="font-weight:800; color:var(--color-green); font-size:1rem;">12,480</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">Actual (tCO₂e)</div>
-                </div>
-                <div style="text-align:center; padding:10px; background:rgba(255,255,255,0.03); border-radius:var(--radius-sm);">
-                  <div style="font-weight:800; color:var(--text-secondary); font-size:1rem;">13,600</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">Target</div>
-                </div>
-                <div style="text-align:center; padding:10px; background:rgba(34,197,94,0.06); border-radius:var(--radius-sm);">
-                  <div style="font-weight:800; color:var(--color-green); font-size:1rem;">-8.3%</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">vs Target</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Water Usage -->
-            <div class="chart-card">
-              <div class="chart-card-header" style="margin-bottom:16px;">
-                <div>
-                  <div class="chart-card-title"><i class="fas fa-tint" style="color:var(--color-blue);margin-right:6px;"></i>Water Usage</div>
-                  <div class="chart-card-subtitle">m³ — consumption vs. recycled</div>
-                </div>
-                <span class="status-badge status-warning">Review</span>
-              </div>
-              <canvas id="waterChart" width="400" height="180"></canvas>
-              <div style="display:flex; gap:16px; margin-top:16px; font-size:0.8rem;">
-                <span style="display:flex;align-items:center;gap:6px;">
-                  <span style="width:10px;height:10px;border-radius:2px;background:var(--color-blue);"></span>Total Used
-                </span>
-                <span style="display:flex;align-items:center;gap:6px;">
-                  <span style="width:10px;height:10px;border-radius:2px;background:var(--color-teal);"></span>Recycled
-                </span>
-              </div>
-            </div>
-
-            <!-- Environmental Metrics List -->
-            <div class="chart-card">
-              <div class="chart-card-title" style="margin-bottom:16px;">
-                <i class="fas fa-seedling" style="color:var(--color-green);margin-right:6px;"></i>Environmental Metrics
-              </div>
-              <div class="metric-progress">
-                <div class="metric-progress-icon icon-green"><i class="fas fa-recycle"></i></div>
-                <div class="metric-progress-info">
-                  <div class="metric-progress-label">Waste Diversion Rate</div>
-                  <div class="metric-progress-sub">Target: 75% | Industry avg: 62%</div>
-                </div>
-                <div class="metric-progress-bar">
-                  <div class="metric-bar-track">
-                    <div class="metric-bar-fill" style="width:78%; background:var(--color-green);"></div>
-                  </div>
-                  <div class="metric-bar-labels"><span>0%</span><span>100%</span></div>
-                </div>
-                <div class="metric-progress-value" style="color:var(--color-green);">78%</div>
-              </div>
-              <div class="metric-progress">
-                <div class="metric-progress-icon icon-teal"><i class="fas fa-solar-panel"></i></div>
-                <div class="metric-progress-info">
-                  <div class="metric-progress-label">Renewable Energy Share</div>
-                  <div class="metric-progress-sub">Target: 40% by 2027</div>
-                </div>
-                <div class="metric-progress-bar">
-                  <div class="metric-bar-track">
-                    <div class="metric-bar-fill" style="width:31%; background:var(--color-teal);"></div>
-                  </div>
-                  <div class="metric-bar-labels"><span>0%</span><span>100%</span></div>
-                </div>
-                <div class="metric-progress-value" style="color:var(--color-teal);">31%</div>
-              </div>
-              <div class="metric-progress">
-                <div class="metric-progress-icon icon-blue"><i class="fas fa-map"></i></div>
-                <div class="metric-progress-info">
-                  <div class="metric-progress-label">Land Reclamation</div>
-                  <div class="metric-progress-sub">142 ha of 180 ha planned</div>
-                </div>
-                <div class="metric-progress-bar">
-                  <div class="metric-bar-track">
-                    <div class="metric-bar-fill" style="width:79%; background:var(--color-blue);"></div>
-                  </div>
-                  <div class="metric-bar-labels"><span>0 ha</span><span>180 ha</span></div>
-                </div>
-                <div class="metric-progress-value" style="color:var(--color-blue);">79%</div>
-              </div>
-              <div class="metric-progress">
-                <div class="metric-progress-icon icon-orange"><i class="fas fa-smog"></i></div>
-                <div class="metric-progress-info">
-                  <div class="metric-progress-label">Dust Suppression</div>
-                  <div class="metric-progress-sub">PM10 compliance rate</div>
-                </div>
-                <div class="metric-progress-bar">
-                  <div class="metric-bar-track">
-                    <div class="metric-bar-fill" style="width:94%; background:var(--color-orange);"></div>
-                  </div>
-                  <div class="metric-bar-labels"><span>0%</span><span>100%</span></div>
-                </div>
-                <div class="metric-progress-value" style="color:var(--color-orange);">94%</div>
-              </div>
-            </div>
-
-            <!-- Certifications -->
-            <div class="chart-card">
-              <div class="chart-card-title" style="margin-bottom:16px;">
-                <i class="fas fa-certificate" style="color:var(--color-accent);margin-right:6px;"></i>Environmental Certifications
-              </div>
-              <div class="compliance-item compliant">
-                <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">ISO 14001:2015</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">Environmental Management System — Certified</div>
-                </div>
-                <span class="status-badge status-active">Valid until Dec 2027</span>
-              </div>
-              <div class="compliance-item compliant">
-                <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">GRI Standards 2021</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">Global Reporting Initiative — Compliant</div>
-                </div>
-                <span class="status-badge status-active">Current</span>
-              </div>
-              <div class="compliance-item pending">
-                <i class="fas fa-clock" style="color:var(--color-accent); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">ICMM Principles</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">International Council on Mining & Metals — In Progress</div>
-                </div>
-                <span class="status-badge status-warning">Pending — Q3 2026</span>
-              </div>
-              <div class="compliance-item compliant">
-                <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">Carbon Disclosure Project</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">CDP Climate Score: B+</div>
-                </div>
-                <span class="status-badge status-active">Score: B+</span>
-              </div>
-              <div class="compliance-item non-compliant">
-                <i class="fas fa-times-circle" style="color:var(--color-red); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">Tailings Management Standard</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">GISTM — Copper Ridge site requires update</div>
-                </div>
-                <span class="status-badge status-critical">Action Required</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── SOCIAL TAB ── -->
-        <div class="esg-tab-panel" id="panel-social">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-
-            <div class="chart-card">
-              <div class="chart-card-title" style="margin-bottom:16px;">
-                <i class="fas fa-hard-hat" style="color:var(--color-orange);margin-right:6px;"></i>Safety Performance
-              </div>
-              <canvas id="safetyChart" width="400" height="180"></canvas>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;">
-                <div style="padding:12px; background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:var(--radius-sm);">
-                  <div style="font-size:1.3rem; font-weight:800; color:var(--color-green);">0.42</div>
-                  <div style="font-size:0.72rem; color:var(--text-muted);">LTIFR (Lost Time Injury Freq. Rate)</div>
-                </div>
-                <div style="padding:12px; background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.15); border-radius:var(--radius-sm);">
-                  <div style="font-size:1.3rem; font-weight:800; color:var(--color-blue);">98.7%</div>
-                  <div style="font-size:0.72rem; color:var(--text-muted);">Safety Training Completion</div>
-                </div>
-                <div style="padding:12px; background:rgba(245,166,35,0.06); border:1px solid rgba(245,166,35,0.15); border-radius:var(--radius-sm);">
-                  <div style="font-size:1.3rem; font-weight:800; color:var(--color-accent);">3</div>
-                  <div style="font-size:0.72rem; color:var(--text-muted);">Open Safety Incidents</div>
-                </div>
-                <div style="padding:12px; background:rgba(168,85,247,0.06); border:1px solid rgba(168,85,247,0.15); border-radius:var(--radius-sm);">
-                  <div style="font-size:1.3rem; font-weight:800; color:var(--color-purple);">247</div>
-                  <div style="font-size:0.72rem; color:var(--text-muted);">Days Since Last LTI</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="chart-card">
-              <div class="chart-card-title" style="margin-bottom:16px;">
-                <i class="fas fa-users" style="color:var(--color-blue);margin-right:6px;"></i>Workforce & Community
-              </div>
-              <div class="metric-progress">
-                <div class="metric-progress-icon icon-blue"><i class="fas fa-female"></i></div>
-                <div class="metric-progress-info">
-                  <div class="metric-progress-label">Gender Diversity</div>
-                  <div class="metric-progress-sub">Women in workforce — Target: 30%</div>
-                </div>
-                <div class="metric-progress-bar">
-                  <div class="metric-bar-track">
-                    <div class="metric-bar-fill" style="width:24%; background:var(--color-blue);"></div>
-                  </div>
-                  <div class="metric-bar-labels"><span>0%</span><span>50%</span></div>
-                </div>
-                <div class="metric-progress-value" style="color:var(--color-blue);">24%</div>
-              </div>
-              <div class="metric-progress">
-                <div class="metric-progress-icon icon-green"><i class="fas fa-map-marker-alt"></i></div>
-                <div class="metric-progress-info">
-                  <div class="metric-progress-label">Local Employment</div>
-                  <div class="metric-progress-sub">% workforce from local communities</div>
-                </div>
-                <div class="metric-progress-bar">
-                  <div class="metric-bar-track">
-                    <div class="metric-bar-fill" style="width:68%; background:var(--color-green);"></div>
-                  </div>
-                  <div class="metric-bar-labels"><span>0%</span><span>100%</span></div>
-                </div>
-                <div class="metric-progress-value" style="color:var(--color-green);">68%</div>
-              </div>
-              <div class="metric-progress">
-                <div class="metric-progress-icon icon-gold"><i class="fas fa-graduation-cap"></i></div>
-                <div class="metric-progress-info">
-                  <div class="metric-progress-label">Training Hours</div>
-                  <div class="metric-progress-sub">Avg per employee — Target: 40 hrs/yr</div>
-                </div>
-                <div class="metric-progress-bar">
-                  <div class="metric-bar-track">
-                    <div class="metric-bar-fill" style="width:86%; background:var(--color-accent);"></div>
-                  </div>
-                  <div class="metric-bar-labels"><span>0</span><span>50 hrs</span></div>
-                </div>
-                <div class="metric-progress-value" style="color:var(--color-accent);">43 hrs</div>
-              </div>
-              <div class="metric-progress">
-                <div class="metric-progress-icon icon-purple"><i class="fas fa-hand-holding-heart"></i></div>
-                <div class="metric-progress-info">
-                  <div class="metric-progress-label">Community Investment</div>
-                  <div class="metric-progress-sub">YTD spend on community programs</div>
-                </div>
-                <div class="metric-progress-bar">
-                  <div class="metric-bar-track">
-                    <div class="metric-bar-fill" style="width:72%; background:var(--color-purple);"></div>
-                  </div>
-                  <div class="metric-bar-labels"><span>$0</span><span>$2M</span></div>
-                </div>
-                <div class="metric-progress-value" style="color:var(--color-purple);">$1.44M</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── GOVERNANCE TAB ── -->
-        <div class="esg-tab-panel" id="panel-governance">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-
-            <div class="chart-card">
-              <div class="chart-card-title" style="margin-bottom:16px;">
-                <i class="fas fa-clipboard-check" style="color:var(--color-purple);margin-right:6px;"></i>Regulatory Compliance Checklist
-              </div>
-              <div class="compliance-item compliant">
-                <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">Mining License — All Sites</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">Valid and current across all 5 active jurisdictions</div>
-                </div>
-                <span class="status-badge status-active">✓ Compliant</span>
-              </div>
-              <div class="compliance-item compliant">
-                <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">Environmental Impact Assessment</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">EIA approved for all active projects</div>
-                </div>
-                <span class="status-badge status-active">✓ Compliant</span>
-              </div>
-              <div class="compliance-item pending">
-                <i class="fas fa-clock" style="color:var(--color-accent); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">Water Use License — Iron Valley</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">Renewal application submitted — awaiting approval</div>
-                </div>
-                <span class="status-badge status-warning">Pending</span>
-              </div>
-              <div class="compliance-item compliant">
-                <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">Anti-Bribery & Corruption Policy</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">ISO 37001 certified — all staff trained</div>
-                </div>
-                <span class="status-badge status-active">✓ Compliant</span>
-              </div>
-              <div class="compliance-item compliant">
-                <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">Conflict Minerals (3TG) Policy</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">Dodd-Frank Section 1502 compliant supply chain</div>
-                </div>
-                <span class="status-badge status-active">✓ Compliant</span>
-              </div>
-              <div class="compliance-item non-compliant">
-                <i class="fas fa-times-circle" style="color:var(--color-red); flex-shrink:0;"></i>
-                <div style="flex:1;">
-                  <strong style="font-size:0.875rem;">Tailings Storage Facility — Copper Ridge</strong>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">GISTM update required — deadline: Sep 2026</div>
-                </div>
-                <span class="status-badge status-critical">Action Required</span>
-              </div>
-            </div>
-
-            <div class="chart-card">
-              <div class="chart-card-title" style="margin-bottom:16px;">
-                <i class="fas fa-chart-bar" style="color:var(--color-purple);margin-right:6px;"></i>Governance Score Trend
-              </div>
-              <canvas id="govChart" width="400" height="180"></canvas>
-              <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.85rem;">
-                  <span style="color:var(--text-secondary);">Board Independence</span>
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="width:100px; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;">
-                      <div style="width:75%; height:100%; background:var(--color-purple); border-radius:3px;"></div>
-                    </div>
-                    <span style="color:var(--color-purple); font-weight:700; width:32px;">75%</span>
-                  </div>
-                </div>
-                <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.85rem;">
-                  <span style="color:var(--text-secondary);">Audit Committee</span>
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="width:100px; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;">
-                      <div style="width:100%; height:100%; background:var(--color-green); border-radius:3px;"></div>
-                    </div>
-                    <span style="color:var(--color-green); font-weight:700; width:32px;">100%</span>
-                  </div>
-                </div>
-                <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.85rem;">
-                  <span style="color:var(--text-secondary);">Executive Pay Ratio</span>
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="width:100px; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;">
-                      <div style="width:82%; height:100%; background:var(--color-blue); border-radius:3px;"></div>
-                    </div>
-                    <span style="color:var(--color-blue); font-weight:700; width:32px;">82%</span>
-                  </div>
-                </div>
-                <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.85rem;">
-                  <span style="color:var(--text-secondary);">Whistleblower Policy</span>
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="width:100px; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;">
-                      <div style="width:100%; height:100%; background:var(--color-green); border-radius:3px;"></div>
-                    </div>
-                    <span style="color:var(--color-green); font-weight:700; width:32px;">100%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </main>
+  <!-- Sidebar -->
+  <aside class="dash-sidebar">
+    <div class="dash-sidebar-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" alt="SESMine" />
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:800;letter-spacing:0.06em;color:#F0F6FF;">SES<em style="color:#00D4FF;font-style:normal;">MINE</em></span>
     </div>
-  </div>
+    <nav class="dash-nav">
+      <div class="dash-nav-section">Main</div>
+      <a href="main-dashboard.html" class="dash-nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="analytics.html"      class="dash-nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+      <a href="esg-dashboard.html"  class="dash-nav-item active"><i class="fas fa-leaf"></i> ESG Dashboard</a>
+      <div class="dash-nav-section">Hubs</div>
+      <a href="../hubs/economics-hub.html"      class="dash-nav-item"><i class="fas fa-chart-bar"  style="color:#00D4FF;"></i> Economics</a>
+      <a href="../hubs/engineering-hub.html"    class="dash-nav-item"><i class="fas fa-cogs"       style="color:#F97316;"></i> Engineering</a>
+      <a href="../hubs/procurement-hub.html"    class="dash-nav-item"><i class="fas fa-boxes"      style="color:#A855F7;"></i> Procurement</a>
+      <a href="../hubs/safety-hub.html"         class="dash-nav-item"><i class="fas fa-hard-hat"   style="color:#EF4444;"></i> Safety</a>
+      <a href="../hubs/sustainability-hub.html" class="dash-nav-item"><i class="fas fa-seedling"   style="color:#22C55E;"></i> Sustainability</a>
+      <a href="../hubs/innovation-hub.html"     class="dash-nav-item"><i class="fas fa-lightbulb"  style="color:#D4AF37;"></i> Innovation</a>
+    </nav>
+    <div class="dash-sidebar-footer">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.03);margin-bottom:8px;">
+        <div id="sidebarAvatarESG"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.78rem;font-weight:700;color:#F0F6FF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="sidebarNameESG">User</div>
+          <div style="font-size:0.65rem;color:#6688A0;" id="sidebarRoleESG">Member</div>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="dash-nav-item" style="width:100%;background:none;border:none;cursor:pointer;font-family:inherit;color:var(--text-500);text-align:left;">
+        <i class="fas fa-sign-out-alt" style="color:#EF4444;"></i> Sign Out
+      </button>
+    </div>
+  </aside>
 
-  <script src="../js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      window.SESMine.initSidebar();
-      renderESGCharts();
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:800;color:#F0F6FF;">ESG Dashboard</div>
+        <div style="font-size:0.68rem;color:#6688A0;">Environmental · Social · Governance reporting</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select class="form-select" id="reportingYear" style="width:110px;font-size:0.78rem;padding:6px 10px;" onchange="refreshESG()">
+          <option value="2026" selected>FY 2026</option>
+          <option value="2025">FY 2025</option>
+          <option value="2024">FY 2024</option>
+        </select>
+        <button onclick="generateReport()" class="btn btn-sm" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#4ADE80;">
+          <i class="fas fa-file-alt"></i> Generate Report
+        </button>
+        <button onclick="exportESG()" class="btn btn-ghost btn-sm">
+          <i class="fas fa-download"></i> Export
+        </button>
+        <div id="topbarAvatarESG"></div>
+      </div>
+    </div>
+
+    <div class="dash-content">
+
+      <!-- Overall ESG score banner -->
+      <div style="
+        background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(0,212,255,0.05));
+        border:1px solid rgba(34,197,94,0.12);
+        border-radius:18px;padding:22px 28px;
+        display:flex;align-items:center;justify-content:space-between;
+        flex-wrap:wrap;gap:16px;margin-bottom:22px;
+        position:relative;overflow:hidden;
+      " class="animate-fade-up">
+        <div style="position:absolute;right:-30px;top:-30px;width:200px;height:200px;border-radius:50%;background:radial-gradient(ellipse,rgba(34,197,94,0.06),transparent);pointer-events:none;"></div>
+        <div style="display:flex;align-items:center;gap:20px;">
+          <!-- Score ring -->
+          <div style="position:relative;width:80px;height:80px;flex-shrink:0;">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+              <circle cx="40" cy="40" r="34" fill="none" stroke="#22C55E" stroke-width="8"
+                      stroke-dasharray="213.6" stroke-dashoffset="42.7"
+                      stroke-linecap="round" transform="rotate(-90 40 40)"
+                      style="filter:drop-shadow(0 0 6px rgba(34,197,94,0.4));"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <span style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;color:#22C55E;line-height:1;">82</span>
+              <span style="font-size:0.55rem;color:#6688A0;font-weight:700;">/100</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#22C55E;margin-bottom:4px;">
+              <i class="fas fa-leaf" style="margin-right:4px;"></i> Overall ESG Score
+            </div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:4px;">
+              Strong Performance
+            </div>
+            <div style="font-size:0.78rem;color:#8BA4BC;">
+              Top 15% of global mining peers · FY 2026
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+          <div style="text-align:center;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:#22C55E;">82</div>
+            <div style="font-size:0.7rem;color:#6688A0;">Environmental</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:#00D4FF;">76</div>
+            <div style="font-size:0.7rem;color:#6688A0;">Social</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:#D4AF37;">88</div>
+            <div style="font-size:0.7rem;color:#6688A0;">Governance</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="framework-badge" style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);color:#00D4FF;">
+            <i class="fas fa-check-circle" style="font-size:0.6rem;"></i> GRI Aligned
+          </span>
+          <span class="framework-badge" style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.15);color:#22C55E;">
+            <i class="fas fa-check-circle" style="font-size:0.6rem;"></i> TCFD
+          </span>
+          <span class="framework-badge" style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.15);color:#D4AF37;">
+            <i class="fas fa-check-circle" style="font-size:0.6rem;"></i> SASB
+          </span>
+        </div>
+      </div>
+
+      <!-- Scope emissions + ESG breakdown -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:18px;">
+
+        <!-- Scope 1 -->
+        <div class="scope-card animate-fade-up">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1rem;color:#EF4444;">
+            <i class="fas fa-industry"></i>
+          </div>
+          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#6688A0;margin-bottom:6px;">Scope 1</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:#EF4444;margin-bottom:2px;">142k</div>
+          <div style="font-size:0.72rem;color:#8BA4BC;margin-bottom:8px;">tCO₂e · Direct emissions</div>
+          <div style="font-size:0.72rem;font-weight:700;color:#4ADE80;">▼ 8.2% vs FY2025</div>
+        </div>
+
+        <!-- Scope 2 -->
+        <div class="scope-card animate-fade-up">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1rem;color:#F97316;">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#6688A0;margin-bottom:6px;">Scope 2</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:#F97316;margin-bottom:2px;">68k</div>
+          <div style="font-size:0.72rem;color:#8BA4BC;margin-bottom:8px;">tCO₂e · Purchased energy</div>
+          <div style="font-size:0.72rem;font-weight:700;color:#4ADE80;">▼ 14.6% vs FY2025</div>
+        </div>
+
+        <!-- Scope 3 -->
+        <div class="scope-card animate-fade-up">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1rem;color:#A855F7;">
+            <i class="fas fa-truck"></i>
+          </div>
+          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#6688A0;margin-bottom:6px;">Scope 3</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:#A855F7;margin-bottom:2px;">890k</div>
+          <div style="font-size:0.72rem;color:#8BA4BC;margin-bottom:8px;">tCO₂e · Value chain</div>
+          <div style="font-size:0.72rem;font-weight:700;color:#FCA5A5;">▲ 2.1% vs FY2025</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:18px;">
+
+        <!-- Emissions trend -->
+        <div class="chart-card animate-fade-up">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div>
+              <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;">Emissions Trend</div>
+              <div style="font-size:0.7rem;color:#6688A0;">Scope 1 + 2 · tCO₂e · 5-year view</div>
+            </div>
+            <span style="font-size:0.72rem;font-weight:700;color:#4ADE80;">
+              <i class="fas fa-arrow-trend-down" style="margin-right:3px;"></i>-22% since 2022
+            </span>
+          </div>
+          <div style="height:200px;"><canvas id="emissionsChart"></canvas></div>
+        </div>
+
+        <!-- ESG radar -->
+        <div class="chart-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">ESG Radar</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">vs Industry benchmark</div>
+          <div style="height:200px;"><canvas id="esgRadarChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Detailed metrics + targets -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;">
+
+        <!-- Detailed ESG metrics -->
+        <div class="chart-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Detailed Metrics</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:16px;">Performance across all ESG dimensions</div>
+          <div id="esgMetricsDetail"></div>
+        </div>
+
+        <!-- Net zero targets -->
+        <div class="chart-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Net Zero Targets</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">Progress against committed milestones</div>
+          <div id="netZeroTargets"></div>
+        </div>
+      </div>
+
+      <!-- Water, Waste, Biodiversity row -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px;">
+        <div class="chart-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Water Intensity</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:12px;">kL per tonne produced</div>
+          <div style="height:160px;"><canvas id="waterChart"></canvas></div>
+        </div>
+        <div class="chart-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Waste Diversion</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:12px;">% diverted from landfill</div>
+          <div style="height:160px;"><canvas id="wasteChart"></canvas></div>
+        </div>
+        <div class="chart-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Renewable Energy</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:12px;">% of total energy mix</div>
+          <div style="height:160px;"><canvas id="renewableChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Reports library -->
+      <div class="chart-card animate-fade-up">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;">ESG Reports Library</div>
+            <div style="font-size:0.7rem;color:#6688A0;">Published reports & disclosures</div>
+          </div>
+          <button onclick="generateReport()" class="btn btn-sm" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#4ADE80;">
+            <i class="fas fa-plus"></i> Generate New
+          </button>
+        </div>
+        <div id="reportsLibrary"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div id="toastContainer"></div>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
+<script>
+'use strict';
+
+/* ── Auth guard ── */
+const currentUser = SESAuth.checkAuth();
+
+/* ── Populate sidebar ── */
+(function() {
+  document.getElementById('sidebarAvatarESG').innerHTML = SESAuth.renderUserAvatar(currentUser, 32);
+  document.getElementById('sidebarNameESG').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+  document.getElementById('sidebarRoleESG').textContent = SESAuth.getRoleInfo(currentUser.role)?.label || currentUser.role;
+  document.getElementById('topbarAvatarESG').innerHTML  = SESAuth.renderUserAvatar(currentUser, 34);
+})();
+
+/* ── Emissions trend chart ── */
+function renderEmissions() {
+  const years = ['2022','2023','2024','2025','2026'];
+  SES.Charts.bar('emissionsChart', years, [
+    { label:'Scope 1', data:[180,168,158,154,142], color:'#EF4444' },
+    { label:'Scope 2', data:[95, 88, 80,  79,  68], color:'#F97316' }
+  ], {
+    plugins:{ legend:{ display:true, position:'top' } },
+    scales:{
+      x:{ stacked:false, grid:{ display:false } },
+      y:{ stacked:false, ticks:{ maxTicksLimit:5 } }
+    }
+  });
+}
+
+/* ── ESG radar ── */
+function renderESGRadar() {
+  SES.Charts.radar('esgRadarChart',
+    ['Environmental','Social','Governance','Safety','Transparency','Innovation'],
+    [
+      { label:'Your Score',   data:[82,76,88,91,79,74], color:'#22C55E' },
+      { label:'Industry Avg', data:[68,72,74,78,70,65], color:'rgba(148,163,184,0.5)' }
+    ],
+    { plugins:{ legend:{ display:true, position:'bottom' } } }
+  );
+}
+
+/* ── Detailed metrics ── */
+function renderDetailedMetrics() {
+  const el = document.getElementById('esgMetricsDetail');
+  if (!el) return;
+  const metrics = [
+    { label:'Carbon Intensity',     value:82, color:'#22C55E', unit:'Score', category:'E' },
+    { label:'Water Stewardship',    value:78, color:'#00D4FF', unit:'Score', category:'E' },
+    { label:'Biodiversity Net Gain',value:71, color:'#22C55E', unit:'Score', category:'E' },
+    { label:'Community Engagement', value:84, color:'#A855F7', unit:'Score', category:'S' },
+    { label:'Workforce Safety',     value:91, color:'#EF4444', unit:'Score', category:'S' },
+    { label:'Indigenous Relations', value:76, color:'#F97316', unit:'Score', category:'S' },
+    { label:'Board Independence',   value:88, color:'#D4AF37', unit:'Score', category:'G' },
+    { label:'Anti-Corruption',      value:94, color:'#22C55E', unit:'Score', category:'G' },
+    { label:'Tax Transparency',     value:86, color:'#00D4FF', unit:'Score', category:'G' }
+  ];
+
+  const catColors = { E:'#22C55E', S:'#00D4FF', G:'#D4AF37' };
+  el.innerHTML = metrics.map(m => `
+    <div class="esg-progress-row">
+      <div class="esg-progress-label">
+        <span style="
+          display:inline-flex;align-items:center;justify-content:center;
+          width:16px;height:16px;border-radius:4px;
+          background:rgba(${m.category==='E'?'34,197,94':m.category==='S'?'0,212,255':'212,175,55'},0.15);
+          font-size:0.55rem;font-weight:800;
+          color:${catColors[m.category]};
+          margin-right:5px;
+        ">${m.category}</span>
+        ${m.label}
+      </div>
+      <div class="esg-progress-bar">
+        <div class="esg-progress-fill" data-value="${m.value}"
+             style="background:${m.color};"></div>
+      </div>
+      <div class="esg-progress-val">${m.value}</div>
+    </div>
+  `).join('');
+
+  /* Animate bars */
+  setTimeout(() => {
+    el.querySelectorAll('.esg-progress-fill').forEach(bar => {
+      bar.style.width = bar.dataset.value + '%';
     });
+  }, 200);
+}
 
-    function switchESGTab(tab) {
-      document.querySelectorAll('.esg-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.esg-tab-panel').forEach(p => p.classList.remove('active'));
-      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-      document.getElementById(`panel-${tab}`).classList.add('active');
-    }
+/* ── Net zero targets ── */
+function renderNetZeroTargets() {
+  const el = document.getElementById('netZeroTargets');
+  if (!el) return;
+  const targets = [
+    { label:'Scope 1 & 2 Net Zero',   target:2040, progress:38, status:'on-track',  icon:'fa-industry' },
+    { label:'Scope 3 Net Zero',        target:2050, progress:12, status:'on-track',  icon:'fa-truck' },
+    { label:'100% Renewable Energy',   target:2035, progress:42, status:'on-track',  icon:'fa-solar-panel' },
+    { label:'Zero Freshwater Discharge',target:2030,progress:61, status:'on-track',  icon:'fa-tint' },
+    { label:'Zero Waste to Landfill',  target:2028, progress:74, status:'at-risk',   icon:'fa-recycle' },
+    { label:'Biodiversity Net Positive',target:2030,progress:28, status:'behind',    icon:'fa-leaf' }
+  ];
 
-    function renderESGCharts() {
-      // Carbon chart
-      window.SESMine.renderLineChart('carbonChart',
-        [
-          { data:[1180,1150,1200,1100,1080,1050,1020,1000,980,1010,990,970], color:'#22C55E' },
-          { data:[1133,1133,1133,1133,1133,1133,1133,1133,1133,1133,1133,1133], color:'rgba(255,255,255,0.2)' }
-        ],
-        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-      );
-      // Water chart
-      window.SESMine.renderBarChart('waterChart',
-        [210,195,220,205,215,200,198,202,195,210,205,200],
-        ['J','F','M','A','M','J','J','A','S','O','N','D'],
-        '#3B82F6'
-      );
-      // Safety chart
-      window.SESMine.renderLineChart('safetyChart',
-        [{ data:[0.68,0.62,0.58,0.55,0.52,0.49,0.47,0.45,0.44,0.43,0.42,0.42], color:'#F97316' }],
-        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-      );
-      // Governance chart
-      window.SESMine.renderLineChart('govChart',
-        [{ data:[78,80,81,82,83,83,84,85,86,87,87,88], color:'#A855F7' }],
-        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-      );
-    }
-  </script>
+  const statusCfg = {
+    'on-track': { color:'#22C55E', bg:'rgba(34,197,94,0.1)',  border:'rgba(34,197,94,0.2)',  label:'On Track' },
+    'at-risk':  { color:'#F97316', bg:'rgba(249,115,22,0.1)', border:'rgba(249,115,22,0.2)', label:'At Risk' },
+    'behind':   { color:'#EF4444', bg:'rgba(239,68,68,0.1)',  border:'rgba(239,68,68,0.2)',  label:'Behind' }
+  };
+
+  el.innerHTML = targets.map(t => {
+    const sc = statusCfg[t.status];
+    return `
+      <div class="target-row">
+        <div style="width:30px;height:30px;border-radius:8px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;color:#22C55E;font-size:0.72rem;flex-shrink:0;">
+          <i class="fas ${t.icon}"></i>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:0.78rem;font-weight:700;color:#D4E0F0;">${t.label}</span>
+            <span style="font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:99px;background:${sc.bg};border:1px solid ${sc.border};color:${sc.color};">${sc.label}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+              <div style="width:${t.progress}%;height:100%;background:${sc.color};border-radius:99px;transition:width 1s ease;"></div>
+            </div>
+            <span style="font-size:0.68rem;color:#6688A0;white-space:nowrap;">${t.progress}% · Target ${t.target}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ── Water, Waste, Renewable charts ── */
+function renderEnvironmentalCharts() {
+  const years = ['2022','2023','2024','2025','2026'];
+  SES.Charts.line('waterChart', years, [{
+    label:'kL/t', data:[2.8,2.6,2.4,2.2,1.9], color:'#00D4FF', fill:true
+  }], { plugins:{ legend:{ display:false } } });
+
+  SES.Charts.line('wasteChart', years, [{
+    label:'% Diverted', data:[62,68,72,76,81], color:'#22C55E', fill:true
+  }], { plugins:{ legend:{ display:false } } });
+
+  SES.Charts.line('renewableChart', years, [{
+    label:'% Renewable', data:[18,24,31,38,42], color:'#D4AF37', fill:true
+  }], { plugins:{ legend:{ display:false } } });
+}
+
+/* ── Reports library ── */
+function renderReportsLibrary() {
+  const el = document.getElementById('reportsLibrary');
+  if (!el) return;
+  const reports = [
+    { title:'Annual Sustainability Report FY2026',    type:'GRI',  date:'Jun 2026', pages:84, status:'published', icon:'fa-file-pdf',  color:'#22C55E' },
+    { title:'TCFD Climate Disclosure FY2026',         type:'TCFD', date:'Jun 2026', pages:42, status:'published', icon:'fa-cloud',     color:'#00D4FF' },
+    { title:'SASB Mining Standard Disclosure FY2026', type:'SASB', date:'May 2026', pages:28, status:'published', icon:'fa-file-alt',  color:'#D4AF37' },
+    { title:'Modern Slavery Statement 2026',          type:'Legal',date:'Apr 2026', pages:16, status:'published', icon:'fa-balance-scale', color:'#A855F7' },
+    { title:'Annual Sustainability Report FY2025',    type:'GRI',  date:'Jun 2025', pages:78, status:'archived',  icon:'fa-file-pdf',  color:'#6688A0' },
+    { title:'TCFD Climate Disclosure FY2025',         type:'TCFD', date:'Jun 2025', pages:38, status:'archived',  icon:'fa-cloud',     color:'#6688A0' }
+  ];
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">
+      ${reports.map(r => `
+        <div class="report-row" onclick="downloadReport('${r.title}')">
+          <div style="width:36px;height:36px;border-radius:9px;background:rgba(${r.color==='#22C55E'?'34,197,94':r.color==='#00D4FF'?'0,212,255':r.color==='#D4AF37'?'212,175,55':r.color==='#A855F7'?'168,85,247':'102,136,160'},0.1);border:1px solid rgba(${r.color==='#22C55E'?'34,197,94':r.color==='#00D4FF'?'0,212,255':r.color==='#D4AF37'?'212,175,55':r.color==='#A855F7'?'168,85,247':'102,136,160'},0.2);display:flex;align-items:center;justify-content:center;color:${r.color};font-size:0.85rem;flex-shrink:0;">
+            <i class="fas ${r.icon}"></i>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:0.78rem;font-weight:700;color:${r.status==='archived'?'#6688A0':'#F0F6FF'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.title}</div>
+            <div style="font-size:0.65rem;color:#4A6478;margin-top:2px;">${r.type} · ${r.pages}pp · ${r.date}</div>
+          </div>
+          <i class="fas fa-download" style="color:#6688A0;font-size:0.75rem;flex-shrink:0;"></i>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ── Actions ── */
+function generateReport() {
+  SES.Toast.info('Generating ESG report...');
+  setTimeout(() => SES.Toast.success('ESG report generated and added to library.'), 2000);
+}
+
+function exportESG() {
+  SES.Toast.info('Preparing ESG data export...');
+  setTimeout(() => SES.Toast.success('ESG data exported to CSV.'), 800);
+}
+
+function downloadReport(title) {
+  SES.Toast.success(`Downloading: ${title}`);
+}
+
+function refreshESG() {
+  const year = document.getElementById('reportingYear').value;
+  SES.Toast.info(`Loading FY${year} ESG data...`);
+  setTimeout(() => SES.Toast.success(`FY${year} ESG data loaded.`), 800);
+}
+
+function handleLogout() { SESAuth.logout(); }
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  renderEmissions();
+  renderESGRadar();
+  renderDetailedMetrics();
+  renderNetZeroTargets();
+  renderEnvironmentalCharts();
+  renderReportsLibrary();
+});
+</script>
 </body>
 </html>
+
