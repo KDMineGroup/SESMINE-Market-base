@@ -3,544 +3,431 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="SESMine Pricing — Flexible plans for mining professionals, engineering teams, and enterprise operations." />
-  <title>Pricing — SESMine</title>
+  <title>Pricing — SESMine Intelligence Platform</title>
+  <meta name="description" content="Transparent pricing for every team size. Start free for 14 days. No credit card required." />
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="assets/css/main.css" />
   <link rel="stylesheet" href="assets/css/animations.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    .pricing-toggle {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      justify-content: center;
-      margin-bottom: 56px;
+    .pricing-hero {
+      padding: 140px 0 80px;
+      background: linear-gradient(160deg, #020810 0%, #071224 60%, #040c1a 100%);
+      position: relative; overflow: hidden; text-align: center;
     }
-    .toggle-label { font-size: 0.9rem; color: var(--text-secondary); font-weight: 600; }
-    .toggle-switch {
-      width: 52px; height: 28px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 14px;
-      position: relative;
-      cursor: pointer;
-      border: 1px solid var(--border-color);
-      transition: background var(--transition-fast);
-    }
-    .toggle-switch.active { background: var(--color-accent); border-color: var(--color-accent); }
-    .toggle-switch::after {
+    .pricing-hero::before {
       content: '';
-      width: 20px; height: 20px;
-      background: white;
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 56px 56px;
+    }
+    .billing-toggle {
+      display: inline-flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 99px; padding: 6px 6px 6px 16px;
+      margin-bottom: 48px;
+    }
+    .billing-label { font-size: 0.85rem; font-weight: 600; color: var(--text-400); }
+    .billing-label.active { color: var(--text-100); }
+    .toggle-switch {
+      width: 44px; height: 24px;
+      background: rgba(0,212,255,0.2);
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 99px; position: relative;
+      cursor: pointer; transition: all 0.3s ease;
+    }
+    .toggle-switch.annual { background: rgba(0,212,255,0.3); }
+    .toggle-knob {
+      position: absolute; top: 2px; left: 2px;
+      width: 18px; height: 18px;
+      background: var(--cyan-500);
       border-radius: 50%;
-      position: absolute;
-      top: 3px; left: 3px;
-      transition: transform var(--transition-fast);
+      transition: transform 0.3s ease;
+      box-shadow: 0 0 8px rgba(0,212,255,0.4);
     }
-    .toggle-switch.active::after { transform: translateX(24px); }
-    .save-badge {
-      background: rgba(34,197,94,0.12);
-      color: var(--color-green);
-      border: 1px solid rgba(34,197,94,0.25);
-      padding: 3px 10px;
-      border-radius: 100px;
-      font-size: 0.72rem;
-      font-weight: 700;
+    .toggle-switch.annual .toggle-knob { transform: translateX(20px); }
+    .annual-badge {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      color: var(--green-400);
+      font-size: 0.68rem; font-weight: 800;
+      padding: 3px 10px; border-radius: 99px;
     }
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      max-width: 1100px;
-      margin: 0 auto;
+    .compare-table { width: 100%; border-collapse: collapse; }
+    .compare-table th {
+      padding: 16px 20px;
+      font-size: 0.78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-600);
+      border-bottom: 1px solid var(--border-default);
+      text-align: left;
     }
-    .pricing-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-xl);
-      padding: 36px 32px;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      transition: all var(--transition-normal);
+    .compare-table th:not(:first-child) { text-align: center; }
+    .compare-table td {
+      padding: 13px 20px;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: middle;
     }
-    .pricing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-xl); }
-    .pricing-card.featured {
-      background: linear-gradient(135deg, rgba(245,166,35,0.08), rgba(59,130,246,0.05));
-      border-color: rgba(245,166,35,0.35);
-      transform: scale(1.03);
-    }
-    .pricing-card.featured:hover { transform: scale(1.03) translateY(-4px); }
-    .featured-badge {
-      position: absolute;
-      top: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--gradient-gold);
-      color: var(--color-primary);
-      padding: 5px 18px;
-      border-radius: 100px;
-      font-size: 0.75rem;
-      font-weight: 800;
-      white-space: nowrap;
-      letter-spacing: 0.04em;
-    }
-    .pricing-plan-name { font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
-    .pricing-price {
-      font-family: var(--font-display);
-      font-size: 3rem;
-      font-weight: 900;
-      line-height: 1;
-      margin: 12px 0 4px;
-    }
-    .pricing-period { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px; }
-    .pricing-desc   { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
-    .pricing-divider { height: 1px; background: var(--border-color); margin-bottom: 24px; }
-    .pricing-feature {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-    }
-    .pricing-feature i { margin-top: 2px; flex-shrink: 0; font-size: 0.8rem; }
-    .pricing-feature.included i { color: var(--color-green); }
-    .pricing-feature.excluded { opacity: 0.4; }
-    .pricing-feature.excluded i { color: var(--text-muted); }
-    .pricing-cta { margin-top: auto; padding-top: 28px; }
-    .compare-table { max-width: 900px; margin: 0 auto; }
-    .compare-table table { width: 100%; }
-    .compare-table th { padding: 14px 20px; font-size: 0.82rem; font-weight: 700; text-align: center; }
-    .compare-table th:first-child { text-align: left; }
-    .compare-table td { padding: 12px 20px; font-size: 0.875rem; border-top: 1px solid rgba(255,255,255,0.04); text-align: center; }
-    .compare-table td:first-child { text-align: left; color: var(--text-secondary); }
+    .compare-table td:not(:first-child) { text-align: center; }
     .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .faq-item { border-bottom: 1px solid var(--border-color); }
-    .faq-question {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 0;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.95rem;
-      transition: color var(--transition-fast);
+    .compare-table .section-row td {
+      background: rgba(0,212,255,0.04);
+      font-size: 0.7rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--cyan-500);
+      padding: 10px 20px;
     }
-    .faq-question:hover { color: var(--color-accent); }
-    .faq-answer { padding-bottom: 20px; color: var(--text-muted); font-size: 0.875rem; line-height: 1.7; display: none; }
-    .faq-answer.open { display: block; }
-    @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } .pricing-card.featured { transform: none; } }
+    .check-yes { color: var(--green-400); font-size: 1rem; }
+    .check-no  { color: rgba(255,255,255,0.15); font-size: 1rem; }
+    .faq-item {
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      transition: border-color 0.2s;
+    }
+    .faq-item:hover { border-color: rgba(0,212,255,0.15); }
+    .faq-question {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px;
+      cursor: pointer;
+      font-size: 0.92rem; font-weight: 600;
+      color: var(--text-100);
+      user-select: none;
+    }
+    .faq-icon {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--cyan-500); font-size: 0.75rem;
+      flex-shrink: 0; transition: transform 0.3s ease;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-answer {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      font-size: 0.85rem; color: var(--text-400);
+      line-height: 1.75; padding: 0 20px;
+    }
+    .faq-item.open .faq-answer { max-height: 300px; padding: 0 20px 18px; }
   </style>
 </head>
-<body class="bg-primary">
+<body>
 
-  <!-- Navbar -->
-  <nav id="navbar" class="navbar">
-    <div class="container nav-container">
-      <a href="index.html" class="nav-logo">
-        <div class="logo-icon"><i class="fas fa-mountain"></i></div>
-        <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
-      </a>
-      <ul class="nav-links" id="navLinks">
-        <li class="nav-item"><a href="index.html#features" class="nav-link">Platform</a></li>
-        <li class="nav-item"><a href="index.html#hubs" class="nav-link">Hubs</a></li>
-        <li class="nav-item"><a href="pricing.html" class="nav-link" style="color:var(--color-accent);">Pricing</a></li>
-        <li class="nav-item"><a href="resources/index.html" class="nav-link">Resources</a></li>
-        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-      </ul>
-      <div class="nav-actions">
-        <a href="auth/login.html" class="btn btn-ghost">Sign In</a>
-        <a href="auth/signup.html" class="btn btn-primary">Start Free Trial</a>
-        <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
-      </div>
+<!-- Navbar (same as index) -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" class="nav-logo-img" alt="SESMine" />
+      <span class="nav-logo-name">SES<em>MINE</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"   class="nav-link">Home</a>
+      <a href="pricing.html" class="nav-link active">Pricing</a>
+      <a href="news.html"    class="nav-link">News</a>
+      <a href="contact.html" class="nav-link">Contact</a>
     </div>
-  </nav>
+    <div class="nav-actions">
+      <a href="auth/login.html"  class="btn btn-ghost btn-sm">Sign In</a>
+      <a href="auth/signup.html" class="btn btn-cyan btn-sm"><i class="fas fa-rocket"></i> Get Started</a>
+    </div>
+  </div>
+</nav>
 
-  <!-- Hero -->
-  <section style="padding:140px 0 80px;background:var(--gradient-hero);text-align:center;">
-    <div class="container">
-      <div class="animate-fade-up">
-        <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);border-radius:100px;font-size:0.82rem;color:var(--color-accent);margin-bottom:20px;">
-          <i class="fas fa-tag"></i> No hidden fees. Cancel anytime.
+<!-- Hero -->
+<div class="pricing-hero">
+  <div style="position:relative;z-index:1;" class="container">
+    <div class="section-label" style="margin:0 auto 20px;display:inline-flex;" >
+      <span class="section-label-dot"></span> Pricing Plans
+    </div>
+    <h1 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2.2rem,4vw,3.6rem);font-weight:800;letter-spacing:-0.025em;margin-bottom:16px;" class="hero-anim-1">
+      Simple, Transparent Pricing
+    </h1>
+    <p style="font-size:1.05rem;color:#8BA4BC;max-width:520px;margin:0 auto 36px;line-height:1.75;" class="hero-anim-2">
+      Start free for 14 days. No credit card required. Upgrade or cancel anytime.
+    </p>
+
+    <!-- Billing toggle -->
+    <div class="billing-toggle hero-anim-3">
+      <span class="billing-label active" id="monthlyLabel">Monthly</span>
+      <div class="toggle-switch" id="billingToggle" onclick="toggleBilling()">
+        <div class="toggle-knob" id="toggleKnob"></div>
+      </div>
+      <span class="billing-label" id="annualLabel">Annual</span>
+      <span class="annual-badge">Save 20%</span>
+    </div>
+  </div>
+</div>
+
+<!-- Pricing Cards -->
+<section style="padding:60px 0;background:var(--bg-900);">
+  <div class="container">
+    <div class="grid-3" id="pricingCards"></div>
+  </div>
+</section>
+
+<!-- Feature Comparison Table -->
+<section class="section" style="background:var(--bg-800);">
+  <div class="container">
+    <div class="section-header center animate-fade-up">
+      <h2 class="section-title">Full Feature Comparison</h2>
+      <p class="section-subtitle">Every feature, every plan — side by side.</p>
+    </div>
+
+    <div class="table-container animate-fade-up" style="overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="width:40%;">Feature</th>
+            <th style="color:#60A5FA;">Starter<br/><span style="font-size:0.9rem;font-weight:800;color:#60A5FA;">$99/mo</span></th>
+            <th style="color:#00D4FF;">Professional<br/><span style="font-size:0.9rem;font-weight:800;color:#00D4FF;">$299/mo</span></th>
+            <th style="color:#D4AF37;">Enterprise<br/><span style="font-size:0.9rem;font-weight:800;color:#D4AF37;">$899/mo</span></th>
+          </tr>
+        </thead>
+        <tbody id="compareTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Enterprise CTA -->
+<section class="section">
+  <div class="container">
+    <div style="
+      display:grid;grid-template-columns:1fr 1fr;gap:40px;
+      background:linear-gradient(135deg,rgba(212,175,55,0.06),rgba(249,115,22,0.04));
+      border:1px solid rgba(212,175,55,0.12);
+      border-radius:24px;padding:48px;
+      align-items:center;
+    " class="animate-fade-up">
+      <div>
+        <div style="
+          display:inline-flex;align-items:center;gap:8px;
+          padding:5px 14px;border-radius:99px;
+          background:rgba(212,175,55,0.08);
+          border:1px solid rgba(212,175,55,0.2);
+          font-size:0.68rem;font-weight:700;
+          letter-spacing:0.1em;text-transform:uppercase;
+          color:var(--gold-500);margin-bottom:20px;
+        ">
+          <i class="fas fa-building"></i> Enterprise
         </div>
-        <h1 style="font-size:clamp(2rem,5vw,3.4rem);font-weight:900;margin-bottom:16px;">
-          Simple, Transparent <span class="text-gradient">Pricing</span>
-        </h1>
-        <p style="color:var(--text-muted);font-size:1.05rem;max-width:520px;margin:0 auto 40px;">
-          Choose the plan that fits your team. All plans include a 14-day free trial — no credit card required.
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:14px;">
+          Large Organisation?<br/>Let's Build a Custom Plan.
+        </h2>
+        <p style="font-size:0.9rem;color:#8BA4BC;line-height:1.75;margin-bottom:0;">
+          Custom integrations, dedicated support, on-premise deployment, white-labelling,
+          and volume pricing for 50+ seat teams. Talk to our enterprise team today.
         </p>
       </div>
-
-      <!-- Billing Toggle -->
-      <div class="pricing-toggle animate-fade-up delay-1">
-        <span class="toggle-label" id="monthlyLabel" style="color:var(--color-accent);">Monthly</span>
-        <div class="toggle-switch" id="billingToggle" onclick="toggleBilling()"></div>
-        <span class="toggle-label" id="annualLabel">Annual</span>
-        <span class="save-badge">Save 20%</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Pricing Cards -->
-  <section style="padding:0 0 100px;margin-top:-20px;">
-    <div class="container">
-      <div class="pricing-grid animate-fade-up delay-2">
-
-        <!-- Starter -->
-        <div class="pricing-card">
-          <div class="pricing-plan-name">Starter</div>
-          <div class="pricing-price" style="color:var(--text-primary);">
-            <span class="price-val" data-monthly="49" data-annual="39">$49</span>
-          </div>
-          <div class="pricing-period">per user / month <span class="billing-note">(billed monthly)</span></div>
-          <div class="pricing-desc">Perfect for independent consultants and small project teams getting started with digital mine planning.</div>
-          <a href="auth/signup.html?plan=starter" class="btn btn-ghost btn-full" style="padding:12px;">Start Free Trial</a>
-          <div class="pricing-divider" style="margin-top:24px;"></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Up to <strong>3 active projects</strong></span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>AI Cost Predictor — 20 runs/month</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Cost Calculator (unlimited)</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Equipment Database access</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>3 Hub access (choose)</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>CSV export</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Email support (48h response)</span></div>
-          <div class="pricing-feature excluded"><i class="fas fa-times-circle"></i><span>ESG Dashboard</span></div>
-          <div class="pricing-feature excluded"><i class="fas fa-times-circle"></i><span>Team collaboration</span></div>
-          <div class="pricing-feature excluded"><i class="fas fa-times-circle"></i><span>API access</span></div>
-          <div class="pricing-cta"></div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          ${['Dedicated Customer Success Manager','Custom API rate limits & SLAs','On-premise or private cloud deployment','SSO / SAML integration','Custom reporting & white-labelling','Training & onboarding program'].map(f => `
+            <div style="display:flex;align-items:center;gap:9px;font-size:0.85rem;color:#D4E0F0;">
+              <i class="fas fa-check-circle" style="color:#D4AF37;flex-shrink:0;"></i> ${f}
+            </div>
+          `).join('')}
         </div>
-
-        <!-- Professional (Featured) -->
-        <div class="pricing-card featured">
-          <div class="featured-badge">⭐ Most Popular</div>
-          <div class="pricing-plan-name" style="color:var(--color-accent);">Professional</div>
-          <div class="pricing-price" style="color:var(--color-accent);">
-            <span class="price-val" data-monthly="149" data-annual="119">$149</span>
-          </div>
-          <div class="pricing-period">per user / month <span class="billing-note">(billed monthly)</span></div>
-          <div class="pricing-desc">For professional mining engineers and mid-size teams managing multiple active projects across sites.</div>
-          <a href="auth/signup.html?plan=professional" class="btn btn-primary btn-full" style="padding:12px;">Start Free Trial</a>
-          <div class="pricing-divider" style="margin-top:24px;"></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Up to <strong>25 active projects</strong></span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>AI Cost Predictor — <strong>unlimited</strong></span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Cost Calculator (unlimited)</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Full Equipment Database</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span><strong>All 6 Hubs</strong> included</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>ESG Dashboard & reporting</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>PDF + CSV + Excel export</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Team collaboration (up to 10)</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Priority email support (4h)</span></div>
-          <div class="pricing-feature excluded"><i class="fas fa-times-circle"></i><span>API access</span></div>
-          <div class="pricing-feature excluded"><i class="fas fa-times-circle"></i><span>Custom AI model training</span></div>
-          <div class="pricing-cta"></div>
-        </div>
-
-        <!-- Enterprise -->
-        <div class="pricing-card">
-          <div class="pricing-plan-name">Enterprise</div>
-          <div class="pricing-price" style="color:var(--color-blue);">
-            <span style="font-size:1.8rem;">Custom</span>
-          </div>
-          <div class="pricing-period">contact us for pricing</div>
-          <div class="pricing-desc">For large mining companies and multi-site operations requiring custom integrations, SSO, and dedicated support.</div>
-          <a href="contact.html?type=sales" class="btn btn-ghost btn-full" style="padding:12px;border-color:rgba(59,130,246,0.4);color:var(--color-blue);">Contact Sales</a>
-          <div class="pricing-divider" style="margin-top:24px;"></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span><strong>Unlimited</strong> projects</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>AI Predictor — unlimited + custom models</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Full platform access</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>All 6 Hubs + custom hubs</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Full ESG suite + audit trail</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Unlimited team members</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>REST API + webhooks</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>SSO / SAML integration</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>Dedicated account manager</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>24/7 phone & chat support</span></div>
-          <div class="pricing-feature included"><i class="fas fa-check-circle"></i><span>On-premise deployment option</span></div>
-          <div class="pricing-cta"></div>
-        </div>
-
-      </div>
-
-      <!-- Trust Badges -->
-      <div style="display:flex;align-items:center;justify-content:center;gap:32px;margin-top:48px;flex-wrap:wrap;" class="animate-fade-up delay-3">
-        <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);">
-          <i class="fas fa-lock" style="color:var(--color-green);"></i> SOC 2 Type II Certified
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);">
-          <i class="fas fa-shield-alt" style="color:var(--color-green);"></i> ISO 27001 Compliant
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);">
-          <i class="fas fa-credit-card" style="color:var(--color-green);"></i> No credit card required
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);">
-          <i class="fas fa-undo" style="color:var(--color-green);"></i> Cancel anytime
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);">
-          <i class="fas fa-star" style="color:var(--color-accent);"></i> 4.9/5 from 1,200+ reviews
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Feature Comparison Table -->
-  <section style="padding:80px 0;background:rgba(0,0,0,0.2);">
-    <div class="container">
-      <div style="text-align:center;margin-bottom:48px;" class="animate-fade-up">
-        <h2 style="font-size:2rem;font-weight:800;margin-bottom:12px;">Full Feature Comparison</h2>
-        <p style="color:var(--text-muted);">Everything you need to make the right decision for your team.</p>
-      </div>
-      <div class="compare-table animate-fade-up delay-1" style="background:rgba(255,255,255,0.02);border:1px solid var(--border-color);border-radius:var(--radius-xl);overflow:hidden;">
-        <table>
-          <thead>
-            <tr style="background:rgba(0,0,0,0.2);">
-              <th style="text-align:left;padding:20px;">Feature</th>
-              <th>Starter</th>
-              <th style="color:var(--color-accent);">Professional</th>
-              <th style="color:var(--color-blue);">Enterprise</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="background:rgba(255,255,255,0.02);">
-              <td colspan="4" style="font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);padding:14px 20px 8px;">AI & Predictions</td>
-            </tr>
-            <tr><td>AI Cost Predictor</td><td>20/month</td><td style="color:var(--color-accent);font-weight:600;">Unlimited</td><td style="color:var(--color-blue);font-weight:600;">Unlimited + Custom</td></tr>
-            <tr><td>Prediction History</td><td>30 days</td><td>1 year</td><td style="color:var(--color-blue);font-weight:600;">Unlimited</td></tr>
-            <tr><td>Scenario Comparison</td><td>3 scenarios</td><td>25 scenarios</td><td style="color:var(--color-blue);font-weight:600;">Unlimited</td></tr>
-            <tr><td>Custom AI Model Training</td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-check" style="color:var(--color-green);"></i></td>
-            </tr>
-            <tr style="background:rgba(255,255,255,0.02);">
-              <td colspan="4" style="font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);padding:14px 20px 8px;">Projects & Hubs</td>
-            </tr>
-            <tr><td>Active Projects</td><td>3</td><td>25</td><td style="color:var(--color-blue);font-weight:600;">Unlimited</td></tr>
-            <tr><td>Hub Access</td><td>3 of 6</td><td style="color:var(--color-accent);font-weight:600;">All 6</td><td style="color:var(--color-blue);font-weight:600;">All 6 + Custom</td></tr>
-            <tr><td>ESG Dashboard</td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-check" style="color:var(--color-green);"></i></td>
-              <td><i class="fas fa-check" style="color:var(--color-green);"></i></td>
-            </tr>
-            <tr style="background:rgba(255,255,255,0.02);">
-              <td colspan="4" style="font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);padding:14px 20px 8px;">Team & Collaboration</td>
-            </tr>
-            <tr><td>Team Members</td><td>1 user</td><td>Up to 10</td><td style="color:var(--color-blue);font-weight:600;">Unlimited</td></tr>
-            <tr><td>Role-based Access Control</td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-check" style="color:var(--color-green);"></i></td>
-              <td><i class="fas fa-check" style="color:var(--color-green);"></i></td>
-            </tr>
-            <tr><td>SSO / SAML</td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-check" style="color:var(--color-green);"></i></td>
-            </tr>
-            <tr style="background:rgba(255,255,255,0.02);">
-              <td colspan="4" style="font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);padding:14px 20px 8px;">Export & Integrations</td>
-            </tr>
-            <tr><td>Export Formats</td><td>CSV only</td><td>CSV, PDF, Excel</td><td style="color:var(--color-blue);font-weight:600;">All + Custom</td></tr>
-            <tr><td>REST API Access</td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-check" style="color:var(--color-green);"></i></td>
-            </tr>
-            <tr><td>Webhooks</td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-check" style="color:var(--color-green);"></i></td>
-            </tr>
-            <tr style="background:rgba(255,255,255,0.02);">
-              <td colspan="4" style="font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);padding:14px 20px 8px;">Support</td>
-            </tr>
-            <tr><td>Support Channel</td><td>Email</td><td>Priority Email</td><td style="color:var(--color-blue);font-weight:600;">24/7 Phone + Chat</td></tr>
-            <tr><td>Response Time</td><td>48 hours</td><td>4 hours</td><td style="color:var(--color-blue);font-weight:600;">1 hour</td></tr>
-            <tr><td>Dedicated Account Manager</td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-times" style="color:var(--text-muted);"></i></td>
-              <td><i class="fas fa-check" style="color:var(--color-green);"></i></td>
-            </tr>
-            <tr><td>Onboarding & Training</td><td>Self-serve docs</td><td>Guided onboarding</td><td style="color:var(--color-blue);font-weight:600;">Custom training program</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ Section -->
-  <section style="padding:80px 0 120px;">
-    <div class="container" style="max-width:760px;">
-      <div style="text-align:center;margin-bottom:48px;" class="animate-fade-up">
-        <h2 style="font-size:2rem;font-weight:800;margin-bottom:12px;">Frequently Asked Questions</h2>
-        <p style="color:var(--text-muted);">Everything you need to know about SESMine pricing and plans.</p>
-      </div>
-      <div class="animate-fade-up delay-1">
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFAQ(this)">
-            Can I switch plans at any time?
-            <i class="fas fa-chevron-down" style="transition:transform 0.3s;flex-shrink:0;"></i>
-          </div>
-          <div class="faq-answer">
-            Yes — you can upgrade or downgrade your plan at any time. Upgrades take effect immediately and you'll be prorated for the remainder of your billing period. Downgrades take effect at the start of your next billing cycle.
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFAQ(this)">
-            What happens after the 14-day free trial?
-            <i class="fas fa-chevron-down" style="transition:transform 0.3s;flex-shrink:0;"></i>
-          </div>
-          <div class="faq-answer">
-            After your trial ends, you'll be prompted to select a plan. Your data and projects are preserved. If you don't subscribe, your account moves to a read-only state for 30 days before being archived — giving you plenty of time to export your work.
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFAQ(this)">
-            Is there a discount for academic or non-profit organizations?
-            <i class="fas fa-chevron-down" style="transition:transform 0.3s;flex-shrink:0;"></i>
-          </div>
-          <div class="faq-answer">
-            Yes — we offer a 50% discount for verified academic institutions and registered non-profit organizations. Contact us at hello@sesmine.com with your institution details to apply.
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFAQ(this)">
-            How is the AI Cost Predictor accuracy calculated?
-            <i class="fas fa-chevron-down" style="transition:transform 0.3s;flex-shrink:0;"></i>
-          </div>
-          <div class="faq-answer">
-            Our AI model is trained on 500+ real-world mining projects spanning 40+ countries and 15 commodity types. Accuracy is measured as the percentage of predictions within ±10% of actual final CAPEX. Our current model v3.2 achieves 94.2% accuracy on our validation dataset.
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFAQ(this)">
-            Can I add more users to my Professional plan?
-            <i class="fas fa-chevron-down" style="transition:transform 0.3s;flex-shrink:0;"></i>
-          </div>
-          <div class="faq-answer">
-            Professional plans support up to 10 team members. If you need more, you can either upgrade to Enterprise or add additional user seats at $49/user/month. Contact our sales team for volume discounts on larger teams.
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFAQ(this)">
-            Is my data secure and where is it stored?
-            <i class="fas fa-chevron-down" style="transition:transform 0.3s;flex-shrink:0;"></i>
-          </div>
-          <div class="faq-answer">
-            All data is encrypted at rest (AES-256) and in transit (TLS 1.3). We are SOC 2 Type II certified and ISO 27001 compliant. Data is stored in AWS data centers in Sydney (primary) and Singapore (backup). Enterprise customers can opt for on-premise deployment or dedicated cloud instances.
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section style="padding:80px 0;background:rgba(0,0,0,0.2);text-align:center;">
-    <div class="container animate-fade-up">
-      <h2 style="font-size:2rem;font-weight:800;margin-bottom:12px;">Ready to transform your mine planning?</h2>
-      <p style="color:var(--text-muted);margin-bottom:32px;font-size:1rem;">Join 1,200+ mining professionals already using SESMine.</p>
-      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-        <a href="auth/signup.html" class="btn btn-primary" style="padding:14px 32px;font-size:1rem;">
-          <i class="fas fa-rocket"></i> Start Free Trial
-        </a>
-        <a href="contact.html" class="btn btn-ghost" style="padding:14px 32px;font-size:1rem;">
-          <i class="fas fa-headset"></i> Talk to Sales
+        <a href="contact.html" class="btn btn-gold btn-lg" style="margin-top:8px;">
+          <i class="fas fa-calendar"></i> Book Enterprise Demo
         </a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer style="background:rgba(0,0,0,0.4);border-top:1px solid var(--border-color);padding:60px 0 30px;">
-    <div class="container">
-      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;">
-        <div>
-          <a href="index.html" class="nav-logo" style="display:inline-flex;margin-bottom:16px;">
-            <div class="logo-icon"><i class="fas fa-mountain"></i></div>
-            <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
-          </a>
-          <p style="color:var(--text-muted);font-size:0.875rem;line-height:1.7;max-width:280px;">
-            The world's most advanced AI-powered mining cost estimation and project management platform.
-          </p>
-        </div>
-        <div>
-          <div style="font-weight:700;margin-bottom:14px;font-size:0.875rem;">Platform</div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <a href="index.html#features" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Features</a>
-            <a href="pricing.html" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Pricing</a>
-            <a href="dashboard/main-dashboard.html" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Dashboard</a>
-            <a href="products/ai-predictor.html" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">AI Predictor</a>
-          </div>
-        </div>
-        <div>
-          <div style="font-weight:700;margin-bottom:14px;font-size:0.875rem;">Resources</div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <a href="resources/index.html" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Documentation</a>
-            <a href="resources/index.html" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Blog</a>
-            <a href="resources/index.html" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Case Studies</a>
-            <a href="resources/index.html" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">API Docs</a>
-          </div>
-        </div>
-        <div>
-          <div style="font-weight:700;margin-bottom:14px;font-size:0.875rem;">Company</div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <a href="contact.html" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Contact</a>
-            <a href="#" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Privacy Policy</a>
-            <a href="#" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Terms of Service</a>
-            <a href="#" style="color:var(--text-muted);font-size:0.875rem;text-decoration:none;">Security</a>
-          </div>
-        </div>
+<!-- FAQ -->
+<section class="section" style="background:var(--bg-800);">
+  <div class="container container-md">
+    <div class="section-header center animate-fade-up">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+    </div>
+    <div id="faqList"></div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-bottom:28px;border-bottom:1px solid var(--border-default);margin-bottom:28px;">
+      <div class="footer-brand-logo">
+        <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" style="height:32px;" />
+        <span class="footer-brand-name">SES<em>MINE</em></span>
       </div>
-      <div style="border-top:1px solid var(--border-color);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-        <p style="color:var(--text-muted);font-size:0.82rem;">© 2026 SESMine Pty Ltd. All rights reserved. ABN 12 345 678 901</p>
-        <div style="display:flex;gap:12px;">
-          <a href="#" style="color:var(--text-muted);font-size:0.9rem;"><i class="fab fa-linkedin"></i></a>
-          <a href="#" style="color:var(--text-muted);font-size:0.9rem;"><i class="fab fa-twitter"></i></a>
-          <a href="#" style="color:var(--text-muted);font-size:0.9rem;"><i class="fab fa-github"></i></a>
-        </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <a href="index.html"    class="footer-link">Home</a>
+        <a href="news.html"     class="footer-link">News</a>
+        <a href="contact.html"  class="footer-link">Contact</a>
+        <a href="#"             class="footer-link">Privacy</a>
+        <a href="#"             class="footer-link">Terms</a>
       </div>
     </div>
-  </footer>
+    <div class="footer-copyright">© 2026 SESMine Intelligence Pty Ltd · All rights reserved.</div>
+  </div>
+</footer>
 
-  <script src="js/main.js"></script>
-  <script>
-    'use strict';
-    let isAnnual = false;
+<div id="toastContainer"></div>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+'use strict';
 
-    document.addEventListener('DOMContentLoaded', () => {
-      window.SESMine.initNavbar();
-    });
+let isAnnual = false;
 
-    function toggleBilling() {
-      isAnnual = !isAnnual;
-      const toggle = document.getElementById('billingToggle');
-      const monthly = document.getElementById('monthlyLabel');
-      const annual  = document.getElementById('annualLabel');
+function toggleBilling() {
+  isAnnual = !isAnnual;
+  document.getElementById('billingToggle').classList.toggle('annual', isAnnual);
+  document.getElementById('monthlyLabel').classList.toggle('active', !isAnnual);
+  document.getElementById('annualLabel').classList.toggle('active', isAnnual);
+  renderPricingCards();
+}
 
-      toggle.classList.toggle('active', isAnnual);
-      monthly.style.color = isAnnual ? 'var(--text-muted)' : 'var(--color-accent)';
-      annual.style.color  = isAnnual ? 'var(--color-accent)' : 'var(--text-muted)';
+function renderPricingCards() {
+  const grid = document.getElementById('pricingCards');
+  if (!grid) return;
+  grid.innerHTML = SESConfig.plans.map(plan => {
+    const price = isAnnual ? Math.round(plan.price * 0.8) : plan.price;
+    return `
+      <div class="pricing-card ${plan.popular ? 'featured' : ''} animate-fade-up" style="position:relative;">
+        ${plan.popular ? '<div class="pricing-popular-badge">Most Popular</div>' : ''}
+        <div style="
+          width:44px;height:44px;border-radius:12px;
+          background:rgba(${plan.popular ? '0,212,255' : plan.id === 'enterprise' ? '212,175,55' : '96,165,250'},0.1);
+          border:1px solid rgba(${plan.popular ? '0,212,255' : plan.id === 'enterprise' ? '212,175,55' : '96,165,250'},0.2);
+          display:flex;align-items:center;justify-content:center;
+          font-size:1.1rem;margin-bottom:16px;
+          color:${plan.color};
+        ">
+          <i class="fas ${plan.id === 'starter' ? 'fa-seedling' : plan.id === 'professional' ? 'fa-rocket' : 'fa-building'}"></i>
+        </div>
+        <div class="pricing-plan-name">${plan.name}</div>
+        <div class="pricing-price" style="color:${plan.color};">
+          <sup>$</sup>${price.toLocaleString()}
+          ${isAnnual ? '<span style="font-size:0.7rem;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#4ADE80;padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;">-20%</span>' : ''}
+        </div>
+        <div class="pricing-period">per user / month${isAnnual ? ', billed annually' : ''}</div>
+        <div class="pricing-desc">${plan.description}</div>
+        <div class="pricing-features">
+          ${plan.features.map(f => `
+            <div class="pricing-feature ${f.included ? '' : 'disabled'}">
+              <i class="fas ${f.included ? 'fa-check-circle' : 'fa-times-circle'}"
+                 style="color:${f.included ? 'var(--green-400)' : 'rgba(255,255,255,0.15)'}"></i>
+              ${f.text}
+            </div>
+          `).join('')}
+        </div>
+        <a href="auth/signup.html?plan=${plan.id}"
+           class="btn ${plan.popular ? 'btn-cyan' : plan.id === 'enterprise' ? 'btn-gold' : 'btn-ghost'} btn-full">
+          ${plan.cta}
+        </a>
+      </div>
+    `;
+  }).join('');
+}
 
-      document.querySelectorAll('.price-val').forEach(el => {
-        const price = isAnnual ? el.dataset.annual : el.dataset.monthly;
-        el.textContent = '$' + price;
-      });
-      document.querySelectorAll('.billing-note').forEach(el => {
-        el.textContent = isAnnual ? '(billed annually)' : '(billed monthly)';
-      });
+function renderCompareTable() {
+  const tbody = document.getElementById('compareTableBody');
+  if (!tbody) return;
+
+  const rows = [
+    { section: 'Core Access' },
+    { label: 'Hub Access',              starter: '2 Hubs',      pro: 'All 6 Hubs',   ent: 'All 6 Hubs' },
+    { label: 'Active Projects',         starter: '5',           pro: 'Unlimited',    ent: 'Unlimited' },
+    { label: 'Team Members',            starter: '3',           pro: '25',           ent: 'Unlimited' },
+    { label: 'Data Retention',          starter: '90 days',     pro: '2 years',      ent: 'Unlimited' },
+    { section: 'Analytics & Reporting' },
+    { label: 'Basic Analytics',         starter: true,  pro: true,  ent: true },
+    { label: 'Advanced Analytics',      starter: false, pro: true,  ent: true },
+    { label: 'Custom Dashboards',       starter: false, pro: true,  ent: true },
+    { label: 'ESG Reporting (GRI/TCFD)',starter: false, pro: true,  ent: true },
+    { label: 'Custom Report Builder',   starter: false, pro: false, ent: true },
+    { label: 'Data Export (CSV/JSON)',  starter: false, pro: true,  ent: true },
+    { section: 'AI & Tools' },
+    { label: 'AI Predictor',            starter: 'Limited', pro: 'Full',    ent: 'Full + Custom' },
+    { label: 'Cost Calculator',         starter: true,      pro: true,      ent: true },
+    { label: 'Equipment Database',      starter: false,     pro: true,      ent: true },
+    { label: 'Sensitivity Analysis',    starter: false,     pro: true,      ent: true },
+    { label: 'Scenario Modelling',      starter: false,     pro: true,      ent: true },
+    { section: 'Integration & API' },
+    { label: 'REST API Access',         starter: false,     pro: '1,000/day',  ent: 'Unlimited' },
+    { label: 'Webhook Support',         starter: false,     pro: true,         ent: true },
+    { label: 'SAP / Oracle Connector',  starter: false,     pro: false,        ent: true },
+    { label: 'SSO / SAML',             starter: false,     pro: false,        ent: true },
+    { section: 'Support & Security' },
+    { label: 'Email Support',           starter: true,  pro: true,  ent: true },
+    { label: 'Priority Support',        starter: false, pro: true,  ent: true },
+    { label: 'Dedicated CSM',           starter: false, pro: false, ent: true },
+    { label: 'SLA Guarantee',           starter: '99.5%', pro: '99.9%', ent: '99.99%' },
+    { label: 'Audit Logging',           starter: false, pro: true,  ent: true },
+    { label: 'On-Premise Option',       starter: false, pro: false, ent: true },
+    { label: 'White Labelling',         starter: false, pro: false, ent: true }
+  ];
+
+  tbody.innerHTML = rows.map(row => {
+    if (row.section) {
+      return `<tr class="section-row"><td colspan="4">${row.section}</td></tr>`;
     }
+    const renderCell = (val) => {
+      if (val === true)  return `<i class="fas fa-check-circle check-yes"></i>`;
+      if (val === false) return `<i class="fas fa-times check-no"></i>`;
+      return `<span style="font-size:0.82rem;font-weight:600;color:var(--text-300);">${val}</span>`;
+    };
+    return `
+      <tr>
+        <td style="color:var(--text-300);font-size:0.85rem;">${row.label}</td>
+        <td>${renderCell(row.starter)}</td>
+        <td>${renderCell(row.pro)}</td>
+        <td>${renderCell(row.ent)}</td>
+      </tr>
+    `;
+  }).join('');
+}
 
-    function toggleFAQ(el) {
-      const answer  = el.nextElementSibling;
-      const icon    = el.querySelector('i');
-      const isOpen  = answer.classList.contains('open');
+function renderFAQ() {
+  const list = document.getElementById('faqList');
+  if (!list) return;
+  const faqs = [
+    { q: 'Is there a free trial?', a: 'Yes — all plans include a 14-day free trial with full access to your chosen plan\'s features. No credit card required to start.' },
+    { q: 'Can I change plans at any time?', a: 'Absolutely. You can upgrade, downgrade, or cancel your plan at any time from your account settings. Upgrades take effect immediately; downgrades apply at the next billing cycle.' },
+    { q: 'How does hub access work?', a: 'Each plan grants access to a specific set of intelligence hubs. Starter includes 2 hubs, Professional unlocks all 6, and Enterprise includes everything plus custom hub configurations. You can also request access to additional hubs from within the platform.' },
+    { q: 'What payment methods do you accept?', a: 'We accept all major credit cards (Visa, Mastercard, Amex), bank transfer for annual plans, and purchase orders for Enterprise customers.' },
+    { q: 'Is my data secure?', a: 'SESMine is SOC 2 Type II certified and ISO 27001 compliant. All data is encrypted at rest (AES-256) and in transit (TLS 1.3). We offer data residency options in Australia, EU, and US regions.' },
+    { q: 'Do you offer discounts for annual billing?', a: 'Yes — switching to annual billing saves 20% compared to monthly pricing. Annual plans are billed upfront and include a dedicated onboarding session.' },
+    { q: 'What is included in Enterprise support?', a: 'Enterprise customers receive a dedicated Customer Success Manager, 24/7 priority support with a 4-hour SLA, quarterly business reviews, and access to our professional services team for custom integrations.' },
+    { q: 'Can I export my data?', a: 'Professional and Enterprise plans include full data export capabilities in CSV, JSON, and PDF formats. You own your data and can export it at any time, including on cancellation.' }
+  ];
 
-      document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
-      document.querySelectorAll('.faq-question i').forEach(i => i.style.transform = '');
+  list.innerHTML = faqs.map((faq, i) => `
+    <div class="faq-item animate-fade-up delay-${(i % 4) * 100}" id="faq-${i}">
+      <div class="faq-question" onclick="toggleFAQ(${i})">
+        <span>${faq.q}</span>
+        <div class="faq-icon"><i class="fas fa-plus"></i></div>
+      </div>
+      <div class="faq-answer">${faq.a}</div>
+    </div>
+  `).join('');
+}
 
-      if (!isOpen) {
-        answer.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
-      }
-    }
-  </script>
+function toggleFAQ(i) {
+  const item = document.getElementById(`faq-${i}`);
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderPricingCards();
+  renderCompareTable();
+  renderFAQ();
+});
+</script>
 </body>
 </html>
