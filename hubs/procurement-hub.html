@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Procurement Hub — SESMine</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body class="bg-primary">
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-logo">
+          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Overview</div>
+          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
+          <a href="../dashboard/esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Hubs</div>
+          <a href="engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
+          <a href="safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
+          <a href="sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
+          <a href="procurement-hub.html" class="sidebar-link active"><i class="fas fa-truck"></i> Procurement</a>
+          <a href="innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
+          <a href="economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">JS</div>
+          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
+        </div>
+      </div>
+    </aside>
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Procurement Hub</div>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="openRFQModal()">
+            <i class="fas fa-plus"></i> New RFQ
+          </button>
+        </div>
+      </header>
+      <main class="page-content">
+
+        <!-- Hero -->
+        <div style="background:linear-gradient(135deg,rgba(249,115,22,0.08),rgba(245,166,35,0.05));border:1px solid rgba(249,115,22,0.2);border-radius:var(--radius-xl);padding:32px;margin-bottom:28px;display:flex;align-items:center;gap:24px;" class="animate-fade-up">
+          <div style="width:72px;height:72px;background:rgba(249,115,22,0.15);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--color-orange);flex-shrink:0;">
+            <i class="fas fa-truck"></i>
+          </div>
+          <div style="flex:1;">
+            <h1 style="font-size:1.6rem;margin-bottom:6px;">Procurement Hub</h1>
+            <p style="color:var(--text-muted);font-size:0.9rem;">Manage RFQs, supplier relationships, equipment orders, and procurement spend analytics across all active projects.</p>
+          </div>
+          <div style="display:flex;gap:20px;flex-shrink:0;">
+            <div style="text-align:center;"><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-orange);">18</div><div style="font-size:0.72rem;color:var(--text-muted);">Active RFQs</div></div>
+            <div style="text-align:center;"><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-green);">$24.8M</div><div style="font-size:0.72rem;color:var(--text-muted);">YTD Spend</div></div>
+            <div style="text-align:center;"><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-blue);">142</div><div style="font-size:0.72rem;color:var(--text-muted);">Suppliers</div></div>
+          </div>
+        </div>
+
+        <div class="kpi-grid animate-fade-up delay-1" style="margin-bottom:28px;">
+          <div class="kpi-card">
+            <div class="kpi-card-header"><span class="kpi-card-label">Open RFQs</span><div class="kpi-card-icon icon-orange"><i class="fas fa-file-invoice"></i></div></div>
+            <div class="kpi-card-value" style="color:var(--color-orange);">18</div>
+            <div class="kpi-card-trend"><span style="color:var(--text-muted);">5 closing this week</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card-header"><span class="kpi-card-label">Pending Deliveries</span><div class="kpi-card-icon icon-blue"><i class="fas fa-shipping-fast"></i></div></div>
+            <div class="kpi-card-value" style="color:var(--color-blue);">7</div>
+            <div class="kpi-card-trend trend-up"><i class="fas fa-arrow-up"></i> 2 arriving this week</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card-header"><span class="kpi-card-label">Cost Savings YTD</span><div class="kpi-card-icon icon-green"><i class="fas fa-piggy-bank"></i></div></div>
+            <div class="kpi-card-value" style="color:var(--color-green);">$1.84M</div>
+            <div class="kpi-card-trend trend-up"><i class="fas fa-arrow-up"></i> 7.4% below budget</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card-header"><span class="kpi-card-label">Supplier Score</span><div class="kpi-card-icon icon-purple"><i class="fas fa-star"></i></div></div>
+            <div class="kpi-card-value" style="color:var(--color-purple);">4.6/5</div>
+            <div class="kpi-card-trend trend-up"><i class="fas fa-arrow-up"></i> Avg across 142 suppliers</div>
+          </div>
+        </div>
+
+        <!-- RFQ Table -->
+        <div class="data-table-card animate-fade-up delay-2" style="margin-bottom:20px;">
+          <div class="data-table-header">
+            <div>
+              <div class="chart-card-title">Active RFQs</div>
+              <div class="chart-card-subtitle">Requests for quotation — all projects</div>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <input type="text" id="rfqSearch" placeholder="Search RFQs..."
+                style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:7px 12px;color:var(--text-primary);font-size:0.82rem;outline:none;width:180px;" />
+              <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="window.SESMine.exportToCSV(rfqData,'rfqs.csv')">
+                <i class="fas fa-download"></i> Export
+              </button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table" id="rfqTable">
+              <thead>
+                <tr>
+                  <th>RFQ ID</th>
+                  <th>Item Description</th>
+                  <th>Project</th>
+                  <th>Qty</th>
+                  <th>Est. Value</th>
+                  <th>Suppliers Invited</th>
+                  <th>Closing Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color:var(--color-accent);font-weight:600;">#RFQ-2026-084</td>
+                  <td><strong style="color:var(--text-primary);">CAT 793F Haul Trucks</strong></td>
+                  <td>Alpha Gold Mine</td>
+                  <td>2 units</td>
+                  <td style="color:var(--color-green);font-weight:600;">$8.4M</td>
+                  <td>6 suppliers</td>
+                  <td>Jul 5, 2026</td>
+                  <td><span class="status-badge status-active">Open</span></td>
+                  <td>
+                    <div style="display:flex;gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Award" style="color:var(--color-green);"><i class="fas fa-gavel"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color:var(--color-accent);font-weight:600;">#RFQ-2026-083</td>
+                  <td><strong style="color:var(--text-primary);">Sandvik DD422i Drill Rigs</strong></td>
+                  <td>Copper Ridge</td>
+                  <td>3 units</td>
+                  <td style="color:var(--color-green);font-weight:600;">$3.2M</td>
+                  <td>4 suppliers</td>
+                  <td>Jul 3, 2026</td>
+                  <td><span class="status-badge status-active">Open</span></td>
+                  <td>
+                    <div style="display:flex;gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Award" style="color:var(--color-green);"><i class="fas fa-gavel"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color:var(--color-accent);font-weight:600;">#RFQ-2026-082</td>
+                  <td><strong style="color:var(--text-primary);">HDPE Pipe — 600mm dia.</strong></td>
+                  <td>Iron Valley</td>
+                  <td>2,400 m</td>
+                  <td style="color:var(--color-green);font-weight:600;">$480K</td>
+                  <td>8 suppliers</td>
+                  <td>Jun 30, 2026</td>
+                  <td><span class="status-badge status-warning">Closing Soon</span></td>
+                  <td>
+                    <div style="display:flex;gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Award" style="color:var(--color-green);"><i class="fas fa-gavel"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color:var(--color-accent);font-weight:600;">#RFQ-2026-081</td>
+                  <td><strong style="color:var(--text-primary);">Ventilation Fan System</strong></td>
+                  <td>Copper Ridge</td>
+                  <td>1 system</td>
+                  <td style="color:var(--color-green);font-weight:600;">$1.1M</td>
+                  <td>5 suppliers</td>
+                  <td>Jun 28, 2026</td>
+                  <td><span class="status-badge status-critical">Urgent</span></td>
+                  <td>
+                    <div style="display:flex;gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Award" style="color:var(--color-green);"><i class="fas fa-gavel"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color:var(--color-accent);font-weight:600;">#RFQ-2026-079</td>
+                  <td><strong style="color:var(--text-primary);">Komatsu PC5500 Excavator</strong></td>
+                  <td>Lithium Star</td>
+                  <td>1 unit</td>
+                  <td style="color:var(--color-green);font-weight:600;">$5.8M</td>
+                  <td>3 suppliers</td>
+                  <td>Jul 15, 2026</td>
+                  <td><span class="status-badge status-info">Evaluating</span></td>
+                  <td>
+                    <div style="display:flex;gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Award" style="color:var(--color-green);"><i class="fas fa-gavel"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Spend Chart + Top Suppliers -->
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;" class="animate-fade-up delay-3">
+          <div class="chart-card">
+            <div class="chart-card-header" style="margin-bottom:16px;">
+              <div>
+                <div class="chart-card-title"><i class="fas fa-chart-bar" style="color:var(--color-orange);margin-right:6px;"></i>Monthly Procurement Spend</div>
+                <div class="chart-card-subtitle">YTD 2026 — USD millions</div>
+              </div>
+            </div>
+            <canvas id="spendChart" width="400" height="180"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-title" style="margin-bottom:16px;">
+              <i class="fas fa-star" style="color:var(--color-accent);margin-right:6px;"></i>Top Suppliers
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;">
+                <div style="width:32px;height:32px;background:rgba(245,166,35,0.12);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:var(--color-accent);flex-shrink:0;">CAT</div>
+                <div style="flex:1;"><strong style="font-size:0.85rem;">Caterpillar Inc.</strong><div style="font-size:0.72rem;color:var(--text-muted);">Equipment — $8.2M YTD</div></div>
+                <span style="color:var(--color-accent);font-weight:700;">4.8★</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;">
+                <div style="width:32px;height:32px;background:rgba(59,130,246,0.12);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:var(--color-blue);flex-shrink:0;">KOM</div>
+                <div style="flex:1;"><strong style="font-size:0.85rem;">Komatsu Ltd.</strong><div style="font-size:0.72rem;color:var(--text-muted);">Equipment — $6.4M YTD</div></div>
+                <span style="color:var(--color-accent);font-weight:700;">4.7★</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;">
+                <div style="width:32px;height:32px;background:rgba(34,197,94,0.12);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:var(--color-green);flex-shrink:0;">SAN</div>
+                <div style="flex:1;"><strong style="font-size:0.85rem;">Sandvik AB</strong><div style="font-size:0.72rem;color:var(--text-muted);">Drilling — $4.1M YTD</div></div>
+                <span style="color:var(--color-accent);font-weight:700;">4.6★</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;">
+                <div style="width:32px;height:32px;background:rgba(168,85,247,0.12);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:var(--color-purple);flex-shrink:0;">ATL</div>
+                <div style="flex:1;"><strong style="font-size:0.85rem;">Atlas Copco</strong><div style="font-size:0.72rem;color:var(--text-muted);">Compressors — $2.8M YTD</div></div>
+                <span style="color:var(--color-accent);font-weight:700;">4.5★</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;">
+                <div style="width:32px;height:32px;background:rgba(20,184,166,0.12);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:var(--color-teal);flex-shrink:0;">FLM</div>
+                <div style="flex:1;"><strong style="font-size:0.85rem;">FLSmidth</strong><div style="font-size:0.72rem;color:var(--text-muted);">Processing — $2.3M YTD</div></div>
+                <span style="color:var(--color-accent);font-weight:700;">4.4★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- RFQ Modal -->
+  <div class="modal" id="rfqModal">
+    <div class="modal-overlay" id="rfqOverlay"></div>
+    <div class="modal-content" style="max-width:540px;">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;">
+        <h2 style="font-size:1.1rem;"><i class="fas fa-file-invoice" style="color:var(--color-orange);margin-right:8px;"></i>Create New RFQ</h2>
+        <button onclick="closeRFQModal()" style="color:var(--text-muted);background:none;border:none;cursor:pointer;"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="rfqForm" style="padding:24px;">
+        <div class="form-group">
+          <label class="form-label">Item Description</label>
+          <input type="text" class="form-input" placeholder="e.g. CAT 793F Haul Trucks" required />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Project</label>
+            <select class="form-select" required>
+              <option value="">Select project...</option>
+              <option>Alpha Gold Mine</option>
+              <option>Copper Ridge</option>
+              <option>Iron Valley</option>
+              <option>Lithium Star</option>
+              <option>Northern Nickel</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Quantity</label>
+            <input type="text" class="form-input" placeholder="e.g. 2 units" required />
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Est. Value (USD)</label>
+            <input type="number" class="form-input" placeholder="5000000" required />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Closing Date</label>
+            <input type="date" class="form-input" required />
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:16px;">
+          <label class="form-label">Specifications / Notes</label>
+          <textarea class="form-textarea" placeholder="Technical specifications, delivery requirements, warranty terms..." style="min-height:80px;"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button type="button" class="btn btn-ghost btn-full" onclick="closeRFQModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-paper-plane"></i> Submit RFQ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    const rfqData = [
+      {id:'#RFQ-2026-084',item:'CAT 793F Haul Trucks',project:'Alpha Gold',qty:'2',value:'$8.4M',status:'Open'},
+      {id:'#RFQ-2026-083',item:'Sandvik DD422i Drill Rigs',project:'Copper Ridge',qty:'3',value:'$3.2M',status:'Open'}
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.SESMine.initSidebar();
+      window.SESMine.renderBarChart('spendChart',
+        [2.1,2.4,1.8,3.2,2.8,3.6,3.1,2.9,3.4,0,0,0],
+        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        '#F97316'
+      );
+    });
+
+    function openRFQModal() {
+      document.getElementById('rfqModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeRFQModal() {
+      document.getElementById('rfqModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('rfqOverlay')?.addEventListener('click', closeRFQModal);
+    document.getElementById('rfqForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      closeRFQModal();
+      window.SESMine.showToast('RFQ #RFQ-2026-085 created and sent to suppliers', 'success');
+    });
+  </script>
+</body>
+</html>
