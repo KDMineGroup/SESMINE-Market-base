@@ -1236,3 +1236,196 @@ SES.Particles = (() => {
               ctx.beginPath();
               ctx.moveTo(p.x, p.y);
               ctx.lineTo(q.x, q.y);
+                             ctx.strokeStyle = `${cfg.color}${(1 - dist / cfg.maxDist) * 0.15})`;
+              ctx.lineWidth   = 0.8;
+              ctx.stroke();
+            }
+          }
+        }
+      });
+      animId = requestAnimationFrame(draw);
+    }
+
+    function start() {
+      resize();
+      createParticles();
+      draw();
+    }
+
+    function stop() {
+      cancelAnimationFrame(animId);
+    }
+
+    function destroy() {
+      stop();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles = [];
+    }
+
+    window.addEventListener('resize', SES.UI.debounce(() => {
+      resize();
+      createParticles();
+    }, 300));
+
+    start();
+    return { start, stop, destroy };
+  }
+
+  return { init };
+})();
+
+/* ══════════════════════════════════════════════
+   19. SEARCH
+══════════════════════════════════════════════ */
+SES.Search = (() => {
+  function filterTable(tableBodyId, query, columns = []) {
+    const tbody = document.getElementById(tableBodyId);
+    if (!tbody) return;
+    const q = query.toLowerCase().trim();
+    let visible = 0;
+    tbody.querySelectorAll('tr').forEach(row => {
+      const text = columns.length
+        ? columns.map(i => row.cells[i]?.textContent || '').join(' ').toLowerCase()
+        : row.textContent.toLowerCase();
+      const show = !q || text.includes(q);
+      row.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    return visible;
+  }
+
+  function filterCards(containerSelector, query, textSelector = null) {
+    const container = document.querySelector(containerSelector);
+    if (!container) return;
+    const q = query.toLowerCase().trim();
+    let visible = 0;
+    container.querySelectorAll('[data-searchable]').forEach(card => {
+      const text = textSelector
+        ? card.querySelector(textSelector)?.textContent.toLowerCase() || ''
+        : (card.dataset.searchable || card.textContent).toLowerCase();
+      const show = !q || text.includes(q);
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    return visible;
+  }
+
+  return { filterTable, filterCards };
+})();
+
+/* ══════════════════════════════════════════════
+   20. EXPORT UTILITIES
+══════════════════════════════════════════════ */
+SES.Export = (() => {
+  function toCSV(data, filename = 'export.csv') {
+    if (!data.length) return;
+    const headers = Object.keys(data[0]);
+    const rows    = data.map(row =>
+      headers.map(h => {
+        const val = row[h] ?? '';
+        return typeof val === 'string' && (val.includes(',') || val.includes('"'))
+          ? `"${val.replace(/"/g, '""')}"`
+          : val;
+      }).join(',')
+    );
+    const csv  = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    download(blob, filename);
+  }
+
+  function toJSON(data, filename = 'export.json') {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    download(blob, filename);
+  }
+
+  function download(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function printSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <html><head>
+        <title>SESMine Export</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; color: #000; }
+          table { border-collapse: collapse; width: 100%; }
+          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          th { background: #f4f4f4; font-weight: 700; }
+        </style>
+      </head><body>${section.innerHTML}</body></html>
+    `);
+    win.document.close();
+    win.print();
+  }
+
+  return { toCSV, toJSON, download, printSection };
+})();
+
+/* ══════════════════════════════════════════════
+   21. CLOCK UTILITY
+══════════════════════════════════════════════ */
+SES.Clock = (() => {
+  const timers = new Map();
+
+  function start(elementId, options = {}) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const tz   = options.timezone || 'Australia/Perth';
+    const fmt  = options.format   || { hour:'2-digit', minute:'2-digit', second:'2-digit' };
+    const tick = () => {
+      el.textContent = new Date().toLocaleTimeString('en-AU', { timeZone: tz, ...fmt });
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    timers.set(elementId, id);
+    return id;
+  }
+
+  function stop(elementId) {
+    const id = timers.get(elementId);
+    if (id) { clearInterval(id); timers.delete(elementId); }
+  }
+
+  function stopAll() {
+    timers.forEach((id) => clearInterval(id));
+    timers.clear();
+  }
+
+  return { start, stop, stopAll };
+})();
+
+/* ══════════════════════════════════════════════
+   22. GLOBAL LOGOUT HANDLER
+══════════════════════════════════════════════ */
+window.handleLogout = function(isAdmin = false) {
+  if (confirm('Are you sure you want to sign out?')) {
+    window.SESAuth?.logout(isAdmin);
+  }
+};
+
+/* ══════════════════════════════════════════════
+   23. GLOBAL ERROR HANDLER
+══════════════════════════════════════════════ */
+window.addEventListener('error', e => {
+  console.error('SESMine Error:', e.message, e.filename, e.lineno);
+});
+
+window.addEventListener('unhandledrejection', e => {
+  console.warn('SESMine Unhandled Promise:', e.reason);
+});
+
+/* ══════════════════════════════════════════════
+   24. EXPOSE GLOBALS
+══════════════════════════════════════════════ */
+window.SES = SES;
+
