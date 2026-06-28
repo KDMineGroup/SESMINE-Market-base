@@ -724,4 +724,104 @@ window.SESAuth = (() => {
     return `<span style="
       display:inline-flex;align-items:center;gap:5px;
       padding:3px 9px;border-radius:9999px;
-      font-size:0.68rem;font-weight
+      font-size:0.68rem;font-weight    ;700;
+      background:${s.bg};
+      border:1px solid ${s.border};
+      color:${s.color};
+    ">
+      <span style="width:5px;height:5px;border-radius:50%;background:${s.dot};flex-shrink:0;"></span>
+      ${s.label}
+    </span>`;
+  }
+
+  function renderUserAvatar(user, size = 36) {
+    const initials = `${(user.firstName||'?')[0]}${(user.lastName||'?')[0]}`.toUpperCase();
+    const colors   = ['#2563EB','#7C3AED','#DC2626','#D97706','#059669','#0891B2','#9333EA','#DB2777'];
+    const color    = colors[(user.firstName?.charCodeAt(0) || 0) % colors.length];
+    if (user.avatar) {
+      return `<img src="${user.avatar}" alt="${initials}"
+        style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;
+               border:2px solid rgba(0,212,255,0.2);flex-shrink:0;" />`;
+    }
+    return `<div style="
+      width:${size}px;height:${size}px;border-radius:50%;
+      background:${color};
+      display:flex;align-items:center;justify-content:center;
+      font-size:${Math.round(size*0.35)}px;font-weight:800;
+      color:#fff;flex-shrink:0;letter-spacing:-0.02em;
+      border:2px solid rgba(255,255,255,0.1);
+    ">${initials}</div>`;
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    const now = new Date();
+    const diff = now - d;
+    const mins  = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days  = Math.floor(diff / 86400000);
+    if (mins < 1)   return 'Just now';
+    if (mins < 60)  return `${mins}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7)   return `${days}d ago`;
+    return d.toLocaleDateString('en-AU', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  /* ══════════════════════════════════════════════
+     HUB PAGE PROTECTION
+  ══════════════════════════════════════════════ */
+  function protectHubPage(hubId) {
+    const user = checkAuth();
+    if (!user) return null;
+    if (!checkHubAccess(hubId)) {
+      window.location.href = `../hub-preview.html?hub=${hubId}`;
+      return null;
+    }
+    return user;
+  }
+
+  /* ══════════════════════════════════════════════
+     INITIALISE
+  ══════════════════════════════════════════════ */
+  seedData();
+
+  /* ══════════════════════════════════════════════
+     PUBLIC API
+  ══════════════════════════════════════════════ */
+  return {
+    // Constants
+    KEYS, SYSTEM_CONFIG, ROLE_PERMISSIONS,
+
+    // Storage
+    Store,
+
+    // Crypto
+    hashPassword, verifyPassword, validatePasswordStrength, generateId, generateToken,
+
+    // Auth
+    registerUser, loginUser, loginAdmin,
+    checkAuth, checkAdminAuth, checkHubAccess,
+    logout, protectHubPage,
+
+    // Users
+    getAllUsers, getUserById, getUserByEmail,
+    updateUser, approveUser, suspendUser, deleteUser,
+    updateUserRole, updateUserHubAccess,
+
+    // Hub requests
+    submitHubRequest, getHubRequests, approveHubRequest, rejectHubRequest,
+
+    // Stats
+    getDashboardStats,
+
+    // UI helpers
+    getRoleInfo, getRoleBadge, getStatusBadge,
+    renderUserAvatar, formatDate,
+
+    // Config passthrough
+    SYSTEM_CONFIG
+  };
+
+})();
+
