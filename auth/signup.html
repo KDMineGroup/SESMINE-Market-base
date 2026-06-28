@@ -4,226 +4,306 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Start Free Trial — SESMine</title>
+  <meta name="description" content="Create your SESMine account and start your free 14-day trial. No credit card required." />
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    body { min-height: 100vh; display: flex; overflow-x: hidden; }
+    /* ══════════════════════════════════════════════
+       SIGNUP LAYOUT
+    ══════════════════════════════════════════════ */
+    html, body { height: 100%; }
+    body { overflow-x: hidden; }
+
+    .signup-root {
+      display: flex;
+      min-height: 100vh;
+    }
 
     /* ── Left Panel ── */
-    .auth-left {
-      width: 44%;
-      min-height: 100vh;
-      position: relative;
+    .signup-left {
+      width: 42%;
+      position: sticky;
+      top: 0;
+      height: 100vh;
       overflow: hidden;
       flex-shrink: 0;
     }
-    .auth-left-bg { position: absolute; inset: 0; }
-    .auth-left-bg img { width:100%;height:100%;object-fit:cover;filter:saturate(0.5) brightness(0.45); }
-    .auth-left-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(160deg, rgba(6,14,30,0.95) 0%, rgba(6,14,30,0.78) 60%, rgba(6,14,30,0.92) 100%);
+
+    .signup-left-bg { position: absolute; inset: 0; }
+    .signup-left-bg-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: saturate(0.4) brightness(0.38);
+      transform: scale(1.04);
     }
-    .auth-left-grid {
+    .signup-left-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg,
+        rgba(2,8,16,0.98) 0%,
+        rgba(4,12,26,0.9) 45%,
+        rgba(4,12,26,0.85) 70%,
+        rgba(2,8,16,0.97) 100%
+      );
+    }
+    .signup-left-grid {
       position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(0,212,255,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,212,255,0.05) 1px, transparent 1px);
-      background-size: 48px 48px;
+        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 52px 52px;
     }
-    .auth-left-content {
+    .signup-left-glow {
+      position: absolute;
+      top: -60px; left: -60px;
+      width: 480px; height: 480px;
+      background: radial-gradient(ellipse, rgba(0,212,255,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .signup-left-content {
       position: relative; z-index: 1;
       height: 100%;
-      display: flex; flex-direction: column;
-      padding: 36px 40px;
+      display: flex;
+      flex-direction: column;
+      padding: 32px 40px;
+      overflow-y: auto;
     }
-    .auth-left-logo {
+
+    /* Logo */
+    .signup-logo {
       display: flex; align-items: center; gap: 10px;
-      text-decoration: none; margin-bottom: 40px;
+      text-decoration: none;
+      margin-bottom: 32px;
+      width: fit-content;
+      flex-shrink: 0;
     }
-    .auth-left-logo img { width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(0,212,255,0.5)); }
-    .auth-left-logo-text { font-family:var(--font-display);font-size:1.1rem;font-weight:800;letter-spacing:0.06em;color:var(--text-primary); }
-    .auth-left-logo-text span { color:var(--brand-cyan); }
+    .signup-logo-img {
+      height: 42px; width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(0,212,255,0.5));
+    }
+    .signup-logo-name {
+      font-family: var(--font-display);
+      font-size: 1.05rem; font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--text-100);
+    }
+    .signup-logo-name em { color: var(--cyan-400); font-style: normal; }
 
-    /* Plan Card */
+    /* Plan highlight card */
     .plan-highlight {
-      background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(0,128,255,0.05));
+      background: linear-gradient(135deg,
+        rgba(0,212,255,0.08) 0%,
+        rgba(0,128,255,0.05) 100%
+      );
       border: 1px solid rgba(0,212,255,0.2);
-      border-radius: var(--r-xl);
-      padding: 24px;
-      margin-bottom: 24px;
+      border-radius: var(--r-2xl);
+      padding: 22px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
     }
-    .plan-highlight-badge {
+    .plan-highlight::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan-400), transparent);
+      opacity: 0.5;
+    }
+    .plan-trial-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      background: linear-gradient(135deg, var(--brand-cyan), #0080FF);
-      color: var(--bg-primary);
-      font-size: 0.68rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--cyan-400), #0080FF);
+      color: var(--bg-900);
+      font-size: 0.65rem; font-weight: 800;
       letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 3px 10px; border-radius: var(--r-full);
-      margin-bottom: 14px;
+      padding: 3px 10px;
+      border-radius: var(--r-full);
+      margin-bottom: 12px;
     }
-    .plan-highlight-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
-    .plan-highlight-price { font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; color: var(--brand-cyan); line-height: 1; margin-bottom: 4px; }
-    .plan-highlight-price span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
-    .plan-highlight-trial { font-size: 0.78rem; color: var(--color-green); font-weight: 600; margin-bottom: 16px; }
+    .plan-name {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .plan-price {
+      font-family: var(--font-display);
+      font-size: 2rem; font-weight: 800;
+      color: var(--cyan-400);
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .plan-price span { font-size: 0.9rem; color: var(--text-500); font-weight: 400; }
+    .plan-trial-note {
+      font-size: 0.75rem;
+      color: var(--green-400);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .plan-features { display: flex; flex-direction: column; gap: 7px; }
+    .plan-feature {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-400);
+    }
+    .plan-feature i { color: var(--cyan-400); font-size: 0.7rem; flex-shrink: 0; }
 
-    .plan-features { display: flex; flex-direction: column; gap: 8px; }
-    .plan-feature  { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-secondary); }
-    .plan-feature i { color: var(--brand-cyan); font-size: 0.75rem; flex-shrink: 0; }
-
-    /* Comparison mini-table */
-    .plan-compare { margin-top: 20px; }
+    /* Plan compare mini */
+    .plan-compare {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .plan-compare-title {
+      font-size: 0.65rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-600);
+      margin-bottom: 10px;
+    }
     .plan-compare-row {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 0.78rem;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      font-size: 0.75rem;
     }
     .plan-compare-row:last-child { border-bottom: none; }
-    .plan-compare-label { color: var(--text-muted); }
-    .plan-compare-val   { font-weight: 700; color: var(--text-primary); }
+    .plan-compare-label { color: var(--text-500); }
+    .plan-compare-val   { font-weight: 700; color: var(--text-200); }
+    .plan-compare-val.cyan { color: var(--cyan-400); }
 
-    /* Social proof strip */
+    /* Social proof */
     .signup-social-proof {
       display: flex; align-items: center; gap: 12px;
-      padding: 14px 16px;
+      padding: 12px 14px;
       background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color);
-      border-radius: var(--r-md);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      margin-top: auto;
     }
-    .signup-avatars { display: flex; }
-    .signup-avatar  { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--bg-secondary); margin-left: -8px; object-fit: cover; }
-    .signup-avatars .signup-avatar:first-child { margin-left: 0; }
-    .signup-social-text { font-size: 0.78rem; color: var(--text-muted); }
-    .signup-social-text strong { color: var(--text-primary); }
+    .proof-avatars { display: flex; }
+    .proof-avatar {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-700);
+      margin-left: -7px;
+      object-fit: cover;
+    }
+    .proof-avatar:first-child { margin-left: 0; }
+    .proof-text { font-size: 0.75rem; color: var(--text-500); line-height: 1.4; }
+    .proof-text strong { color: var(--text-200); }
 
     /* ── Right Panel ── */
-    .auth-right {
+    .signup-right {
       flex: 1;
-      background: var(--bg-secondary);
+      background: var(--bg-700);
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 40px 32px;
+      padding: 40px 40px 80px;
       overflow-y: auto;
       position: relative;
     }
-    .auth-right::before {
+    .signup-right::before {
       content: '';
       position: absolute;
       top: 0; left: 0;
       width: 1px; height: 100%;
-      background: linear-gradient(to bottom, transparent, var(--brand-cyan), transparent);
-      opacity: 0.3;
+      background: linear-gradient(to bottom,
+        transparent 0%,
+        rgba(0,212,255,0.35) 25%,
+        rgba(0,212,255,0.35) 75%,
+        transparent 100%
+      );
     }
 
-    .signup-form-card { width: 100%; max-width: 480px; padding: 8px 0; }
+    /* ── Form Card ── */
+    .signup-form-card {
+      width: 100%;
+      max-width: 500px;
+      padding-top: 8px;
+    }
 
-    /* Progress Steps */
-    .signup-progress {
-      display: flex; align-items: center;
-      margin-bottom: 32px;
-      gap: 0;
+    /* ── Progress Steps ── */
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      margin-bottom: 36px;
     }
-    .signup-step {
-      display: flex; align-items: center; gap: 8px;
-      flex: 1;
-    }
-    .signup-step-num {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border-color);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.75rem; font-weight: 800;
-      color: var(--text-muted);
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       flex-shrink: 0;
-      transition: all var(--t-normal);
     }
-    .signup-step.active .signup-step-num {
-      background: linear-gradient(135deg, var(--brand-cyan), #0080FF);
-      border-color: transparent;
-      color: var(--bg-primary);
-      box-shadow: 0 0 12px rgba(0,212,255,0.4);
-    }
-    .signup-step.done .signup-step-num {
-      background: rgba(34,197,94,0.15);
-      border-color: rgba(34,197,94,0.3);
-      color: var(--color-green);
-    }
-    .signup-step-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
-    .signup-step.active .signup-step-label { color: var(--brand-cyan); }
-    .signup-step.done  .signup-step-label  { color: var(--color-green); }
-    .signup-step-line  { flex: 1; height: 1px; background: var(--border-color); margin: 0 8px; }
-    .signup-step-line.done { background: rgba(34,197,94,0.3); }
-
-    /* Form Steps */
-    .signup-step-panel { display: none; }
-    .signup-step-panel.active { display: block; animation: fadeInUp 0.35s ease both; }
-
-    .signup-form-title    { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; }
-    .signup-form-subtitle { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
-
-    /* Password strength */
-    .pw-strength { margin-top: 8px; }
-    .pw-strength-bar { display: flex; gap: 4px; margin-bottom: 4px; }
-    .pw-strength-seg { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.08); transition: background var(--t-fast); }
-    .pw-strength-label { font-size: 0.72rem; color: var(--text-muted); }
-
-    /* Plan selector */
-    .plan-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .plan-option {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px;
+    .progress-step-circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 800;
+      border: 2px solid var(--border-default);
       background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color);
-      border-radius: var(--r-md);
-      cursor: pointer;
-      transition: all var(--t-fast);
-      position: relative;
-    }
-    .plan-option:hover { border-color: var(--border-hover); background: rgba(0,212,255,0.04); }
-    .plan-option.selected {
-      border-color: var(--brand-cyan);
-      background: rgba(0,212,255,0.06);
-      box-shadow: 0 0 0 1px rgba(0,212,255,0.2);
-    }
-    .plan-option-radio {
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      border: 2px solid var(--border-color);
-      display: flex; align-items: center; justify-content: center;
+      color: var(--text-500);
+      transition: all var(--ease-normal);
       flex-shrink: 0;
-      transition: all var(--t-fast);
+      font-family: var(--font-display);
     }
-    .plan-option.selected .plan-option-radio {
-      border-color: var(--brand-cyan);
-      background: var(--brand-cyan);
+    .progress-step-label {
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--text-600);
+      white-space: nowrap;
+      transition: color var(--ease-normal);
     }
-    .plan-option.selected .plan-option-radio::after {
+    .progress-step.active .progress-step-circle {
+      background: linear-gradient(135deg, var(--cyan-400), #0080FF);
+      border-color: transparent;
+      color: var(--bg-900);
+      box-shadow: 0 0 14px rgba(0,212,255,0.4);
+    }
+    .progress-step.active .progress-step-label { color: var(--cyan-400); }
+    .progress-step.done .progress-step-circle {
+      background: rgba(34,197,94,0.15);
+      border-color: rgba(34,197,94,0.35);
+      color: var(--green-400);
+    }
+    .progress-step.done .progress-step-label { color: var(--green-400); }
+    .progress-line {
+      flex: 1;
+      height: 2px;
+      background: var(--border-subtle);
+      margin: 0 8px;
+      border-radius: 1px;
+      transition: background var(--ease-normal);
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-line::after {
       content: '';
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--bg-primary);
+      position: absolute; top: 0; left: 0;
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--green-400), var(--cyan-400));
+      border-radius: 1px;
+      transition: width 0.5s ease;
     }
-    .plan-option-name  { font-weight: 700; font-size: 0.9rem; color: var(--text-primary); }
-    .plan-option-price { font-size: 0.78rem; color: var(--text-muted); }
-    .plan-option-badge { margin-left: auto; }
+    .progress-line.done::after { width: 100%; }
 
-    /* Success screen */
-    .success-screen { text-align: center; padding: 20px 0; }
-    .success-icon {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      background: rgba(34,197,94,0.1);
-      border: 2px solid rgba(34,197,94,0.3);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 24px;
-      font-size: 2rem;
-      color: var(--color-green);
-      animation: pulse 2s ease-in-out infinite;
+    /* ── Step panels ── */
+    .signup-panel { display: none; }
+    .signup-panel.active { display: block; animation: fadeInUp 0.38s cubic-bezier(0.4,0,0.2,1) both; }
+
+    /* Panel header */
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 1.55rem; font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .panel-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-500);
+      line-height: 1.65;
+      margin-bottom: 24px;
     }
 
     /* SSO */
@@ -232,257 +312,600 @@
       display: flex; align-items: center; justify-content: center; gap: 8px;
       padding: 10px 14px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-color);
-      border-radius: var(--r-sm);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-md);
       font-size: 0.82rem; font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--text-300);
       cursor: pointer;
-      transition: all var(--t-fast);
-    }
-    .sso-btn:hover { background: rgba(255,255,255,0.07); border-color: var(--border-hover); color: var(--text-primary); }
-    .auth-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .auth-divider-line { flex: 1; height: 1px; background: var(--border-color); }
-    .auth-divider-text { font-size: 0.75rem; color: var(--text-dim); white-space: nowrap; }
-
-    .input-password-wrap { position: relative; }
-    .input-password-wrap .form-input { padding-right: 42px; }
-    .password-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.875rem; padding: 4px; transition: color var(--t-fast); }
-    .password-toggle:hover { color: var(--brand-cyan); }
-
-    .auth-submit {
-      width: 100%; padding: 13px;
-      background: linear-gradient(135deg, var(--brand-cyan), #0080FF);
-      border: none; border-radius: var(--r-sm);
-      font-size: 0.95rem; font-weight: 700;
-      color: var(--bg-primary);
-      cursor: pointer; transition: all var(--t-fast);
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      box-shadow: 0 4px 20px rgba(0,212,255,0.3);
-      margin-bottom: 16px;
+      transition: all var(--ease-fast);
       font-family: var(--font-body);
     }
-    .auth-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(0,212,255,0.45); filter: brightness(1.06); }
-    .auth-submit .spinner { display: none; }
-    .auth-submit.loading .spinner { display: inline-block; }
-    .auth-submit.loading .btn-text { display: none; }
+    .sso-btn:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: var(--border-medium);
+      color: var(--text-100);
+      transform: translateY(-1px);
+    }
 
-    .auth-footer-text { text-align: center; font-size: 0.82rem; color: var(--text-muted); }
-    .auth-footer-text a { color: var(--brand-cyan); text-decoration: none; font-weight: 600; }
+    /* Divider */
+    .form-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px;
+    }
+    .form-divider-line { flex: 1; height: 1px; background: var(--border-subtle); }
+    .form-divider-text { font-size: 0.72rem; color: var(--text-600); white-space: nowrap; }
 
-    .form-input.error   { border-color: var(--color-red);  background: rgba(239,68,68,0.05); }
-    .form-input.success { border-color: var(--color-green); background: rgba(34,197,94,0.05); }
-    .input-error-msg { font-size: 0.75rem; color: var(--color-red); margin-top: 4px; display: none; }
-    .input-error-msg.show { display: block; }
+    /* Password strength */
+    .pw-strength { margin-top: 7px; }
+    .pw-strength-bars { display: flex; gap: 4px; margin-bottom: 4px; }
+    .pw-seg {
+      flex: 1; height: 3px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.07);
+      transition: background var(--ease-normal);
+    }
+    .pw-strength-text { font-size: 0.7rem; color: var(--text-500); transition: color var(--ease-fast); }
 
-    .terms-check { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 16px; }
-    .terms-check input { accent-color: var(--brand-cyan); margin-top: 2px; cursor: pointer; flex-shrink: 0; }
-    .terms-check span  { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
-    .terms-check a     { color: var(--brand-cyan); text-decoration: none; }
+    /* Submit */
+    .form-submit {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--cyan-400) 0%, #0080FF 100%);
+      border: none;
+      border-radius: var(--r-md);
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--bg-900);
+      cursor: pointer;
+      transition: all var(--ease-fast);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,212,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+      margin-bottom: 16px;
+      font-family: var(--font-body);
+      position: relative;
+      overflow: hidden;
+    }
+    .form-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 28px rgba(0,212,255,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    .form-submit:active { transform: translateY(0); }
+    .form-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+    .form-submit .spinner { display: none; }
+    .form-submit.loading .spinner { display: inline-flex; align-items: center; gap: 6px; }
+    .form-submit.loading .btn-label { display: none; }
 
-    @media (max-width: 900px) {
-      .auth-left { display: none; }
-      .auth-right { padding: 32px 20px; }
+    /* Back button */
+    .btn-back {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 11px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-md);
+      font-size: 0.875rem; font-weight: 600;
+      color: var(--text-400);
+      cursor: pointer;
+      transition: all var(--ease-fast);
+      font-family: var(--font-body);
+      flex: 1;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.07); border-color: var(--border-medium); color: var(--text-200); }
+
+    /* Plan selector */
+    .plan-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .plan-option {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      transition: all var(--ease-fast);
+      position: relative;
+    }
+    .plan-option:hover { border-color: var(--border-medium); background: rgba(0,212,255,0.04); }
+    .plan-option.selected {
+      border-color: var(--cyan-400);
+      background: rgba(0,212,255,0.07);
+      box-shadow: 0 0 0 1px rgba(0,212,255,0.2);
+    }
+    .plan-radio {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--border-default);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--ease-fast);
+    }
+    .plan-option.selected .plan-radio {
+      border-color: var(--cyan-400);
+      background: var(--cyan-400);
+    }
+    .plan-option.selected .plan-radio::after {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--bg-900);
+    }
+    .plan-option-info { flex: 1; min-width: 0; }
+    .plan-option-name  { font-weight: 700; font-size: 0.9rem; color: var(--text-100); margin-bottom: 2px; }
+    .plan-option-desc  { font-size: 0.75rem; color: var(--text-500); }
+    .plan-option-price { font-family: var(--font-display); font-size: 1rem; font-weight: 800; color: var(--text-200); white-space: nowrap; }
+    .plan-option.selected .plan-option-price { color: var(--cyan-400); }
+
+    /* Billing toggle */
+    .billing-toggle-row {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      margin-bottom: 18px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+    }
+    .billing-label { font-size: 0.82rem; color: var(--text-500); }
+    .billing-toggle {
+      width: 46px; height: 26px;
+      border-radius: var(--r-full);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border-default);
+      position: relative;
+      cursor: pointer;
+      transition: all var(--ease-normal);
+      flex-shrink: 0;
+    }
+    .billing-toggle-knob {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--text-500);
+      transition: all var(--ease-normal);
+    }
+    .billing-toggle.on { background: rgba(0,212,255,0.2); border-color: rgba(0,212,255,0.4); }
+    .billing-toggle.on .billing-toggle-knob {
+      background: var(--cyan-400);
+      transform: translateX(20px);
+      box-shadow: 0 0 8px rgba(0,212,255,0.4);
+    }
+    .billing-save-badge {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      color: var(--green-400);
+      font-size: 0.68rem; font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--r-full);
+    }
+
+    /* Plan summary box */
+    .plan-summary {
+      background: rgba(0,212,255,0.05);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: var(--r-lg);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+    .plan-summary-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .plan-summary-name  { font-weight: 700; font-size: 0.9rem; }
+    .plan-summary-price { font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; color: var(--cyan-400); }
+    .plan-summary-features { display: flex; flex-direction: column; gap: 5px; }
+    .plan-summary-feature {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; color: var(--text-400);
+    }
+    .plan-summary-feature i { color: var(--cyan-400); font-size: 0.68rem; flex-shrink: 0; }
+
+    /* Success screen */
+    .success-icon {
+      width: 84px; height: 84px;
+      border-radius: 50%;
+      background: rgba(34,197,94,0.1);
+      border: 2px solid rgba(34,197,94,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 2.2rem;
+      color: var(--green-400);
+      box-shadow: 0 0 32px rgba(34,197,94,0.2);
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+
+    /* Onboarding checklist */
+    .onboarding-list { display: flex; flex-direction: column; gap: 10px; }
+    .onboarding-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      transition: all var(--ease-fast);
+    }
+    .onboarding-item:hover { border-color: var(--border-default); background: rgba(0,212,255,0.03); }
+    .onboarding-item.done { border-color: rgba(34,197,94,0.2); background: rgba(34,197,94,0.04); }
+    .onboarding-step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 800;
+      color: var(--cyan-400);
+      flex-shrink: 0;
+    }
+    .onboarding-item.done .onboarding-step-num {
+      background: rgba(34,197,94,0.15);
+      border-color: rgba(34,197,94,0.3);
+      color: var(--green-400);
+    }
+    .onboarding-item-text { font-size: 0.85rem; color: var(--text-300); flex: 1; }
+    .onboarding-item.done .onboarding-item-text { text-decoration: line-through; opacity: 0.6; }
+
+    /* Trial countdown */
+    .trial-countdown {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      background: rgba(245,166,35,0.06);
+      border: 1px solid rgba(245,166,35,0.15);
+      border-radius: var(--r-lg);
+      margin-bottom: 20px;
+    }
+    .trial-countdown-icon { font-size: 1.3rem; color: var(--gold-400); flex-shrink: 0; }
+    .trial-countdown-title { font-size: 0.875rem; font-weight: 700; color: var(--gold-400); }
+    .trial-countdown-sub   { font-size: 0.75rem; color: var(--text-500); margin-top: 1px; }
+
+    /* Alert */
+    .form-alert {
+      display: none;
+      align-items: flex-start; gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+    .form-alert.show { display: flex; }
+    .form-alert-error {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      color: var(--red-400);
+    }
+
+    /* Footer text */
+    .form-footer-text {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-500);
+    }
+    .form-footer-text a {
+      color: var(--cyan-400);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .form-footer-text a:hover { opacity: 0.8; }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .signup-left { display: none; }
+      .signup-right { padding: 36px 24px 60px; }
+      .signup-right::before { display: none; }
+    }
+    @media (max-width: 480px) {
+      .sso-grid { grid-template-columns: 1fr; }
+      .progress-step-label { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── LEFT PANEL ── -->
-  <div class="auth-left">
-    <div class="auth-left-bg">
-      <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&q=80&auto=format&fit=crop"
-           alt="Mining equipment at work" />
-      <div class="auth-left-overlay"></div>
-      <div class="auth-left-grid"></div>
+<div class="signup-root">
+
+  <!-- ══════════════════════════════════════════════
+       LEFT PANEL
+  ══════════════════════════════════════════════ -->
+  <div class="signup-left">
+    <div class="signup-left-bg">
+      <img class="signup-left-bg-img"
+           src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1400&q=80&auto=format&fit=crop"
+           alt="Mining equipment" />
+      <div class="signup-left-overlay"></div>
+      <div class="signup-left-grid"></div>
+      <div class="signup-left-glow"></div>
     </div>
-    <div class="auth-left-content">
-      <a href="../index.html" class="auth-left-logo">
+
+    <div class="signup-left-content">
+      <!-- Logo -->
+      <a href="../index.html" class="signup-logo">
         <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png"
-             alt="SESMine Logo" />
-        <span class="auth-left-logo-text">SES<span>_</span>MINE</span>
+             alt="SESMine" class="signup-logo-img" />
+        <span class="signup-logo-name">SES<em>_</em>MINE</span>
       </a>
 
-      <!-- Plan Highlight -->
-      <div class="plan-highlight animate-fade-up">
-        <div class="plan-highlight-badge"><i class="fas fa-rocket"></i> Free 14-Day Trial</div>
-        <div class="plan-highlight-title">Professional Plan</div>
-        <div class="plan-highlight-price">$299<span>/month after trial</span></div>
-        <div class="plan-highlight-trial"><i class="fas fa-check-circle"></i> No credit card required · Cancel anytime</div>
+      <!-- Plan highlight -->
+      <div class="plan-highlight hero-anim-1">
+        <div class="plan-trial-badge">
+          <i class="fas fa-rocket"></i> Free 14-Day Trial
+        </div>
+        <div class="plan-name">Professional Plan</div>
+        <div class="plan-price">$299<span>/month after trial</span></div>
+        <div class="plan-trial-note">
+          <i class="fas fa-check-circle"></i> No credit card required · Cancel anytime
+        </div>
         <div class="plan-features">
-          <div class="plan-feature"><i class="fas fa-check"></i> Full AI Cost Predictor access</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Full AI Cost Predictor (unlimited)</div>
           <div class="plan-feature"><i class="fas fa-check"></i> Real-time Cost Calculator</div>
           <div class="plan-feature"><i class="fas fa-check"></i> Equipment Database (1,247+ items)</div>
           <div class="plan-feature"><i class="fas fa-check"></i> ESG Dashboard & reporting</div>
           <div class="plan-feature"><i class="fas fa-check"></i> All 6 specialist hubs</div>
-          <div class="plan-feature"><i class="fas fa-check"></i> Advanced analytics & export</div>
-          <div class="plan-feature"><i class="fas fa-check"></i> Priority email support</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Advanced analytics & PDF export</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> API access + Priority support</div>
         </div>
       </div>
 
-      <!-- Plan Compare -->
-      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border-color);border-radius:var(--r-lg);padding:16px;margin-bottom:20px;" class="animate-fade-up delay-1">
-        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:12px;">What's included</div>
-        <div class="plan-compare">
-          <div class="plan-compare-row"><span class="plan-compare-label">AI Predictions / month</span><span class="plan-compare-val text-cyan">Unlimited</span></div>
-          <div class="plan-compare-row"><span class="plan-compare-label">Projects</span><span class="plan-compare-val">Up to 25</span></div>
-          <div class="plan-compare-row"><span class="plan-compare-label">Team members</span><span class="plan-compare-val">Up to 5</span></div>
-          <div class="plan-compare-row"><span class="plan-compare-label">Data export (CSV/PDF)</span><span class="plan-compare-val text-cyan"><i class="fas fa-check"></i></span></div>
-          <div class="plan-compare-row"><span class="plan-compare-label">API access</span><span class="plan-compare-val text-cyan"><i class="fas fa-check"></i></span></div>
+      <!-- Plan compare -->
+      <div class="plan-compare hero-anim-2">
+        <div class="plan-compare-title">What's included</div>
+        <div class="plan-compare-row">
+          <span class="plan-compare-label">AI Predictions / month</span>
+          <span class="plan-compare-val cyan">Unlimited</span>
+        </div>
+        <div class="plan-compare-row">
+          <span class="plan-compare-label">Projects</span>
+          <span class="plan-compare-val">Up to 25</span>
+        </div>
+        <div class="plan-compare-row">
+          <span class="plan-compare-label">Team members</span>
+          <span class="plan-compare-val">Up to 5</span>
+        </div>
+        <div class="plan-compare-row">
+          <span class="plan-compare-label">CSV / PDF export</span>
+          <span class="plan-compare-val cyan"><i class="fas fa-check"></i></span>
+        </div>
+        <div class="plan-compare-row">
+          <span class="plan-compare-label">REST API access</span>
+          <span class="plan-compare-val cyan"><i class="fas fa-check"></i></span>
+        </div>
+        <div class="plan-compare-row">
+          <span class="plan-compare-label">SSO / SAML</span>
+          <span class="plan-compare-val" style="color:var(--text-600);">Enterprise only</span>
         </div>
       </div>
 
-      <!-- Social Proof -->
-      <div class="signup-social-proof animate-fade-up delay-2">
-        <div class="signup-avatars">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&q=80&auto=format&fit=crop&crop=face" class="signup-avatar" alt="" />
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&q=80&auto=format&fit=crop&crop=face" class="signup-avatar" alt="" />
-          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&q=80&auto=format&fit=crop&crop=face" class="signup-avatar" alt="" />
-          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&q=80&auto=format&fit=crop&crop=face" class="signup-avatar" alt="" />
+      <!-- Social proof -->
+      <div class="signup-social-proof hero-anim-3">
+        <div class="proof-avatars">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
+          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
+          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
         </div>
-        <div class="signup-social-text">
-          <strong>1,200+ professionals</strong> joined this month.<br/>
-          <span style="color:var(--color-accent);">★★★★★</span> 4.9/5 average rating
+        <div class="proof-text">
+          <strong>1,200+ professionals</strong> joined this month<br/>
+          <span style="color:var(--gold-400);">★★★★★</span>
+          <span> 4.9/5 average rating</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── RIGHT PANEL ── -->
-  <div class="auth-right">
+  <!-- ══════════════════════════════════════════════
+       RIGHT PANEL
+  ══════════════════════════════════════════════ -->
+  <div class="signup-right">
     <div class="signup-form-card">
 
-      <!-- Progress Bar -->
-      <div class="signup-progress" id="signupProgress">
-        <div class="signup-step active" id="prog-1">
-          <div class="signup-step-num">1</div>
-          <div class="signup-step-label">Account</div>
+      <!-- ── Progress Steps ── -->
+      <div class="progress-steps" id="progressSteps">
+        <div class="progress-step active" id="prog-1">
+          <div class="progress-step-circle">1</div>
+          <div class="progress-step-label">Account</div>
         </div>
-        <div class="signup-step-line" id="line-1"></div>
-        <div class="signup-step" id="prog-2">
-          <div class="signup-step-num">2</div>
-          <div class="signup-step-label">Profile</div>
+        <div class="progress-line" id="line-1"></div>
+        <div class="progress-step" id="prog-2">
+          <div class="progress-step-circle">2</div>
+          <div class="progress-step-label">Profile</div>
         </div>
-        <div class="signup-step-line" id="line-2"></div>
-        <div class="signup-step" id="prog-3">
-          <div class="signup-step-num">3</div>
-          <div class="signup-step-label">Plan</div>
+        <div class="progress-line" id="line-2"></div>
+        <div class="progress-step" id="prog-3">
+          <div class="progress-step-circle">3</div>
+          <div class="progress-step-label">Plan</div>
         </div>
-        <div class="signup-step-line" id="line-3"></div>
-        <div class="signup-step" id="prog-4">
-          <div class="signup-step-num"><i class="fas fa-check" style="font-size:0.65rem;"></i></div>
-          <div class="signup-step-label">Done</div>
+        <div class="progress-line" id="line-3"></div>
+        <div class="progress-step" id="prog-4">
+          <div class="progress-step-circle">
+            <i class="fas fa-check" style="font-size:0.6rem;"></i>
+          </div>
+          <div class="progress-step-label">Done</div>
         </div>
       </div>
 
-      <!-- ── STEP 1: Account Details ── -->
-      <div class="signup-step-panel active" id="signup-step-1">
-        <h2 class="signup-form-title">Create Your Account</h2>
-        <p class="signup-form-subtitle">Start your free 14-day trial — no credit card required.</p>
+      <!-- ════════════════════════════
+           PANEL 1 — Account Details
+      ════════════════════════════ -->
+      <div class="signup-panel active" id="panel-1">
+        <h2 class="panel-title">Create Your Account</h2>
+        <p class="panel-subtitle">Start your free 14-day trial — no credit card required.</p>
 
+        <!-- Error alert -->
+        <div class="form-alert form-alert-error" id="p1Alert">
+          <i class="fas fa-exclamation-circle" style="flex-shrink:0;margin-top:1px;"></i>
+          <span id="p1AlertMsg">Please fix the errors below.</span>
+        </div>
+
+        <!-- SSO -->
         <div class="sso-grid">
-          <button class="sso-btn" onclick="handleSSO('google')">
-            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          <button class="sso-btn" onclick="handleSSO('google',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
             Sign up with Google
           </button>
-          <button class="sso-btn" onclick="handleSSO('microsoft')">
-            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#f25022" d="M1 1h10v10H1z"/><path fill="#00a4ef" d="M13 1h10v10H13z"/><path fill="#7fba00" d="M1 13h10v10H1z"/><path fill="#ffb900" d="M13 13h10v10H13z"/></svg>
+          <button class="sso-btn" onclick="handleSSO('microsoft',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path fill="#f25022" d="M1 1h10v10H1z"/>
+              <path fill="#00a4ef" d="M13 1h10v10H13z"/>
+              <path fill="#7fba00" d="M1 13h10v10H1z"/>
+              <path fill="#ffb900" d="M13 13h10v10H13z"/>
+            </svg>
             Sign up with Microsoft
           </button>
         </div>
 
-        <div class="auth-divider">
-          <div class="auth-divider-line"></div>
-          <span class="auth-divider-text">or create with email</span>
-          <div class="auth-divider-line"></div>
+        <div class="form-divider">
+          <div class="form-divider-line"></div>
+          <span class="form-divider-text">or create with email</span>
+          <div class="form-divider-line"></div>
         </div>
 
-        <form id="step1Form" novalidate>
+        <form id="form-1" novalidate autocomplete="on">
+          <!-- Name row -->
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
             <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="firstName">First Name *</label>
-              <input type="text" class="form-input" id="firstName" placeholder="James" autocomplete="given-name" required />
-              <div class="input-error-msg" id="firstNameErr">Required</div>
+              <label class="form-label" for="firstName">
+                First Name <span class="form-label-required">*</span>
+              </label>
+              <input type="text" class="form-input" id="firstName"
+                     placeholder="James"
+                     autocomplete="given-name" required />
+              <div class="field-error" id="firstNameErr">
+                <i class="fas fa-exclamation-circle"></i> Required
+              </div>
             </div>
             <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="lastName">Last Name *</label>
-              <input type="text" class="form-input" id="lastName" placeholder="Whitfield" autocomplete="family-name" required />
-              <div class="input-error-msg" id="lastNameErr">Required</div>
+              <label class="form-label" for="lastName">
+                Last Name <span class="form-label-required">*</span>
+              </label>
+              <input type="text" class="form-input" id="lastName"
+                     placeholder="Whitfield"
+                     autocomplete="family-name" required />
+              <div class="field-error" id="lastNameErr">
+                <i class="fas fa-exclamation-circle"></i> Required
+              </div>
             </div>
           </div>
 
           <div class="form-group" style="margin-top:14px;">
-            <label class="form-label" for="signupEmail">Work Email *</label>
-            <div style="position:relative;">
-              <input type="email" class="form-input" id="signupEmail" placeholder="you@company.com" autocomplete="email" required style="padding-left:38px;" />
-              <i class="fas fa-envelope" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.8rem;pointer-events:none;"></i>
+            <label class="form-label" for="signupEmail">
+              Work Email <span class="form-label-required">*</span>
+            </label>
+            <div class="input-icon-wrap">
+              <input type="email" class="form-input" id="signupEmail"
+                     placeholder="you@company.com"
+                     autocomplete="email" required />
+              <i class="fas fa-envelope input-icon"></i>
             </div>
-            <div class="input-error-msg" id="signupEmailErr">Please enter a valid work email.</div>
+            <div class="field-error" id="signupEmailErr">
+              <i class="fas fa-exclamation-circle"></i> Please enter a valid work email.
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="signupPassword">Password *</label>
+            <label class="form-label" for="signupPassword">
+              Password <span class="form-label-required">*</span>
+            </label>
             <div class="input-password-wrap">
-              <input type="password" class="form-input" id="signupPassword" placeholder="Create a strong password" autocomplete="new-password" required oninput="checkPasswordStrength(this.value)" />
-              <button type="button" class="password-toggle" onclick="togglePassword('signupPassword',this)"><i class="fas fa-eye"></i></button>
+              <input type="password" class="form-input" id="signupPassword"
+                     placeholder="Create a strong password (min. 8 chars)"
+                     autocomplete="new-password" required
+                     oninput="updatePasswordStrength(this.value)" />
+              <button type="button" class="pw-toggle"
+                      onclick="togglePw('signupPassword',this)"
+                      aria-label="Toggle password">
+                <i class="fas fa-eye"></i>
+              </button>
             </div>
             <div class="pw-strength" id="pwStrength">
-              <div class="pw-strength-bar">
-                <div class="pw-strength-seg" id="seg1"></div>
-                <div class="pw-strength-seg" id="seg2"></div>
-                <div class="pw-strength-seg" id="seg3"></div>
-                <div class="pw-strength-seg" id="seg4"></div>
+              <div class="pw-strength-bars">
+                <div class="pw-seg" id="seg1"></div>
+                <div class="pw-seg" id="seg2"></div>
+                <div class="pw-seg" id="seg3"></div>
+                <div class="pw-seg" id="seg4"></div>
               </div>
-              <div class="pw-strength-label" id="pwStrengthLabel">Enter a password</div>
+              <div class="pw-strength-text" id="pwStrengthText">Enter a password</div>
             </div>
-            <div class="input-error-msg" id="signupPasswordErr">Password must be at least 8 characters.</div>
+            <div class="field-error" id="signupPasswordErr">
+              <i class="fas fa-exclamation-circle"></i> Password must be at least 8 characters.
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="confirmPassword">Confirm Password *</label>
+            <label class="form-label" for="confirmPassword">
+              Confirm Password <span class="form-label-required">*</span>
+            </label>
             <div class="input-password-wrap">
-              <input type="password" class="form-input" id="confirmPassword" placeholder="Repeat your password" autocomplete="new-password" required />
-              <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword',this)"><i class="fas fa-eye"></i></button>
+              <input type="password" class="form-input" id="confirmPassword"
+                     placeholder="Repeat your password"
+                     autocomplete="new-password" required />
+              <button type="button" class="pw-toggle"
+                      onclick="togglePw('confirmPassword',this)"
+                      aria-label="Toggle password">
+                <i class="fas fa-eye"></i>
+              </button>
             </div>
-            <div class="input-error-msg" id="confirmPasswordErr">Passwords do not match.</div>
+            <div class="field-error" id="confirmPasswordErr">
+              <i class="fas fa-exclamation-circle"></i> Passwords do not match.
+            </div>
           </div>
 
-          <div class="terms-check">
-            <input type="checkbox" id="termsCheck" required />
-            <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I understand my data will be processed in accordance with GDPR.</span>
+          <div class="checkbox-wrap" style="margin-bottom:6px;">
+            <input type="checkbox" id="termsCheck" />
+            <span class="checkbox-label">
+              I agree to the <a href="#">Terms of Service</a> and
+              <a href="#">Privacy Policy</a>. I understand my data will be
+              processed in accordance with GDPR.
+            </span>
           </div>
-          <div class="input-error-msg" id="termsErr">You must accept the terms to continue.</div>
+          <div class="field-error" id="termsErr" style="margin-bottom:14px;">
+            <i class="fas fa-exclamation-circle"></i> You must accept the terms to continue.
+          </div>
 
-          <button type="submit" class="auth-submit" id="step1Btn">
-            <span class="btn-text">Continue <i class="fas fa-arrow-right"></i></span>
+          <button type="submit" class="form-submit" id="p1Btn">
+            <span class="btn-label">Continue <i class="fas fa-arrow-right"></i></span>
             <span class="spinner"><i class="fas fa-spinner fa-spin"></i> Checking...</span>
           </button>
         </form>
 
-        <p class="auth-footer-text">
+        <p class="form-footer-text">
           Already have an account? <a href="login.html">Sign in</a>
         </p>
       </div>
 
-      <!-- ── STEP 2: Professional Profile ── -->
-      <div class="signup-step-panel" id="signup-step-2">
-        <h2 class="signup-form-title">Your Professional Profile</h2>
-        <p class="signup-form-subtitle">Help us personalise your SESMine experience with your role and industry context.</p>
+      <!-- ════════════════════════════
+           PANEL 2 — Professional Profile
+      ════════════════════════════ -->
+      <div class="signup-panel" id="panel-2">
+        <h2 class="panel-title">Your Professional Profile</h2>
+        <p class="panel-subtitle">Help us personalise your SESMine experience with your role and industry context.</p>
 
-        <form id="step2Form" novalidate>
+        <form id="form-2" novalidate>
           <div class="form-group">
-            <label class="form-label" for="company">Company / Organisation *</label>
-            <div style="position:relative;">
-              <input type="text" class="form-input" id="company" placeholder="e.g. Rio Tinto, BHP, Newmont..." style="padding-left:38px;" required />
-              <i class="fas fa-building" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.8rem;pointer-events:none;"></i>
+            <label class="form-label" for="company">
+              Company / Organisation <span class="form-label-required">*</span>
+            </label>
+            <div class="input-icon-wrap">
+              <input type="text" class="form-input" id="company"
+                     placeholder="e.g. Rio Tinto, BHP, Newmont..."
+                     required />
+              <i class="fas fa-building input-icon"></i>
             </div>
-            <div class="input-error-msg" id="companyErr">Company name is required.</div>
+            <div class="field-error" id="companyErr">
+              <i class="fas fa-exclamation-circle"></i> Company name is required.
+            </div>
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
             <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="jobTitle">Job Title *</label>
-              <input type="text" class="form-input" id="jobTitle" placeholder="e.g. Chief Engineer" required />
-              <div class="input-error-msg" id="jobTitleErr">Required</div>
+              <label class="form-label" for="jobTitle">
+                Job Title <span class="form-label-required">*</span>
+              </label>
+              <input type="text" class="form-input" id="jobTitle"
+                     placeholder="e.g. Chief Engineer" required />
+              <div class="field-error" id="jobTitleErr">
+                <i class="fas fa-exclamation-circle"></i> Required
+              </div>
             </div>
             <div class="form-group" style="margin-bottom:0;">
               <label class="form-label" for="department">Department</label>
@@ -503,7 +926,7 @@
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
             <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="mineType">Primary Mine  Type</label>
+              <label class="form-label" for="mineType">Primary Mine Type</label>
               <select class="form-select" id="mineType">
                 <option value="">Select...</option>
                 <option>Open-pit</option>
@@ -528,7 +951,9 @@
           </div>
 
           <div class="form-group" style="margin-top:14px;">
-            <label class="form-label" for="country">Country / Region *</label>
+            <label class="form-label" for="country">
+              Country / Region <span class="form-label-required">*</span>
+            </label>
             <select class="form-select" id="country" required>
               <option value="">Select your country...</option>
               <option>Australia</option>
@@ -550,9 +975,12 @@
               <option>United Kingdom</option>
               <option>Sweden</option>
               <option>Finland</option>
+              <option>Iran</option>
               <option>Other</option>
             </select>
-            <div class="input-error-msg" id="countryErr">Please select your country.</div>
+            <div class="field-error" id="countryErr">
+              <i class="fas fa-exclamation-circle"></i> Please select your country.
+            </div>
           </div>
 
           <div class="form-group">
@@ -571,8 +999,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">How did you hear about SESMine?</label>
-            <select class="form-select" id="referralSource">
+            <label class="form-label" for="referral">How did you hear about SESMine?</label>
+            <select class="form-select" id="referral">
               <option value="">Select...</option>
               <option>Google / Search</option>
               <option>LinkedIn</option>
@@ -585,448 +1013,575 @@
           </div>
 
           <div style="display:flex;gap:10px;">
-            <button type="button" class="btn btn-ghost btn-full" onclick="goToStep(1)">
+            <button type="button" class="btn-back" onclick="goToPanel(1)">
               <i class="fas fa-arrow-left"></i> Back
             </button>
-            <button type="submit" class="auth-submit" id="step2Btn" style="margin-bottom:0;flex:1;">
-              <span class="btn-text">Continue <i class="fas fa-arrow-right"></i></span>
+            <button type="submit" class="form-submit" id="p2Btn" style="margin-bottom:0;flex:2;">
+              <span class="btn-label">Continue <i class="fas fa-arrow-right"></i></span>
               <span class="spinner"><i class="fas fa-spinner fa-spin"></i> Saving...</span>
             </button>
           </div>
         </form>
       </div>
 
-      <!-- ── STEP 3: Choose Plan ── -->
-      <div class="signup-step-panel" id="signup-step-3">
-        <h2 class="signup-form-title">Choose Your Plan</h2>
-        <p class="signup-form-subtitle">All plans include a full 14-day free trial. No credit card required to start.</p>
+      <!-- ════════════════════════════
+           PANEL 3 — Choose Plan
+      ════════════════════════════ -->
+      <div class="signup-panel" id="panel-3">
+        <h2 class="panel-title">Choose Your Plan</h2>
+        <p class="panel-subtitle">All plans include a full 14-day free trial. No credit card required to start.</p>
 
+        <!-- Billing toggle -->
+        <div class="billing-toggle-row">
+          <span class="billing-label">Monthly</span>
+          <div class="billing-toggle" id="billingToggle" onclick="toggleBilling()">
+            <div class="billing-toggle-knob" id="billingKnob"></div>
+          </div>
+          <span class="billing-label">Annual</span>
+          <span class="billing-save-badge">Save 20%</span>
+        </div>
+
+        <!-- Plan options -->
         <div class="plan-selector" id="planSelector">
-
           <div class="plan-option" data-plan="starter" onclick="selectPlan('starter')">
-            <div class="plan-option-radio"></div>
-            <div style="flex:1;">
+            <div class="plan-radio"></div>
+            <div class="plan-option-info">
               <div class="plan-option-name">Starter</div>
-              <div class="plan-option-price">$99/month · Up to 5 projects · 1 user</div>
+              <div class="plan-option-desc">Up to 5 projects · 1 user · 50 AI predictions/mo</div>
             </div>
-            <span class="badge badge-gray plan-option-badge">Free Trial</span>
+            <div class="plan-option-price" id="price-starter">$99/mo</div>
+            <span class="badge badge-gray" style="margin-left:8px;">Trial</span>
           </div>
 
           <div class="plan-option selected" data-plan="professional" onclick="selectPlan('professional')">
-            <div class="plan-option-radio"></div>
-            <div style="flex:1;">
-              <div class="plan-option-name">Professional <span style="color:var(--brand-cyan);font-size:0.72rem;">(Recommended)</span></div>
-              <div class="plan-option-price">$299/month · Up to 25 projects · 5 users</div>
+            <div class="plan-radio"></div>
+            <div class="plan-option-info">
+              <div class="plan-option-name">
+                Professional
+                <span style="color:var(--cyan-400);font-size:0.72rem;font-weight:600;"> · Recommended</span>
+              </div>
+              <div class="plan-option-desc">Up to 25 projects · 5 users · Unlimited AI</div>
             </div>
-            <span class="badge badge-cyan plan-option-badge">Most Popular</span>
+            <div class="plan-option-price" id="price-professional">$299/mo</div>
+            <span class="badge badge-cyan" style="margin-left:8px;">Popular</span>
           </div>
 
           <div class="plan-option" data-plan="enterprise" onclick="selectPlan('enterprise')">
-            <div class="plan-option-radio"></div>
-            <div style="flex:1;">
+            <div class="plan-radio"></div>
+            <div class="plan-option-info">
               <div class="plan-option-name">Enterprise</div>
-              <div class="plan-option-price">$899/month · Unlimited projects · Unlimited users</div>
+              <div class="plan-option-desc">Unlimited projects & users · SSO · SLA</div>
             </div>
-            <span class="badge badge-gold plan-option-badge">Full Power</span>
-          </div>
-
-        </div>
-
-        <!-- Selected plan summary -->
-        <div id="planSummaryBox" style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:var(--r-md);padding:14px 16px;margin-bottom:20px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div style="font-weight:700;font-size:0.9rem;" id="planSummaryName">Professional Plan</div>
-            <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--brand-cyan);" id="planSummaryPrice">$299/mo</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:5px;" id="planSummaryFeatures">
-            <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text-secondary);">
-              <i class="fas fa-check" style="color:var(--brand-cyan);font-size:0.7rem;"></i> 14-day free trial included
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text-secondary);">
-              <i class="fas fa-check" style="color:var(--brand-cyan);font-size:0.7rem;"></i> Full AI Predictor + Cost Calculator
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text-secondary);">
-              <i class="fas fa-check" style="color:var(--brand-cyan);font-size:0.7rem;"></i> All 6 hubs + Equipment Database
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text-secondary);">
-              <i class="fas fa-check" style="color:var(--brand-cyan);font-size:0.7rem;"></i> Priority support + API access
-            </div>
+            <div class="plan-option-price" id="price-enterprise">$899/mo</div>
+            <span class="badge badge-gold" style="margin-left:8px;">Full Power</span>
           </div>
         </div>
 
-        <!-- Billing toggle -->
-        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px;">
-          <span style="font-size:0.82rem;color:var(--text-muted);">Monthly</span>
-          <div style="position:relative;width:44px;height:24px;cursor:pointer;" onclick="toggleBilling()">
-            <div style="width:44px;height:24px;border-radius:12px;background:rgba(255,255,255,0.1);border:1px solid var(--border-color);transition:background var(--t-fast);" id="billingToggleBg"></div>
-            <div style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--brand-cyan);transition:transform var(--t-fast);box-shadow:0 0 6px rgba(0,212,255,0.4);" id="billingToggleKnob"></div>
+        <!-- Plan summary -->
+        <div class="plan-summary" id="planSummary">
+          <div class="plan-summary-header">
+            <div class="plan-summary-name" id="summaryName">Professional Plan</div>
+            <div class="plan-summary-price" id="summaryPrice">$299/mo</div>
           </div>
-          <span style="font-size:0.82rem;color:var(--text-muted);">Annual <span style="color:var(--color-green);font-weight:700;">Save 20%</span></span>
+          <div class="plan-summary-features" id="summaryFeatures"></div>
         </div>
 
         <div style="display:flex;gap:10px;">
-          <button type="button" class="btn btn-ghost btn-full" onclick="goToStep(2)">
+          <button type="button" class="btn-back" onclick="goToPanel(2)">
             <i class="fas fa-arrow-left"></i> Back
           </button>
-          <button type="button" class="auth-submit" id="step3Btn" onclick="completeSignup()" style="margin-bottom:0;flex:1;">
-            <span class="btn-text"><i class="fas fa-rocket"></i> Start Free Trial</span>
+          <button type="button" class="form-submit" id="p3Btn"
+                  onclick="completeSignup()" style="margin-bottom:0;flex:2;">
+            <span class="btn-label"><i class="fas fa-rocket"></i> Start Free Trial</span>
             <span class="spinner"><i class="fas fa-spinner fa-spin"></i> Creating account...</span>
           </button>
         </div>
 
-        <p style="text-align:center;font-size:0.75rem;color:var(--text-dim);margin-top:12px;">
-          <i class="fas fa-lock" style="color:var(--brand-cyan);margin-right:3px;"></i>
+        <p style="text-align:center;font-size:0.75rem;color:var(--text-600);margin-top:12px;">
+          <i class="fas fa-lock" style="color:var(--cyan-400);margin-right:3px;"></i>
           Secure sign-up · No credit card · Cancel anytime
         </p>
       </div>
 
-      <!-- ── STEP 4: Success ── -->
-      <div class="signup-step-panel" id="signup-step-4">
-        <div class="success-screen">
+      <!-- ════════════════════════════
+           PANEL 4 — Success
+      ════════════════════════════ -->
+      <div class="signup-panel" id="panel-4">
+        <div style="text-align:center;">
           <div class="success-icon">
             <i class="fas fa-check"></i>
           </div>
-          <h2 class="signup-form-title">Welcome to SESMine!</h2>
-          <p style="font-size:0.9rem;color:var(--text-muted);line-height:1.7;margin:12px 0 8px;">
-            Your account has been created successfully.<br/>
-            We've sent a confirmation email to<br/>
-            <strong id="successEmail" style="color:var(--text-primary);"></strong>
+          <h2 class="panel-title" style="margin-bottom:8px;">Welcome to SESMine!</h2>
+          <p style="font-size:0.9rem;color:var(--text-500);line-height:1.72;margin-bottom:6px;">
+            Your account has been created successfully.
+          </p>
+          <p style="font-size:0.875rem;color:var(--text-400);margin-bottom:24px;">
+            Confirmation sent to
+            <strong id="successEmail" style="color:var(--text-100);"></strong>
           </p>
 
-          <!-- Onboarding checklist -->
-          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--r-lg);padding:20px;margin:24px 0;text-align:left;">
-            <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:14px;">
-              <i class="fas fa-list-check" style="color:var(--brand-cyan);margin-right:6px;"></i>Your Onboarding Checklist
-            </div>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              <div style="display:flex;align-items:center;gap:10px;">
-                <div style="width:22px;height:22px;border-radius:50%;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i class="fas fa-check" style="color:var(--color-green);font-size:0.65rem;"></i>
-                </div>
-                <span style="font-size:0.85rem;color:var(--text-secondary);text-decoration:line-through;opacity:0.6;">Create your account</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:10px;" id="check2">
-                <div style="width:22px;height:22px;border-radius:50%;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:800;color:var(--brand-cyan);">2</div>
-                <span style="font-size:0.85rem;color:var(--text-secondary);">Verify your email address</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:10px;">
-                <div style="width:22px;height:22px;border-radius:50%;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:800;color:var(--brand-cyan);">3</div>
-                <span style="font-size:0.85rem;color:var(--text-secondary);">Create your first project</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:10px;">
-                <div style="width:22px;height:22px;border-radius:50%;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:800;color:var(--brand-cyan);">4</div>
-                <span style="font-size:0.85rem;color:var(--text-secondary);">Run your first AI cost prediction</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:10px;">
-                <div style="width:22px;height:22px;border-radius:50%;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;font-weight:800;color:var(--brand-cyan);">5</div>
-                <span style="font-size:0.85rem;color:var(--text-secondary);">Invite your team members</span>
-              </div>
-            </div>
-          </div>
-
           <!-- Trial countdown -->
-          <div style="background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:var(--r-md);padding:14px 16px;margin-bottom:24px;display:flex;align-items:center;gap:12px;">
-            <i class="fas fa-clock" style="color:var(--color-accent);font-size:1.2rem;flex-shrink:0;"></i>
-            <div style="text-align:left;">
-              <div style="font-size:0.85rem;font-weight:700;color:var(--color-accent);">14-day free trial started</div>
-              <div style="font-size:0.75rem;color:var(--text-muted);">Trial ends <strong id="trialEndDate" style="color:var(--text-primary);"></strong> · No charge until then</div>
+          <div class="trial-countdown" style="text-align:left;">
+            <div class="trial-countdown-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <div class="trial-countdown-title">14-day free trial started</div>
+              <div class="trial-countdown-sub">
+                Trial ends <strong id="trialEndDate" style="color:var(--text-200);"></strong>
+                · No charge until then
+              </div>
             </div>
           </div>
 
-          <a href="../dashboard/main-dashboard.html" class="auth-submit" style="text-decoration:none;display:flex;">
-            <span><i class="fas fa-th-large"></i> Go to Dashboard</span>
+          <!-- Onboarding checklist -->
+          <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border-subtle);border-radius:var(--r-xl);padding:18px;margin-bottom:22px;text-align:left;">
+            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-600);margin-bottom:14px;">
+              <i class="fas fa-list-check" style="color:var(--cyan-400);margin-right:5px;"></i>
+              Your Onboarding Checklist
+            </div>
+            <div class="onboarding-list">
+              <div class="onboarding-item done">
+                <div class="onboarding-step-num"><i class="fas fa-check" style="font-size:0.6rem;"></i></div>
+                <div class="onboarding-item-text">Create your account</div>
+              </div>
+              <div class="onboarding-item">
+                <div class="onboarding-step-num">2</div>
+                <div class="onboarding-item-text">Verify your email address</div>
+              </div>
+              <div class="onboarding-item">
+                <div class="onboarding-step-num">3</div>
+                <div class="onboarding-item-text">Create your first project</div>
+              </div>
+              <div class="onboarding-item">
+                <div class="onboarding-step-num">4</div>
+                <div class="onboarding-item-text">Run your first AI cost prediction</div>
+              </div>
+              <div class="onboarding-item">
+                <div class="onboarding-step-num">5</div>
+                <div class="onboarding-item-text">Invite your team members</div>
+              </div>
+            </div>
+          </div>
+
+          <a href="../dashboard/main-dashboard.html"
+             class="form-submit" style="text-decoration:none;display:flex;margin-bottom:12px;">
+            <i class="fas fa-th-large"></i> Go to Dashboard
           </a>
 
-          <p style="font-size:0.8rem;color:var(--text-dim);margin-top:14px;">
-            Need help getting started?
-            <a href="../contact.html" style="color:var(--brand-cyan);text-decoration:none;font-weight:600;">Contact our onboarding team</a>
+          <p class="form-footer-text">
+            Need help?
+            <a href="../contact.html">Contact our onboarding team</a>
           </p>
         </div>
       </div>
 
-    </div>
-  </div>
+    </div><!-- /signup-form-card -->
+  </div><!-- /signup-right -->
+</div><!-- /signup-root -->
 
-  <script src="../js/main.js"></script>
-  <script>
-    'use strict';
+<div id="toastContainer"></div>
 
-    let currentStep  = 1;
-    let selectedPlan = 'professional';
-    let isAnnual     = false;
+<script src="../js/main.js"></script>
+<script>
+'use strict';
 
-    const planData = {
-      starter:      { name:'Starter Plan',      monthly:99,  annual:79,  features:['14-day free trial included','AI Predictor (50 predictions/mo)','Up to 5 projects','1 user','Email support'] },
-      professional: { name:'Professional Plan',  monthly:299, annual:239, features:['14-day free trial included','Full AI Predictor + Cost Calculator','All 6 hubs + Equipment Database','Up to 25 projects · 5 users','Priority support + API access'] },
-      enterprise:   { name:'Enterprise Plan',    monthly:899, annual:719, features:['14-day free trial included','Unlimited everything','Custom AI model training','SSO/SAML + RBAC','Dedicated account manager','SLA 99.9% uptime guarantee'] }
-    };
+// ── State ──────────────────────────────────────────────────────────────────
+let currentPanel  = 1;
+let selectedPlan  = 'professional';
+let isAnnual      = false;
 
-    // ── Step Navigation ────────────────────────────────────────────
-    function goToStep(step) {
-      // Hide current
-      document.getElementById(`signup-step-${currentStep}`)?.classList.remove('active');
+const PLANS = {
+  starter: {
+    name: 'Starter Plan',
+    monthly: 99, annual: 79,
+    features: [
+      '14-day free trial included',
+      'AI Predictor (50 predictions/mo)',
+      'Up to 5 projects · 1 user',
+      'Cost Calculator access',
+      'Email support'
+    ]
+  },
+  professional: {
+    name: 'Professional Plan',
+    monthly: 299, annual: 239,
+    features: [
+      '14-day free trial included',
+      'Unlimited AI predictions',
+      'Up to 25 projects · 5 users',
+      'All 6 hubs + Equipment DB',
+      'API access + Priority support'
+    ]
+  },
+  enterprise: {
+    name: 'Enterprise Plan',
+    monthly: 899, annual: 719,
+    features: [
+      '14-day free trial included',
+      'Unlimited everything',
+      'SSO/SAML + custom RBAC',
+      'Dedicated account manager',
+      'SLA 99.9% uptime guarantee'
+    ]
+  }
+};
 
-      // Update progress indicators
-      for (let i = 1; i <= 4; i++) {
-        const prog = document.getElementById(`prog-${i}`);
-        if (!prog) continue;
-        prog.classList.remove('active','done');
-        if (i < step)      prog.classList.add('done');
-        else if (i === step) prog.classList.add('active');
-      }
-      for (let i = 1; i <= 3; i++) {
-        const line = document.getElementById(`line-${i}`);
-        if (line) line.classList.toggle('done', i < step);
-      }
+// ── Panel navigation ───────────────────────────────────────────────────────
+function goToPanel(n) {
+  document.getElementById(`panel-${currentPanel}`)?.classList.remove('active');
 
-      // Mark done steps with checkmark
-      for (let i = 1; i < step; i++) {
-        const num = document.querySelector(`#prog-${i} .signup-step-num`);
-        if (num) num.innerHTML = '<i class="fas fa-check" style="font-size:0.65rem;"></i>';
-      }
+  // Update progress indicators
+  for (let i = 1; i <= 4; i++) {
+    const step = document.getElementById(`prog-${i}`);
+    if (!step) continue;
+    step.classList.remove('active','done');
+    if (i < n)      step.classList.add('done');
+    else if (i === n) step.classList.add('active');
 
-      currentStep = step;
-      const panel = document.getElementById(`signup-step-${step}`);
-      if (panel) {
-        panel.classList.add('active');
-        panel.scrollIntoView({ behavior:'smooth', block:'start' });
-      }
-    }
-
-    // ── SSO ────────────────────────────────────────────────────────
-    function handleSSO(provider) {
-      const btn = event.currentTarget;
-      const orig = btn.innerHTML;
-      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Connecting...`;
-      btn.disabled = true;
-      setTimeout(() => {
-        btn.innerHTML = orig;
-        btn.disabled = false;
-        window.SESMine?.showToast(`${provider.charAt(0).toUpperCase()+provider.slice(1)} SSO — configure in Admin → Integrations`, 'info');
-      }, 1800);
-    }
-
-    // ── Password Toggle ────────────────────────────────────────────
-    function togglePassword(inputId, btn) {
-      const input = document.getElementById(inputId);
-      if (!input) return;
-      const isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      btn.querySelector('i').className = isHidden ? 'fas fa-eye-slash' : 'fas fa-eye';
-    }
-
-    // ── Password Strength ──────────────────────────────────────────
-    function checkPasswordStrength(val) {
-      const segs  = [1,2,3,4].map(i => document.getElementById(`seg${i}`));
-      const label = document.getElementById('pwStrengthLabel');
-      if (!segs[0] || !label) return;
-
-      const hasUpper   = /[A-Z]/.test(val);
-      const hasLower   = /[a-z]/.test(val);
-      const hasNumber  = /\d/.test(val);
-      const hasSpecial = /[^A-Za-z0-9]/.test(val);
-      const longEnough = val.length >= 8;
-      const veryLong   = val.length >= 12;
-
-      let score = 0;
-      if (longEnough) score++;
-      if (hasUpper && hasLower) score++;
-      if (hasNumber) score++;
-      if (hasSpecial && veryLong) score++;
-
-      const configs = [
-        { color:'var(--color-red)',    text:'Too weak' },
-        { color:'var(--color-orange)', text:'Weak' },
-        { color:'var(--color-accent)', text:'Fair' },
-        { color:'var(--color-green)',  text:'Strong' }
-      ];
-
-      segs.forEach((seg, i) => {
-        seg.style.background = i < score
-          ? configs[Math.max(0, score-1)].color
-          : 'rgba(255,255,255,0.08)';
-      });
-
-      label.textContent = val.length === 0 ? 'Enter a password' : configs[Math.max(0, score-1)].text;
-      label.style.color = val.length === 0 ? 'var(--text-muted)' : configs[Math.max(0, score-1)].color;
-    }
-
-    // ── Step 1 Submit ──────────────────────────────────────────────
-    document.getElementById('step1Form')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      let valid = true;
-
-      const fields = [
-        { id:'firstName',       errId:'firstNameErr',       check: v => v.trim().length >= 1,          msg:'First name is required.' },
-        { id:'lastName',        errId:'lastNameErr',        check: v => v.trim().length >= 1,          msg:'Last name is required.' },
-        { id:'signupEmail',     errId:'signupEmailErr',     check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()), msg:'Please enter a valid work email.' },
-        { id:'signupPassword',  errId:'signupPasswordErr',  check: v => v.length >= 8,                 msg:'Password must be at least 8 characters.' },
-        { id:'confirmPassword', errId:'confirmPasswordErr', check: v => v === document.getElementById('signupPassword').value, msg:'Passwords do not match.' }
-      ];
-
-      fields.forEach(f => {
-        const input = document.getElementById(f.id);
-        const err   = document.getElementById(f.errId);
-        if (!input || !err) return;
-        if (!f.check(input.value)) {
-          input.classList.add('error');
-          err.textContent = f.msg;
-          err.classList.add('show');
-          valid = false;
-        } else {
-          input.classList.remove('error');
-          input.classList.add('success');
-          err.classList.remove('show');
-        }
-      });
-
-      // Terms check
-      const terms    = document.getElementById('termsCheck');
-      const termsErr = document.getElementById('termsErr');
-      if (!terms?.checked) {
-        if (termsErr) termsErr.classList.add('show');
-        valid = false;
+    // Restore number or checkmark
+    const circle = step.querySelector('.progress-step-circle');
+    if (circle) {
+      if (i < n) {
+        circle.innerHTML = '<i class="fas fa-check" style="font-size:0.6rem;"></i>';
+      } else if (i === 4) {
+        circle.innerHTML = '<i class="fas fa-check" style="font-size:0.6rem;"></i>';
       } else {
-        if (termsErr) termsErr.classList.remove('show');
-      }
-
-      if (!valid) return;
-
-      const btn = document.getElementById('step1Btn');
-      if (btn) { btn.classList.add('loading'); btn.disabled = true; }
-
-      // Simulate email check
-      setTimeout(() => {
-        if (btn) { btn.classList.remove('loading'); btn.disabled = false; }
-        goToStep(2);
-      }, 1200);
-    });
-
-    // ── Step 2 Submit ──────────────────────────────────────────────
-    document.getElementById('step2Form')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      let valid = true;
-
-      const required = [
-        { id:'company',  errId:'companyErr',  msg:'Company name is required.' },
-        { id:'jobTitle', errId:'jobTitleErr', msg:'Job title is required.' },
-        { id:'country',  errId:'countryErr',  msg:'Please select your country.' }
-      ];
-
-      required.forEach(f => {
-        const input = document.getElementById(f.id);
-        const err   = document.getElementById(f.errId);
-        if (!input || !err) return;
-        if (!input.value.trim()) {
-          input.classList.add('error');
-          err.textContent = f.msg;
-          err.classList.add('show');
-          valid = false;
-        } else {
-          input.classList.remove('error');
-          input.classList.add('success');
-          err.classList.remove('show');
-        }
-      });
-
-      if (!valid) return;
-
-      const btn = document.getElementById('step2Btn');
-      if (btn) { btn.classList.add('loading'); btn.disabled = true; }
-
-      setTimeout(() => {
-        if (btn) { btn.classList.remove('loading'); btn.disabled = false; }
-        goToStep(3);
-      }, 900);
-    });
-
-    // ── Plan Selection ─────────────────────────────────────────────
-    function selectPlan(plan) {
-      selectedPlan = plan;
-      document.querySelectorAll('.plan-option').forEach(opt => {
-        opt.classList.toggle('selected', opt.dataset.plan === plan);
-      });
-      updatePlanSummary();
-    }
-
-    function updatePlanSummary() {
-      const data  = planData[selectedPlan];
-      const price = isAnnual ? data.annual : data.monthly;
-      const nameEl     = document.getElementById('planSummaryName');
-      const priceEl    = document.getElementById('planSummaryPrice');
-      const featuresEl = document.getElementById('planSummaryFeatures');
-      if (nameEl)     nameEl.textContent  = data.name;
-      if (priceEl)    priceEl.textContent = `$${price}/mo${isAnnual ? ' (billed annually)' : ''}`;
-      if (featuresEl) {
-        featuresEl.innerHTML = data.features.map(f => `
-          <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text-secondary);">
-            <i class="fas fa-check" style="color:var(--brand-cyan);font-size:0.7rem;"></i> ${f}
-          </div>
-        `).join('');
+        circle.textContent = i;
       }
     }
+  }
 
-    // ── Billing Toggle ─────────────────────────────────────────────
-    function toggleBilling() {
-      isAnnual = !isAnnual;
-      const knob = document.getElementById('billingToggleKnob');
-      const bg   = document.getElementById('billingToggleBg');
-      if (knob) knob.style.transform = isAnnual ? 'translateX(20px)' : 'translateX(0)';
-      if (bg)   bg.style.background  = isAnnual ? 'rgba(0,212,255,0.2)' : 'rgba(255,255,255,0.1)';
-      updatePlanSummary();
-      window.SESMine?.showToast(
-        isAnnual ? 'Annual billing selected — save 20%!' : 'Monthly billing selected',
-        isAnnual ? 'success' : 'info', 2000
-      );
-    }
+  // Update progress lines
+  for (let i = 1; i <= 3; i++) {
+    const line = document.getElementById(`line-${i}`);
+    if (line) line.classList.toggle('done', i < n);
+  }
 
-    // ── Complete Signup ────────────────────────────────────────────
-    function completeSignup() {
-      const btn = document.getElementById('step3Btn');
-      if (btn) { btn.classList.add('loading'); btn.disabled = true; }
+  currentPanel = n;
+  const panel = document.getElementById(`panel-${n}`);
+  if (panel) {
+    panel.classList.add('active');
+    // Scroll to top of form
+    panel.closest('.signup-right')?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
 
-      setTimeout(() => {
-        if (btn) { btn.classList.remove('loading'); btn.disabled = false; }
+// ── SSO ────────────────────────────────────────────────────────────────────
+function handleSSO(provider, btn) {
+  const orig = btn.innerHTML;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Connecting...`;
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.innerHTML = orig;
+    btn.disabled = false;
+    showToast(`${provider.charAt(0).toUpperCase()+provider.slice(1)} SSO — configure in Admin → Security → Identity Providers`, 'info', 4000);
+  }, 1800);
+}
 
-        // Set success screen data
-        const email = document.getElementById('signupEmail')?.value || 'your email';
-        const successEmailEl = document.getElementById('successEmail');
-        if (successEmailEl) successEmailEl.textContent = email;
+// ── Password toggle ────────────────────────────────────────────────────────
+function togglePw(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
 
-        // Trial end date — 14 days from now
-        const trialEnd = new Date();
-        trialEnd.setDate(trialEnd.getDate() + 14);
-        const trialEndEl = document.getElementById('trialEndDate');
-        if (trialEndEl) {
-          trialEndEl.textContent = trialEnd.toLocaleDateString('en-AU', {
-            day: 'numeric', month: 'long', year: 'numeric'
-          });
-        }
+// ── Password strength ──────────────────────────────────────────────────────
+function updatePasswordStrength(val) {
+  const segs  = [1,2,3,4].map(i => document.getElementById(`seg${i}`));
+  const label = document.getElementById('pwStrengthText');
+  if (!segs[0] || !label) return;
 
-        goToStep(4);
-        window.SESMine?.showToast('Account created! Welcome to SESMine 🎉', 'success', 4000);
-      }, 2000);
-    }
+  const checks = [
+    val.length >= 8,
+    /[A-Z]/.test(val) && /[a-z]/.test(val),
+    /\d/.test(val),
+    /[^A-Za-z0-9]/.test(val) && val.length >= 12
+  ];
+  const score = checks.filter(Boolean).length;
 
-    // ── Clear field errors on input ────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.form-input, .form-select').forEach(input => {
-        input.addEventListener('input', () => {
-          input.classList.remove('error');
-          const errId = input.id + 'Err';
-          document.getElementById(errId)?.classList.remove('show');
-        });
-        input.addEventListener('change', () => {
-          input.classList.remove('error');
-          const errId = input.id + 'Err';
-          document.getElementById(errId)?.classList.remove('show');
-        });
+  const levels = [
+    { color: 'var(--red-400)',    text: 'Too weak',   label: 'Use 8+ characters' },
+    { color: 'var(--orange-400)', text: 'Weak',        label: 'Add uppercase & lowercase' },
+    { color: 'var(--gold-400)',   text: 'Fair',        label: 'Add numbers' },
+    { color: 'var(--green-400)',  text: 'Strong',      label: 'Excellent password!' }
+  ];
+
+  const level = val.length === 0 ? null : levels[Math.max(0, score - 1)];
+
+  segs.forEach((seg, i) => {
+    seg.style.background = (level && i < score)
+      ? level.color
+      : 'rgba(255,255,255,0.07)';
+  });
+
+  if (!level) {
+    label.textContent = 'Enter a password';
+    label.style.color = 'var(--text-500)';
+  } else {
+    label.textContent = `${level.text} — ${level.label}`;
+    label.style.color = level.color;
+  }
+}
+
+// ── Field validation helpers ───────────────────────────────────────────────
+const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function setField(id, errId, valid) {
+  const input = document.getElementById(id);
+  const err   = document.getElementById(errId);
+  if (input) {
+    input.classList.toggle('error',   !valid);
+    input.classList.toggle('success',  valid);
+  }
+  if (err) err.classList.toggle('show', !valid);
+  return valid;
+}
+
+function clearField(id, errId) {
+  document.getElementById(id)?.classList.remove('error','success');
+  document.getElementById(errId)?.classList.remove('show');
+}
+
+function setLoading(btnId, state) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.classList.toggle('loading', state);
+  btn.disabled = state;
+}
+
+function showFormAlert(alertId, msgId, msg) {
+  const alert = document.getElementById(alertId);
+  const msgEl = document.getElementById(msgId);
+  if (alert) alert.classList.add('show');
+  if (msgEl && msg) msgEl.textContent = msg;
+}
+
+function hideFormAlert(alertId) {
+  document.getElementById(alertId)?.classList.remove('show');
+}
+
+// ── Panel 1 submit ─────────────────────────────────────────────────────────
+document.getElementById('form-1')?.addEventListener('submit', e => {
+  e.preventDefault();
+  hideFormAlert('p1Alert');
+
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName  = document.getElementById('lastName').value.trim();
+  const email     = document.getElementById('signupEmail').value.trim();
+  const password  = document.getElementById('signupPassword').value;
+  const confirm   = document.getElementById('confirmPassword').value;
+  const terms     = document.getElementById('termsCheck').checked;
+  let valid = true;
+
+  if (!firstName) { setField('firstName','firstNameErr',false); valid = false; }
+  else             setField('firstName','firstNameErr',true);
+
+  if (!lastName)  { setField('lastName','lastNameErr',false); valid = false; }
+  else             setField('lastName','lastNameErr',true);
+
+  if (!emailRx.test(email)) { setField('signupEmail','signupEmailErr',false); valid = false; }
+  else                        setField('signupEmail','signupEmailErr',true);
+
+  if (password.length < 8) { setField('signupPassword','signupPasswordErr',false); valid = false; }
+  else                       setField('signupPassword','signupPasswordErr',true);
+
+  if (confirm !== password || !confirm) {
+    setField('confirmPassword','confirmPasswordErr',false);
+    valid = false;
+  } else {
+    setField('confirmPassword','confirmPasswordErr',true);
+  }
+
+  if (!terms) {
+    document.getElementById('termsErr')?.classList.add('show');
+    valid = false;
+  } else {
+    document.getElementById('termsErr')?.classList.remove('show');
+  }
+
+  if (!valid) {
+    showFormAlert('p1Alert','p1AlertMsg','Please fix the errors below before continuing.');
+    return;
+  }
+
+  setLoading('p1Btn', true);
+  // Simulate email uniqueness check
+  setTimeout(() => {
+    setLoading('p1Btn', false);
+    goToPanel(2);
+  }, 1100);
+});
+
+// ── Panel 2 submit ─────────────────────────────────────────────────────────
+document.getElementById('form-2')?.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const company  = document.getElementById('company').value.trim();
+  const jobTitle = document.getElementById('jobTitle').value.trim();
+  const country  = document.getElementById('country').value;
+  let valid = true;
+
+  if (!company)  { setField('company','companyErr',false); valid = false; }
+  else            setField('company','companyErr',true);
+
+  if (!jobTitle) { setField('jobTitle','jobTitleErr',false); valid = false; }
+  else            setField('jobTitle','jobTitleErr',true);
+
+  if (!country)  { setField('country','countryErr',false); valid = false; }
+  else            setField('country','countryErr',true);
+
+  if (!valid) return;
+
+  setLoading('p2Btn', true);
+  setTimeout(() => {
+    setLoading('p2Btn', false);
+    goToPanel(3);
+    updatePlanSummary();
+  }, 900);
+});
+
+// ── Plan selection ─────────────────────────────────────────────────────────
+function selectPlan(plan) {
+  selectedPlan = plan;
+  document.querySelectorAll('.plan-option').forEach(opt => {
+    opt.classList.toggle('selected', opt.dataset.plan === plan);
+  });
+  updatePlanSummary();
+}
+
+function updatePlanSummary() {
+  const data  = PLANS[selectedPlan];
+  const price = isAnnual ? data.annual : data.monthly;
+  const suffix = isAnnual ? '/mo (billed annually)' : '/mo';
+
+  const nameEl     = document.getElementById('summaryName');
+  const priceEl    = document.getElementById('summaryPrice');
+  const featuresEl = document.getElementById('summaryFeatures');
+
+  if (nameEl)  nameEl.textContent  = data.name;
+  if (priceEl) priceEl.textContent = `$${price}${suffix}`;
+
+  if (featuresEl) {
+    featuresEl.innerHTML = data.features.map(f => `
+      <div class="plan-summary-feature">
+        <i class="fas fa-check"></i> ${f}
+      </div>
+    `).join('');
+  }
+
+  // Update price labels in plan options
+  const prices = {
+    starter:      { monthly: 99,  annual: 79  },
+    professional: { monthly: 299, annual: 239 },
+    enterprise:   { monthly: 899, annual: 719 }
+  };
+  Object.entries(prices).forEach(([key, val]) => {
+    const el = document.getElementById(`price-${key}`);
+    if (el) el.textContent = `$${isAnnual ? val.annual : val.monthly}/mo`;
+  });
+}
+
+// ── Billing toggle ─────────────────────────────────────────────────────────
+function toggleBilling() {
+  isAnnual = !isAnnual;
+  const toggle = document.getElementById('billingToggle');
+  if (toggle) toggle.classList.toggle('on', isAnnual);
+  updatePlanSummary();
+  showToast(
+    isAnnual
+      ? '🎉 Annual billing selected — you save 20%!'
+      : 'Monthly billing selected',
+    isAnnual ? 'success' : 'info',
+    2500
+  );
+}
+
+// ── Complete signup ────────────────────────────────────────────────────────
+function completeSignup() {
+  setLoading('p3Btn', true);
+
+  setTimeout(() => {
+    setLoading('p3Btn', false);
+
+    // Populate success screen
+    const email = document.getElementById('signupEmail')?.value || 'your email';
+    const successEmailEl = document.getElementById('successEmail');
+    if (successEmailEl) successEmailEl.textContent = email;
+
+    // Trial end date — 14 days from now
+    const trialEnd = new Date();
+    trialEnd.setDate(trialEnd.getDate() + 14);
+    const trialEndEl = document.getElementById('trialEndDate');
+    if (trialEndEl) {
+      trialEndEl.textContent = trialEnd.toLocaleDateString('en-AU', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
       });
+    }
 
-      // Init plan summary
-      updatePlanSummary();
-    });
-  </script>
+    goToPanel(4);
+    showToast('Account created! Welcome to SESMine 🎉', 'success', 5000);
+  }, 2200);
+}
+
+// ── Clear errors on input ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Auto-clear field errors
+  const fieldMap = {
+    firstName:       'firstNameErr',
+    lastName:        'lastNameErr',
+    signupEmail:     'signupEmailErr',
+    signupPassword:  'signupPasswordErr',
+    confirmPassword: 'confirmPasswordErr',
+    company:         'companyErr',
+    jobTitle:        'jobTitleErr',
+    country:         'countryErr'
+  };
+  Object.entries(fieldMap).forEach(([id, errId]) => {
+    const el = document.getElementById(id);
+    el?.addEventListener('input',  () => { clearField(id, errId); hideFormAlert('p1Alert'); });
+    el?.addEventListener('change', () => { clearField(id, errId); });
+  });
+
+  // Terms checkbox
+  document.getElementById('termsCheck')?.addEventListener('change', () => {
+    document.getElementById('termsErr')?.classList.remove('show');
+  });
+
+  // Init plan summary
+  updatePlanSummary();
+});
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function showToast(msg, type = 'info', duration = 3500) {
+  const icons = {
+    success: 'fa-check-circle',
+    error:   'fa-exclamation-circle',
+    warning: 'fa-exclamation-triangle',
+    info:    'fa-info-circle'
+  };
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `
+    <i class="fas ${icons[type] || icons.info} toast-icon"></i>
+    <span class="toast-msg">${msg}</span>
+    <i class="fas fa-times toast-close" onclick="this.parentElement.remove()"></i>
+    <div class="toast-progress" style="animation-duration:${duration}ms;"></div>
+  `;
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, duration);
+}
+</script>
 </body>
 </html>
 
