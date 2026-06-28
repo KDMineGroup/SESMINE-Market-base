@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Industry News — SESMine Intelligence Platform</title>
+  <meta name="description" content="Real-time mining industry news, commodity updates, and regulatory intelligence from global sources." />
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+  <style>
+    .news-hero {
+      padding: 140px 0 70px;
+      background: linear-gradient(160deg, #020810 0%, #071224 60%, #040c1a 100%);
+      position: relative; overflow: hidden;
+    }
+    .news-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 56px 56px;
+    }
+    .news-filter-bar {
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap; margin-bottom: 32px;
+    }
+    .filter-btn {
+      padding: 7px 16px;
+      border-radius: 99px;
+      font-size: 0.78rem; font-weight: 700;
+      border: 1px solid var(--border-default);
+      background: var(--surface-1);
+      color: var(--text-400);
+      cursor: pointer; transition: all 0.2s ease;
+      font-family: var(--font-body);
+    }
+    .filter-btn:hover { background: var(--surface-3); color: var(--text-100); }
+    .filter-btn.active {
+      background: rgba(0,212,255,0.1);
+      border-color: rgba(0,212,255,0.25);
+      color: var(--cyan-500);
+    }
+    .news-featured {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .news-featured-main {
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 20px;
+      overflow: hidden;
+      text-decoration: none; color: inherit;
+      display: block;
+      transition: all 0.25s ease;
+    }
+    .news-featured-main:hover {
+      border-color: rgba(0,212,255,0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.4);
+    }
+    .news-featured-main img {
+      width: 100%; height: 280px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .news-featured-main:hover img { transform: scale(1.04); }
+    .news-featured-side {
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .news-side-card {
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 14px; overflow: hidden;
+      text-decoration: none; color: inherit;
+      display: flex; gap: 0;
+      transition: all 0.2s ease;
+      flex: 1;
+    }
+    .news-side-card:hover {
+      border-color: rgba(0,212,255,0.15);
+      transform: translateX(3px);
+    }
+    .news-side-card img {
+      width: 100px; height: 100%;
+      object-fit: cover; flex-shrink: 0;
+    }
+    .news-side-body { padding: 14px; flex: 1; min-width: 0; }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .news-card {
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 16px; overflow: hidden;
+      text-decoration: none; color: inherit;
+      display: block;
+      transition: all 0.25s ease;
+    }
+    .news-card:hover {
+      border-color: rgba(0,212,255,0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+    }
+    .news-card img {
+      width: 100%; height: 180px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .news-card:hover img { transform: scale(1.05); }
+    .news-card-body { padding: 16px; }
+    .news-category-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 99px;
+      font-size: 0.62rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .news-sidebar-card {
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 14px; padding: 18px;
+      margin-bottom: 16px;
+    }
+    .trending-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .trending-item:last-child { border-bottom: none; }
+    .trending-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--cyan-500); flex-shrink: 0;
+      width: 20px;
+    }
+    .commodity-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .commodity-row:last-child { border-bottom: none; }
+    .load-more-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; width: 100%; padding: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--text-300); cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-body);
+    }
+    .load-more-btn:hover {
+      background: var(--surface-3);
+      border-color: rgba(0,212,255,0.2);
+      color: var(--cyan-500);
+    }
+    .skeleton-news {
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.04) 25%,
+        rgba(255,255,255,0.08) 50%,
+        rgba(255,255,255,0.04) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.8s infinite;
+      border-radius: 16px;
+    }
+    @media (max-width: 1024px) {
+      .news-featured { grid-template-columns: 1fr; }
+      .news-grid     { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .news-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png"
+           class="nav-logo-img" alt="SESMine" />
+      <span class="nav-logo-name">SES<em>MINE</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"   class="nav-link">Home</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="news.html"    class="nav-link active">News</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="auth/login.html"  class="btn btn-ghost btn-sm">Sign In</a>
+      <a href="auth/signup.html" class="btn btn-cyan btn-sm">
+        <i class="fas fa-rocket"></i> Get Started
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="news-hero">
+  <div class="container" style="position:relative;z-index:1;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+      <div>
+        <div class="section-label" style="margin-bottom:16px;" class="hero-anim-1">
+          <span class="section-label-dot"></span>
+          Live Industry Intelligence
+        </div>
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-0.025em;margin-bottom:10px;" class="hero-anim-2">
+          Mining Industry News
+        </h1>
+        <p style="font-size:0.95rem;color:#8BA4BC;max-width:520px;line-height:1.7;" class="hero-anim-3">
+          Real-time news from the world's most trusted mining, commodities,
+          and energy sources — curated and updated every 30 minutes.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;" class="hero-anim-4">
+        <div style="
+          display:flex;align-items:center;gap:6px;
+          padding:7px 14px;
+          background:rgba(34,197,94,0.08);
+          border:1px solid rgba(34,197,94,0.2);
+          border-radius:99px;
+          font-size:0.75rem;font-weight:700;color:#4ADE80;
+        ">
+          <span style="width:6px;height:6px;border-radius:50%;background:#22C55E;animation:pulse 2s infinite;"></span>
+          Live Feed Active
+        </div>
+        <div style="font-size:0.72rem;color:#6688A0;" id="lastUpdated">Updating...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ticker -->
+<div style="
+  background:rgba(4,12,26,0.98);
+  border-top:1px solid rgba(255,255,255,0.05);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  padding:10px 0; overflow:hidden; position:relative;
+">
+  <div style="
+    position:absolute;top:0;left:0;bottom:0;width:80px;z-index:2;
+    background:linear-gradient(90deg,rgba(4,12,26,1),transparent);
+  "></div>
+  <div style="
+    position:absolute;top:0;right:0;bottom:0;width:80px;z-index:2;
+    background:linear-gradient(270deg,rgba(4,12,26,1),transparent);
+  "></div>
+  <div id="commodityTicker" style="overflow:hidden;"></div>
+</div>
+
+<!-- Main Content -->
+<section style="padding:48px 0;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start;">
+
+      <!-- Main Feed -->
+      <div>
+        <!-- Filter bar -->
+        <div class="news-filter-bar">
+          <button class="filter-btn active" data-filter="all"          onclick="filterNews('all',this)">All News</button>
+          <button class="filter-btn"        data-filter="production"   onclick="filterNews('production',this)">Production</button>
+          <button class="filter-btn"        data-filter="commodities"  onclick="filterNews('commodities',this)">Commodities</button>
+          <button class="filter-btn"        data-filter="sustainability"onclick="filterNews('sustainability',this)">Sustainability</button>
+          <button class="filter-btn"        data-filter="technology"   onclick="filterNews('technology',this)">Technology</button>
+          <button class="filter-btn"        data-filter="mergers"      onclick="filterNews('mergers',this)">M&A</button>
+          <button class="filter-btn"        data-filter="policy"       onclick="filterNews('policy',this)">Policy</button>
+          <div class="search-wrap" style="margin-left:auto;">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" id="newsSearch"
+                   placeholder="Search news..."
+                   oninput="searchNews(this.value)" />
+          </div>
+        </div>
+
+        <!-- Loading skeletons -->
+        <div id="newsSkeletons">
+          <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-bottom:40px;">
+            <div class="skeleton-news" style="height:380px;"></div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div class="skeleton-news" style="height:120px;"></div>
+              <div class="skeleton-news" style="height:120px;"></div>
+              <div class="skeleton-news" style="height:120px;"></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+            ${[1,2,3,4,5,6].map(() => `<div class="skeleton-news" style="height:280px;"></div>`).join('')}
+          </div>
+        </div>
+
+        <!-- Featured articles -->
+        <div id="newsFeatured" style="display:none;" class="animate-fade-up"></div>
+
+        <!-- News grid -->
+        <div id="newsGrid" style="display:none;" class="animate-fade-up"></div>
+
+        <!-- Load more -->
+        <button class="load-more-btn" id="loadMoreBtn" style="display:none;" onclick="loadMore()">
+          <i class="fas fa-sync-alt"></i> Load More Articles
+        </button>
+
+        <!-- Empty state -->
+        <div id="newsEmpty" style="display:none;text-align:center;padding:60px 20px;">
+          <i class="fas fa-newspaper" style="font-size:2.5rem;color:rgba(255,255,255,0.1);display:block;margin-bottom:16px;"></i>
+          <p style="color:var(--text-600);font-size:0.9rem;">No articles match your search.</p>
+          <button class="btn btn-ghost" style="margin-top:16px;" onclick="filterNews('all',document.querySelector('.filter-btn'))">
+            Clear Filter
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div style="position:sticky;top:80px;">
+
+        <!-- Trending -->
+        <div class="news-sidebar-card">
+          <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#6688A0;margin-bottom:14px;">
+            <i class="fas fa-fire" style="color:#F97316;margin-right:5px;"></i> Trending Topics
+          </div>
+          <div id="trendingList"></div>
+        </div>
+
+        <!-- Live Commodities -->
+        <div class="news-sidebar-card">
+          <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#6688A0;margin-bottom:14px;">
+            <i class="fas fa-chart-line" style="color:#00D4FF;margin-right:5px;"></i> Commodity Prices
+          </div>
+          <div id="commodityList"></div>
+          <div style="font-size:0.65rem;color:#4A6478;margin-top:10px;text-align:right;">
+            <i class="fas fa-clock" style="margin-right:3px;"></i>
+            Indicative prices · <span id="priceTime"></span>
+          </div>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="news-sidebar-card" style="
+          background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(37,99,235,0.04));
+          border-color:rgba(0,212,255,0.12);
+        ">
+          <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#00D4FF;margin-bottom:12px;">
+            <i class="fas fa-envelope" style="margin-right:5px;"></i> Weekly Digest
+          </div>
+          <p style="font-size:0.8rem;color:#8BA4BC;line-height:1.65;margin-bottom:14px;">
+            Get the top 10 mining stories delivered every Monday morning.
+          </p>
+          <form id="newsletterForm" onsubmit="subscribeNewsletter(event)">
+            <input type="email" class="form-input" id="newsletterEmail"
+                   placeholder="your@email.com"
+                   style="margin-bottom:8px;font-size:0.82rem;" required />
+            <button type="submit" class="btn btn-cyan btn-full btn-sm">
+              <i class="fas fa-paper-plane"></i> Subscribe Free
+            </button>
+          </form>
+          <div id="newsletterSuccess" style="display:none;text-align:center;padding:8px 0;">
+            <i class="fas fa-check-circle" style="color:#22C55E;margin-right:5px;"></i>
+            <span style="font-size:0.8rem;color:#4ADE80;font-weight:600;">Subscribed!</span>
+          </div>
+        </div>
+
+        <!-- Sources -->
+        <div class="news-sidebar-card">
+          <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#6688A0;margin-bottom:12px;">
+            <i class="fas fa-rss" style="color:#F97316;margin-right:5px;"></i> News Sources
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            ${['Mining Journal','Reuters Commodities','S&P Global Platts','Bloomberg Mining','Financial Review','Mining Technology','ABC Business','Wood Mackenzie'].map(s => `
+              <div style="display:flex;align-items:center;gap:7px;font-size:0.78rem;color:#8BA4BC;">
+                <i class="fas fa-circle" style="font-size:0.35rem;color:rgba(0,212,255,0.5);"></i>
+                ${s}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-bottom:24px;border-bottom:1px solid var(--border-default);margin-bottom:24px;">
+      <div class="footer-brand-logo">
+        <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" style="height:32px;" />
+        <span class="footer-brand-name">SES<em>MINE</em></span>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <a href="index.html"   class="footer-link">Home</a>
+        <a href="pricing.html" class="footer-link">Pricing</a>
+        <a href="contact.html" class="footer-link">Contact</a>
+        <a href="#"            class="footer-link">Privacy</a>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      © 2026 SESMine Intelligence Pty Ltd · News sourced from public APIs and industry publications.
+    </div>
+  </div>
+</footer>
+
+<div id="toastContainer"></div>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+'use strict';
+
+/* ── State ── */
+let allArticles     = [];
+let filteredArticles= [];
+let displayCount    = 9;
+let currentFilter   = 'all';
+let currentSearch   = '';
+
+/* ── Category config ── */
+const catConfig = {
+  production:    { color:'#00D4FF', bg:'rgba(0,212,255,0.1)',   border:'rgba(0,212,255,0.2)' },
+  commodities:   { color:'#D4AF37', bg:'rgba(212,175,55,0.1)',  border:'rgba(212,175,55,0.2)' },
+  sustainability:{ color:'#22C55E', bg:'rgba(34,197,94,0.1)',   border:'rgba(34,197,94,0.2)' },
+  technology:    { color:'#A855F7', bg:'rgba(168,85,247,0.1)',  border:'rgba(168,85,247,0.2)' },
+  mergers:       { color:'#F97316', bg:'rgba(249,115,22,0.1)',  border:'rgba(249,115,22,0.2)' },
+  policy:        { color:'#60A5FA', bg:'rgba(96,165,250,0.1)',  border:'rgba(96,165,250,0.2)' },
+  mining:        { color:'#00D4FF', bg:'rgba(0,212,255,0.1)',   border:'rgba(0,212,255,0.2)' }
+};
+
+function getCatStyle(cat) {
+  return catConfig[cat] || catConfig.mining;
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', async () => {
+  renderCommoditySidebar();
+  renderTrending();
+  updateLastUpdated();
+
+  /* Fetch news */
+  const queries = ['mining industry 2026','iron ore copper gold mining','ESG mining sustainability','mining technology autonomous'];
+  const results = await Promise.all(queries.map(q => SES.News.fetch(q, 'en', 6)));
+  const merged  = results.flat();
+
+  /* Deduplicate by title */
+  const seen = new Set();
+  allArticles = merged.filter(a => {
+    if (seen.has(a.title)) return false;
+    seen.add(a.title);
+    return true;
+  });
+
+  filteredArticles = [...allArticles];
+
+  /* Hide skeletons */
+  document.getElementById('newsSkeletons').style.display = 'none';
+  document.getElementById('newsFeatured').style.display  = 'block';
+  document.getElementById('newsGrid').style.display      = 'block';
+
+  renderFeatured();
+  renderGrid();
+});
+
+/* ── Render Featured ── */
+function renderFeatured() {
+  const el   = document.getElementById('newsFeatured');
+  const main = filteredArticles[0];
+  const side = filteredArticles.slice(1, 4);
+  if (!el || !main) return;
+
+  const mainCat = getCatStyle(main.category);
+  el.innerHTML = `
+    <div class="news-featured">
+      <!-- Main featured -->
+      <a href="${main.url}" target="_blank" rel="noopener" class="news-featured-main">
+        <div style="position:relative;overflow:hidden;">
+          <img src="${main.image}" alt="${main.title}"
+               onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80'" />
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(7,18,36,0.95));"></div>
+          <div style="position:absolute;top:14px;left:14px;">
+            <span style="
+              padding:4px 12px;border-radius:99px;
+              font-size:0.62rem;font-weight:800;
+              text-transform:uppercase;letter-spacing:0.08em;
+              background:${mainCat.bg};border:1px solid ${mainCat.border};
+              color:${mainCat.color};
+            ">${main.category}</span>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;line-height:1.35;color:#F0F6FF;margin-bottom:8px;">
+              ${main.title}
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.72rem;color:#8BA4BC;">
+              <span><i class="fas fa-newspaper" style="margin-right:3px;color:rgba(0,212,255,0.5);"></i>${main.source}</span>
+              <span>·</span>
+              <span><i class="fas fa-clock" style="margin-right:3px;"></i>${SES.News.formatRelativeTime(main.publishedAt)}</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:16px;">
+          <p style="font-size:0.85rem;color:#8BA4BC;line-height:1.7;
+                    display:-webkit-box;-webkit-line-clamp:2;
+                    -webkit-box-orient:vertical;overflow:hidden;">
+            ${main.description}
+          </p>
+        </div>
+      </a>
+
+      <!-- Side cards -->
+      <div class="news-featured-side">
+        ${side.map(a => {
+          const cat = getCatStyle(a.category);
+          return `
+            <a href="${a.url}" target="_blank" rel="noopener" class="news-side-card">
+              <div style="position:relative;width:100px;flex-shrink:0;overflow:hidden;">
+                <img src="${a.image}" alt="${a.title}" style="width:100%;height:100%;object-fit:cover;"
+                     onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=200&q=60'" />
+              </div>
+              <div class="news-side-body">
+                <span style="
+                  font-size:0.58rem;font-weight:800;
+                  text-transform:uppercase;letter-spacing:0.08em;
+                  padding:2px 7px;border-radius:99px;
+                  background:${cat.bg};border:1px solid ${cat.border};
+                  color:${cat.color};
+                  display:inline-block;margin-bottom:6px;
+                ">${a.category}</span>
+                <div style="font-size:0.8rem;font-weight:700;line-height:1.4;color:#F0F6FF;margin-bottom:5px;
+                            display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                  ${a.title}
+                </div>
+                <div style="font-size:0.68rem;color:#6688A0;">
+                  ${a.source} · ${SES.News.formatRelativeTime(a.publishedAt)}
+                </div>
+              </div>
+            </a>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+/* ── Render Grid ── */
+function renderGrid() {
+  const el      = document.getElementById('newsGrid');
+  const loadBtn = document.getElementById('loadMoreBtn');
+  const emptyEl = document.getElementById('newsEmpty');
+  if (!el) return;
+
+  const articles = filteredArticles.slice(4, displayCount + 4);
+
+  if (!filteredArticles.length) {
+    el.innerHTML = '';
+    emptyEl.style.display = 'block';
+    loadBtn.style.display = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  el.innerHTML = `
+    <div class="news-grid">
+      ${articles.map(a => {
+        const cat = getCatStyle(a.category);
+        return `
+          <a href="${a.url}" target="_blank" rel="noopener" class="news-card">
+            <div style="position:relative;overflow:hidden;">
+              <img src="${a.image}" alt="${a.title}"
+                   onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80'" />
+              <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(7,18,36,0.6));"></div>
+            </div>
+            <div class="news-card-body">
+              <span class="news-category-badge" style="background:${cat.bg};border:1px solid ${cat.border};color:${cat.color};">
+                ${a.category}
+              </span>
+              <div style="font-size:0.88rem;font-weight:700;line-height:1.45;color:#F0F6FF;margin-bottom:8px;
+                          display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                ${a.title}
+              </div>
+              <div style="font-size:0.78rem;color:#6688A0;line-height:1.6;margin-bottom:12px;
+                          display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                ${a.description}
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:0.7rem;font-weight:700;color:#94A3B8;">
+                  <i class="fas fa-newspaper" style="margin-right:3px;color:rgba(0,212,255,0.4);"></i>${a.source}
+                </span>
+                <span style="font-size:0.7rem;color:#6688A0;">
+                  <i class="fas fa-clock" style="margin-right:3px;"></i>${SES.News.formatRelativeTime(a.publishedAt)}
+                </span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  const hasMore = filteredArticles.length > displayCount + 4;
+  loadBtn.style.display = hasMore ? 'flex' : 'none';
+}
+
+/* ── Filter ── */
+function filterNews(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  applyFilters();
+}
+
+function searchNews(query) {
+  currentSearch = query.toLowerCase();
+  applyFilters();
+}
+
+function applyFilters() {
+  filteredArticles = allArticles.filter(a => {
+    const matchFilter = currentFilter === 'all' || a.category === currentFilter;
+    const matchSearch = !currentSearch ||
+      a.title.toLowerCase().includes(currentSearch) ||
+      a.description.toLowerCase().includes(currentSearch) ||
+      a.source.toLowerCase().includes(currentSearch);
+    return matchFilter && matchSearch;
+  });
+  displayCount = 9;
+  renderFeatured();
+  renderGrid();
+}
+
+/* ── Load more ── */
+function loadMore() {
+  displayCount += 6;
+  renderGrid();
+  SES.Toast.info('Loaded more articles.');
+}
+
+/* ── Commodity sidebar ── */
+function renderCommoditySidebar() {
+  const el = document.getElementById('commodityList');
+  const pt = document.getElementById('priceTime');
+  if (!el) return;
+
+  const commodities = SESConfig.commodities;
+  el.innerHTML = commodities.map(c => {
+    const up    = c.change >= 0;
+    const color = up ? '#4ADE80' : '#FCA5A5';
+    const arrow = up ? '▲' : '▼';
+    return `
+      <div class="commodity-row">
+        <div style="display:flex;align-items:center;gap:7px;">
+          <i class="fas ${c.icon}" style="color:rgba(0,212,255,0.5);font-size:0.72rem;width:14px;"></i>
+          <span style="font-size:0.82rem;font-weight:600;color:#D4E0F0;">${c.name}</span>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.82rem;font-weight:700;color:#F0F6FF;font-family:'JetBrains Mono',monospace;">
+            $${c.price.toLocaleString()}
+          </div>
+          <div style="font-size:0.65rem;font-weight:700;color:${color};">
+            ${arrow} ${Math.abs(c.change)}%
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (pt) pt.textContent = new Date().toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' });
+}
+
+/* ── Trending ── */
+function renderTrending() {
+  const el = document.getElementById('trendingList');
+  if (!el) return;
+  const topics = [
+    'Iron Ore Prices', 'Lithium Supply Chain', 'Net Zero Mining',
+    'Autonomous Haulage', 'Critical Minerals', 'ESG Reporting',
+    'Copper Demand', 'Mine Safety AI'
+  ];
+  el.innerHTML = topics.map((t, i) => `
+    <div class="trending-item">
+      <span class="trending-num">${String(i+1).padStart(2,'0')}</span>
+      <a href="#" onclick="searchNews('${t.toLowerCase()}');document.getElementById('newsSearch').value='${t}';return false;"
+         style="font-size:0.82rem;font-weight:600;color:#D4E0F0;text-decoration:none;
+                transition:color 0.2s ease;"
+         onmouseover="this.style.color='#00D4FF'"
+         onmouseout="this.style.color='#D4E0F0'">
+        ${t}
+      </a>
+    </div>
+  `).join('');
+}
+
+/* ── Last updated ── */
+function updateLastUpdated() {
+  const el = document.getElementById('lastUpdated');
+  if (el) el.textContent = `Updated ${new Date().toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}`;
+  setTimeout(updateLastUpdated, 30 * 60 * 1000);
+}
+
+/* ── Newsletter ── */
+function subscribeNewsletter(e) {
+  e.preventDefault();
+  const email = document.getElementById('newsletterEmail').value;
+  if (!email) return;
+  document.getElementById('newsletterForm').style.display    = 'none';
+  document.getElementById('newsletterSuccess').style.display = 'block';
+  SES.Toast.success(`Subscribed! Weekly digest will arrive at ${email}`);
+}
+</script>
+</body>
+</html>
+
