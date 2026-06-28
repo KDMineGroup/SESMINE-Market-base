@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — SESMine</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .welcome-bar {
+      background: linear-gradient(135deg, rgba(245,166,35,0.08), rgba(59,130,246,0.06));
+      border: 1px solid rgba(245,166,35,0.15);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .welcome-text h2 { font-size: 1.2rem; margin-bottom: 4px; }
+    .welcome-text p  { font-size: 0.85rem; color: var(--text-muted); }
+    .activity-feed {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background var(--transition-fast);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-item:hover { background: rgba(255,255,255,0.02); }
+    .activity-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .activity-content strong { display: block; font-size: 0.85rem; margin-bottom: 2px; }
+    .activity-content span   { font-size: 0.78rem; color: var(--text-muted); }
+    .activity-time { font-size: 0.72rem; color: var(--text-muted); margin-left: auto; white-space: nowrap; flex-shrink: 0; }
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .quick-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      text-align: center;
+    }
+    .quick-action:hover {
+      border-color: rgba(245,166,35,0.3);
+      background: rgba(245,166,35,0.05);
+      transform: translateY(-2px);
+    }
+    .quick-action i { font-size: 1.3rem; color: var(--color-accent); }
+    .quick-action span { font-size: 0.78rem; color: var(--text-secondary); font-weight: 500; }
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 199;
+      display: none;
+    }
+    .sidebar-overlay.active { display: block; }
+  </style>
+</head>
+<body class="bg-primary">
+
+  <div class="app-layout">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-logo">
+          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
+        </a>
+        <button id="sidebarClose" style="color:var(--text-muted); font-size:1rem; display:none;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Overview</div>
+          <a href="main-dashboard.html" class="sidebar-link active">
+            <i class="fas fa-th-large"></i> Dashboard
+          </a>
+          <a href="analytics.html" class="sidebar-link">
+            <i class="fas fa-chart-bar"></i> Analytics
+          </a>
+          <a href="esg-dashboard.html" class="sidebar-link">
+            <i class="fas fa-leaf"></i> ESG Dashboard
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Products</div>
+          <a href="../products/ai-predictor.html" class="sidebar-link">
+            <i class="fas fa-brain"></i> AI Predictor
+          </a>
+          <a href="../products/cost-calculator.html" class="sidebar-link">
+            <i class="fas fa-calculator"></i> Cost Calculator
+          </a>
+          <a href="../products/equipment-database.html" class="sidebar-link">
+            <i class="fas fa-database"></i> Equipment DB
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Hubs</div>
+          <a href="../hubs/engineering-hub.html" class="sidebar-link">
+            <i class="fas fa-drafting-compass"></i> Engineering
+          </a>
+          <a href="../hubs/safety-hub.html" class="sidebar-link">
+            <i class="fas fa-hard-hat"></i> Safety
+            <span class="link-badge">3</span>
+          </a>
+          <a href="../hubs/sustainability-hub.html" class="sidebar-link">
+            <i class="fas fa-seedling"></i> Sustainability
+          </a>
+          <a href="../hubs/procurement-hub.html" class="sidebar-link">
+            <i class="fas fa-truck"></i> Procurement
+          </a>
+          <a href="../hubs/innovation-hub.html" class="sidebar-link">
+            <i class="fas fa-lightbulb"></i> Innovation
+          </a>
+          <a href="../hubs/economics-hub.html" class="sidebar-link">
+            <i class="fas fa-chart-line"></i> Economics
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Admin</div>
+          <a href="../admin/admin-dashboard.html" class="sidebar-link">
+            <i class="fas fa-cog"></i> Admin Panel
+          </a>
+          <a href="../admin/user-management.html" class="sidebar-link">
+            <i class="fas fa-users"></i> Users
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">JS</div>
+          <div class="user-info">
+            <strong>John Smith</strong>
+            <span>Professional Plan</span>
+          </div>
+          <i class="fas fa-ellipsis-v" style="color:var(--text-muted); margin-left:auto; font-size:0.8rem;"></i>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="main-content">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-btn" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div>
+            <div class="topbar-title">Dashboard</div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div style="position:relative;">
+            <input type="text" placeholder="Search projects, equipment..."
+              style="background:rgba(255,255,255,0.05); border:1px solid var(--border-color);
+                     border-radius:var(--radius-sm); padding:8px 14px 8px 36px;
+                     color:var(--text-primary); font-size:0.85rem; outline:none; width:240px;"
+              onfocus="this.style.borderColor='var(--color-accent)'"
+              onblur="this.style.borderColor='var(--border-color)'" />
+            <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.8rem;"></i>
+          </div>
+          <button class="topbar-btn" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="notif-dot"></span>
+          </button>
+          <button class="topbar-btn" title="Help">
+            <i class="fas fa-question-circle"></i>
+          </button>
+          <div class="user-avatar" style="cursor:pointer;" title="Profile">JS</div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+
+        <!-- Welcome Bar -->
+        <div class="welcome-bar animate-fade-up">
+          <div class="welcome-text">
+            <h2>Good morning, John 👋</h2>
+            <p>Here's what's happening across your mining operations today — Sunday, June 28, 2026</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <a href="../products/ai-predictor.html" class="btn btn-primary">
+              <i class="fas fa-brain"></i> New AI Prediction
+            </a>
+            <button class="btn btn-ghost" onclick="window.SESMine.exportToCSV([], 'dashboard-report.csv')">
+              <i class="fas fa-download"></i> Export Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions animate-fade-up delay-1">
+          <a href="../products/ai-predictor.html" class="quick-action">
+            <i class="fas fa-brain"></i>
+            <span>AI Predictor</span>
+          </a>
+          <a href="../products/cost-calculator.html" class="quick-action">
+            <i class="fas fa-calculator"></i>
+            <span>Cost Calculator</span>
+          </a>
+          <a href="../products/equipment-database.html" class="quick-action">
+            <i class="fas fa-database"></i>
+            <span>Equipment DB</span>
+          </a>
+          <a href="esg-dashboard.html" class="quick-action">
+            <i class="fas fa-leaf"></i>
+            <span>ESG Report</span>
+          </a>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid animate-fade-up delay-2">
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-card-label">Total Project Value</span>
+              <div class="kpi-card-icon icon-gold"><i class="fas fa-dollar-sign"></i></div>
+            </div>
+            <div class="kpi-card-value">$124.7M</div>
+            <div class="kpi-card-trend trend-up">
+              <i class="fas fa-arrow-up"></i> +12.4% vs last quarter
+            </div>
+            <canvas id="sparkline1" width="120" height="32" style="margin-top:10px;"></canvas>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-card-label">Active Projects</span>
+              <div class="kpi-card-icon icon-blue"><i class="fas fa-project-diagram"></i></div>
+            </div>
+            <div class="kpi-card-value">24</div>
+            <div class="kpi-card-trend trend-up">
+              <i class="fas fa-arrow-up"></i> +3 new this month
+            </div>
+            <canvas id="sparkline2" width="120" height="32" style="margin-top:10px;"></canvas>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-card-label">Safety Alerts</span>
+              <div class="kpi-card-icon icon-orange"><i class="fas fa-exclamation-triangle"></i></div>
+            </div>
+            <div class="kpi-card-value" style="color:var(--color-orange);">3</div>
+            <div class="kpi-card-trend trend-down">
+              <i class="fas fa-arrow-down"></i> -2 resolved today
+            </div>
+            <canvas id="sparkline3" width="120" height="32" style="margin-top:10px;"></canvas>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-card-label">ESG Score</span>
+              <div class="kpi-card-icon icon-green"><i class="fas fa-leaf"></i></div>
+            </div>
+            <div class="kpi-card-value" style="color:var(--color-green);">87.4</div>
+            <div class="kpi-card-trend trend-up">
+              <i class="fas fa-arrow-up"></i> +3.2 pts this month
+            </div>
+            <canvas id="sparkline4" width="120" height="32" style="margin-top:10px;"></canvas>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-grid animate-fade-up delay-3">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-card-title">CAPEX vs Actual Spend</div>
+                <div class="chart-card-subtitle">Last 12 months — all active projects</div>
+              </div>
+              <select class="form-select" style="width:auto; padding:6px 28px 6px 10px; font-size:0.8rem;">
+                <option>Last 12 months</option>
+                <option>Last 6 months</option>
+                <option>Last 3 months</option>
+              </select>
+            </div>
+            <canvas id="lineChart" width="600" height="220"></canvas>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-card-title">Equipment Utilization</div>
+                <div class="chart-card-subtitle">By category</div>
+              </div>
+            </div>
+            <canvas id="donutChart" width="220" height="220" style="display:block; margin:0 auto;"></canvas>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-top:16px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.8rem;">
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px;height:10px;border-radius:50%;background:#F5A623;display:inline-block;"></span>
+                  Excavators
+                </span>
+                <span style="color:var(--color-accent); font-weight:600;">35%</span>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.8rem;">
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px;height:10px;border-radius:50%;background:#3B82F6;display:inline-block;"></span>
+                  Haul Trucks
+                </span>
+                <span style="color:var(--color-blue); font-weight:600;">28%</span>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.8rem;">
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px;height:10px;border-radius:50%;background:#22C55E;display:inline-block;"></span>
+                  Drills
+                </span>
+                <span style="color:var(--color-green); font-weight:600;">22%</span>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.8rem;">
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:10px;height:10px;border-radius:50%;background:#A855F7;display:inline-block;"></span>
+                  Other
+                </span>
+                <span style="color:var(--color-purple); font-weight:600;">15%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Projects Table -->
+        <div class="data-table-card animate-fade-up delay-4">
+          <div class="data-table-header">
+            <div>
+              <div class="chart-card-title">Active Projects</div>
+              <div class="chart-card-subtitle">24 projects across 12 countries</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <div style="position:relative;">
+                <input type="text" id="projectSearch" placeholder="Search projects..."
+                  style="background:rgba(255,255,255,0.05); border:1px solid var(--border-color);
+                         border-radius:var(--radius-sm); padding:7px 12px 7px 32px;
+                         color:var(--text-primary); font-size:0.82rem; outline:none; width:200px;"
+                  onfocus="this.style.borderColor='var(--color-accent)'"
+                  onblur="this.style.borderColor='var(--border-color)'" />
+                <i class="fas fa-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.75rem;"></i>
+              </div>
+              <button class="btn btn-ghost" style="padding:7px 14px; font-size:0.82rem;"
+                onclick="window.SESMine.exportToCSV(projectData, 'projects.csv')">
+                <i class="fas fa-download"></i> Export
+              </button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table" id="projectsTable">
+              <thead>
+                <tr>
+                  <th>Project Name</th>
+                  <th>Type</th>
+                  <th>Location</th>
+                  <th>CAPEX Budget</th>
+                  <th>Progress</th>
+                  <th>ESG Score</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:var(--text-primary);">Alpha Gold Mine</strong></td>
+                  <td>Open-pit</td>
+                  <td>🇦🇺 Western Australia</td>
+                  <td style="color:var(--color-accent); font-weight:600;">$42.3M</td>
+                  <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <div style="flex:1; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
+                        <div style="width:68%; height:100%; background:var(--color-green); border-radius:3px;"></div>
+                      </div>
+                      <span style="font-size:0.78rem; color:var(--color-green);">68%</span>
+                    </div>
+                  </td>
+                  <td><span style="color:var(--color-green); font-weight:600;">91.2</span></td>
+                  <td><span class="status-badge status-active"><i class="fas fa-circle" style="font-size:6px;"></i> Active</span></td>
+                  <td>
+                    <div style="display:flex; gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--text-primary);">Copper Ridge Project</strong></td>
+                  <td>Underground</td>
+                  <td>🇨🇱 Atacama, Chile</td>
+                  <td style="color:var(--color-accent); font-weight:600;">$28.7M</td>
+                  <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <div style="flex:1; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
+                        <div style="width:45%; height:100%; background:var(--color-blue); border-radius:3px;"></div>
+                      </div>
+                      <span style="font-size:0.78rem; color:var(--color-blue);">45%</span>
+                    </div>
+                  </td>
+                  <td><span style="color:var(--color-accent); font-weight:600;">78.5</span></td>
+                  <td><span class="status-badge status-active"><i class="fas fa-circle" style="font-size:6px;"></i> Active</span></td>
+                  <td>
+                    <div style="display:flex; gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--text-primary);">Iron Valley Expansion</strong></td>
+                  <td>Open-pit</td>
+                  <td>🇿🇦 Limpopo, South Africa</td>
+                  <td style="color:var(--color-accent); font-weight:600;">$67.1M</td>
+                  <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <div style="flex:1; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
+                        <div style="width:22%; height:100%; background:var(--color-orange); border-radius:3px;"></div>
+                      </div>
+                      <span style="font-size:0.78rem; color:var(--color-orange);">22%</span>
+                    </div>
+                  </td>
+                  <td><span style="color:var(--color-accent); font-weight:600;">84.1</span></td>
+                  <td><span class="status-badge status-warning"><i class="fas fa-circle" style="font-size:6px;"></i> Review</span></td>
+                  <td>
+                    <div style="display:flex; gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--text-primary);">Lithium Star Mine</strong></td>
+                  <td>Open-pit</td>
+                  <td>🇦🇷 Jujuy, Argentina</td>
+                  <td style="color:var(--color-accent); font-weight:600;">$89.4M</td>
+                  <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <div style="flex:1; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
+                        <div style="width:91%; height:100%; background:var(--color-teal); border-radius:3px;"></div>
+                      </div>
+                      <span style="font-size:0.78rem; color:var(--color-teal);">91%</span>
+                    </div>
+                  </td>
+                  <td><span style="color:var(--color-green); font-weight:600;">93.7</span></td>
+                  <td><span class="status-badge status-info"><i class="fas fa-circle" style="font-size:6px;"></i> Closing</span></td>
+                  <td>
+                    <div style="display:flex; gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--text-primary);">Northern Nickel Belt</strong></td>
+                  <td>Underground</td>
+                  <td>🇨🇦 Ontario, Canada</td>
+                  <td style="color:var(--color-accent); font-weight:600;">$54.2M</td>
+                  <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <div style="flex:1; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
+                        <div style="width:5%; height:100%; background:var(--color-red); border-radius:3px;"></div>
+                      </div>
+                      <span style="font-size:0.78rem; color:var(--color-red);">5%</span>
+                    </div>
+                  </td>
+                  <td><span style="color:var(--text-muted); font-weight:600;">—</span></td>
+                  <td><span class="status-badge status-critical"><i class="fas fa-circle" style="font-size:6px;"></i> Planning</span></td>
+                  <td>
+                    <div style="display:flex; gap:6px;">
+                      <button class="topbar-btn" title="View"><i class="fas fa-eye"></i></button>
+                      <button class="topbar-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="padding:16px 24px; border-top:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-size:0.8rem; color:var(--text-muted);">Showing 5 of 24 projects</span>
+            <div style="display:flex; gap:6px;">
+              <button class="topbar-btn"><i class="fas fa-chevron-left"></i></button>
+              <button class="topbar-btn" style="background:rgba(245,166,35,0.15); border-color:rgba(245,166,35,0.3); color:var(--color-accent);">1</button>
+              <button class="topbar-btn">2</button>
+              <button class="topbar-btn">3</button>
+              <button class="topbar-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Row: Activity + Alerts -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:0;">
+
+          <!-- Activity Feed -->
+          <div class="chart-card animate-fade-up delay-5">
+            <div class="chart-card-header" style="margin-bottom:16px;">
+              <div>
+                <div class="chart-card-title">Recent Activity</div>
+                <div class="chart-card-subtitle">Platform-wide events</div>
+              </div>
+              <a href="#" style="font-size:0.8rem; color:var(--color-accent);">View all</a>
+            </div>
+            <div class="activity-feed">
+              <div class="activity-item">
+                <div class="activity-icon icon-blue"><i class="fas fa-brain"></i></div>
+                <div class="activity-content">
+                  <strong>AI Prediction completed</strong>
+                  <span>Alpha Gold Mine — CAPEX forecast: $42.3M</span>
+                </div>
+                <span class="activity-time">2m ago</span>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon icon-orange"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="activity-content">
+                  <strong>Safety alert raised</strong>
+                  <span>Copper Ridge — Ventilation check required</span>
+                </div>
+                <span class="activity-time">18m ago</span>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon icon-green"><i class="fas fa-file-alt"></i></div>
+                <div class="activity-content">
+                  <strong>ESG report generated</strong>
+                  <span>Q2 2026 — Lithium Star Mine</span>
+                </div>
+                <span class="activity-time">1h ago</span>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon icon-purple"><i class="fas fa-user-plus"></i></div>
+                <div class="activity-content">
+                  <strong>New user added</strong>
+                  <span>Sarah Chen joined as Engineer</span>
+                </div>
+                <span class="activity-time">3h ago</span>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon icon-teal"><i class="fas fa-truck"></i></div>
+                <div class="activity-content">
+                  <strong>Equipment order placed</strong>
+                  <span>2x CAT 793F Haul Trucks — Iron Valley</span>
+                </div>
+                <span class="activity-time">5h ago</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Safety Alerts Panel -->
+          <div class="chart-card animate-fade-up delay-5">
+            <div class="chart-card-header" style="margin-bottom:16px;">
+              <div>
+                <div class="chart-card-title">Safety Alerts</div>
+                <div class="chart-card-subtitle">3 active alerts require attention</div>
+              </div>
+              <a href="../hubs/safety-hub.html" style="font-size:0.8rem; color:var(--color-accent);">View hub</a>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="padding:14px 16px; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius-sm); display:flex; gap:12px; align-items:flex-start;">
+                <i class="fas fa-exclamation-circle" style="color:var(--color-red); margin-top:2px; flex-shrink:0;"></i>
+                <div style="flex:1;">
+                  <strong style="font-size:0.85rem; color:var(--color-red);">CRITICAL — Ventilation Failure</strong>
+                  <p style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">Copper Ridge, Level 4 — Immediate inspection required</p>
+                </div>
+                <button class="btn btn-ghost" style="padding:4px 10px; font-size:0.75rem; flex-shrink:0;">Resolve</button>
+              </div>
+              <div style="padding:14px 16px; background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.2); border-radius:var(--radius-sm); display:flex; gap:12px; align-items:flex-start;">
+                <i class="fas fa-exclamation-triangle" style="color:var(--color-accent); margin-top:2px; flex-shrink:0;"></i>
+                <div style="flex:1;">
+                  <strong style="font-size:0.85rem; color:var(--color-accent);">WARNING — Equipment Overdue</strong>
+                  <p style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">Alpha Gold Mine — CAT 793F maintenance overdue by 12 days</p>
+                </div>
+                <button class="btn btn-ghost" style="padding:4px 10px; font-size:0.75rem; flex-shrink:0;">Resolve</button>
+              </div>
+              <div style="padding:14px 16px; background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.2); border-radius:var(--radius-sm); display:flex; gap:12px; align-items:flex-start;">
+                <i class="fas fa-exclamation-triangle" style="color:var(--color-accent); margin-top:2px; flex-shrink:0;"></i>
+                <div style="flex:1;">
+                  <strong style="font-size:0.85rem; color:var(--color-accent);">WARNING — Permit Expiry</strong>
+                  <p style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">Iron Valley — Environmental permit expires in 14 days</p>
+                </div>
+                <button class="btn btn-ghost" style="padding:4px 10px; font-size:0.75rem; flex-shrink:0;">Resolve</button>
+              </div>
+              <div style="padding:14px 16px; background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:var(--radius-sm); display:flex; gap:12px; align-items:center;">
+                <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0;"></i>
+                <span style="font-size:0.82rem; color:var(--text-muted);">All other sites operating within safety parameters</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    const projectData = [
+      { name:'Alpha Gold Mine', type:'Open-pit', location:'Australia', capex:'$42.3M', progress:'68%', status:'Active' },
+      { name:'Copper Ridge', type:'Underground', location:'Chile', capex:'$28.7M', progress:'45%', status:'Active' },
+      { name:'Iron Valley', type:'Open-pit', location:'South Africa', capex:'$67.1M', progress:'22%', status:'Review' },
+      { name:'Lithium Star', type:'Open-pit', location:'Argentina', capex:'$89.4M', progress:'91%', status:'Closing' },
+      { name:'Northern Nickel', type:'Underground', location:'Canada', capex:'$54.2M', progress:'5%', status:'Planning' }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.SESMine.initSidebar();
+      window.SESMine.initTableSearch('projectSearch', 'projectsTable');
+
+      // Sparklines
+      window.SESMine.renderSparkline('sparkline1', [80,95,88,102,98,115,108,120,118,125,122,124], '#F5A623');
+      window.SESMine.renderSparkline('sparkline2', [18,19,20,20,21,21,22,22,23,23,24,24], '#3B82F6');
+      window.SESMine.renderSparkline('sparkline3', [8,6,7,5,4,6,5,4,3,4,5,3], '#F97316');
+      window.SESMine.renderSparkline('sparkline4', [80,81,82,83,82,84,84,85,85,86,87,87], '#22C55E');
+
+      // Line chart
+      window.SESMine.renderLineChart('lineChart',
+        [
+          { data:[32,38,35,42,40,48,45,52,50,58,55,62], color:'#F5A623' },
+          { data:[28,32,30,38,36,42,40,46,44,50,48,55], color:'#3B82F6' }
+        ],
+        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+      );
+
+      // Donut chart
+      window.SESMine.renderDonutChart('donutChart',
+        [35, 28, 22, 15],
+        ['#F5A623','#3B82F6','#22C55E','#A855F7']
+      );
+    });
+  </script>
+</body>
+</html>
+            
