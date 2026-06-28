@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cost Calculator — SESMine</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .calc-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .calc-panel {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .calc-panel-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .calc-panel-title { font-weight: 700; font-size: 0.95rem; }
+    .calc-panel-body  { padding: 24px; }
+    .result-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-row-label { font-size: 0.875rem; color: var(--text-secondary); }
+    .result-row-value { font-weight: 700; font-size: 0.95rem; }
+    .result-total {
+      padding: 16px;
+      background: rgba(245,166,35,0.08);
+      border: 1px solid rgba(245,166,35,0.2);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+    .result-total-label { font-weight: 700; font-size: 1rem; }
+    .result-total-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--color-accent);
+    }
+    .currency-selector {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .currency-btn {
+      padding: 5px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      background: transparent;
+    }
+    .currency-btn.active {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      background: rgba(245,166,35,0.1);
+    }
+    .waterfall-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .waterfall-label { font-size: 0.8rem; color: var(--text-secondary); width: 120px; flex-shrink: 0; }
+    .waterfall-track { flex: 1; height: 22px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+    .waterfall-fill  { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 0.72rem; font-weight: 600; color: var(--color-primary); transition: width 0.8s ease; }
+    .waterfall-val   { font-size: 0.8rem; font-weight: 700; width: 70px; text-align: right; flex-shrink: 0; }
+    @media (max-width: 900px) { .calc-layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body class="bg-primary">
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-logo">
+          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Overview</div>
+          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
+          <a href="../dashboard/analytics.html" class="sidebar-link"><i class="fas fa-chart-bar"></i> Analytics</a>
+          <a href="../dashboard/esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Products</div>
+          <a href="ai-predictor.html" class="sidebar-link"><i class="fas fa-brain"></i> AI Predictor</a>
+          <a href="cost-calculator.html" class="sidebar-link active"><i class="fas fa-calculator"></i> Cost Calculator</a>
+          <a href="equipment-database.html" class="sidebar-link"><i class="fas fa-database"></i> Equipment DB</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Hubs</div>
+          <a href="../hubs/engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
+          <a href="../hubs/safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
+          <a href="../hubs/sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
+          <a href="../hubs/procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
+          <a href="../hubs/innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
+          <a href="../hubs/economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">JS</div>
+          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Cost Calculator</div>
+        </div>
+        <div class="topbar-right">
+          <button class="topbar-btn" title="Save"><i class="fas fa-save"></i></button>
+          <button class="topbar-btn" title="Export PDF" onclick="window.print()"><i class="fas fa-file-pdf"></i></button>
+          <button class="topbar-btn" title="Export Excel" onclick="window.SESMine.exportToCSV(getCalcData(),'cost-calc.csv')"><i class="fas fa-file-excel"></i></button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div style="margin-bottom:24px;">
+          <h1 style="font-size:1.6rem; margin-bottom:6px;">Cost Calculator</h1>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Real-time CAPEX/OPEX modeling with live result updates as you adjust inputs.</p>
+        </div>
+
+        <!-- Currency Selector -->
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
+          <span style="font-size:0.82rem; color:var(--text-muted);">Currency:</span>
+          <div class="currency-selector" style="margin-bottom:0;">
+            <button class="currency-btn active" data-rate="1" data-symbol="$" data-code="USD">USD $</button>
+            <button class="currency-btn" data-rate="1.52" data-symbol="A$" data-code="AUD">AUD A$</button>
+            <button class="currency-btn" data-rate="0.92" data-symbol="€" data-code="EUR">EUR €</button>
+            <button class="currency-btn" data-rate="18.2" data-symbol="R" data-code="ZAR">ZAR R</button>
+            <button class="currency-btn" data-rate="1.27" data-symbol="C$" data-code="CAD">CAD C$</button>
+          </div>
+          <div style="margin-left:auto; display:flex; gap:8px;">
+            <button class="btn btn-ghost" style="padding:7px 14px; font-size:0.82rem;" onclick="resetCalculator()">
+              <i class="fas fa-redo"></i> Reset
+            </button>
+            <button class="btn btn-primary" style="padding:7px 14px; font-size:0.82rem;" onclick="saveCalcScenario()">
+              <i class="fas fa-save"></i> Save Scenario
+            </button>
+          </div>
+        </div>
+
+        <div class="calc-layout">
+
+          <!-- INPUT PANEL -->
+          <div class="calc-panel animate-fade-up">
+            <div class="calc-panel-header">
+              <span class="calc-panel-title"><i class="fas fa-sliders-h" style="color:var(--color-accent);margin-right:8px;"></i>Project Inputs</span>
+              <span style="font-size:0.75rem; color:var(--color-green); display:flex; align-items:center; gap:5px;">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--color-green);animation:pulse 2s infinite;"></span>
+                Live updating
+              </span>
+            </div>
+            <div class="calc-panel-body">
+
+              <div class="form-group">
+                <label class="form-label">Project Name</label>
+                <input type="text" class="form-input" id="calcProjectName" placeholder="My Mining Project" oninput="updateCalc()" />
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="form-group" style="margin-bottom:0;">
+                  <label class="form-label">Mine Type</label>
+                  <select class="form-select" id="calcMineType" onchange="updateCalc()">
+                    <option value="open-pit">Open-pit</option>
+                    <option value="underground">Underground</option>
+                    <option value="placer">Placer</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label class="form-label">Duration (months)</label>
+                  <input type="number" class="form-input" id="calcDuration" value="36" min="1" max="360" oninput="updateCalc()" />
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top:16px;">
+                <label class="form-label">
+                  Equipment Cost
+                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="equipDisplay">$10.0M</span>
+                </label>
+                <input type="range" class="range-slider" id="equipCost" min="0.5" max="200" step="0.5" value="10" oninput="updateCalc()" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Labor (workers)
+                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="laborDisplay">150</span>
+                </label>
+                <input type="range" class="range-slider" id="laborCount" min="10" max="2000" step="10" value="150" oninput="updateCalc()" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Avg. Salary ($/month)
+                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="salaryDisplay">$4,500</span>
+                </label>
+                <input type="range" class="range-slider" id="avgSalary" min="500" max="20000" step="100" value="4500" oninput="updateCalc()" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Fuel Cost ($/month)
+                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="fuelMonthDisplay">$120,000</span>
+                </label>
+                <input type="range" class="range-slider" id="fuelMonth" min="5000" max="2000000" step="5000" value="120000" oninput="updateCalc()" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Infrastructure Cost
+                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="infraDisplay">$3.0M</span>
+                </label>
+                <input type="range" class="range-slider" id="infraCost" min="0" max="100" step="0.5" value="3" oninput="updateCalc()" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Contingency (%)
+                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="calcContDisplay">10%</span>
+                </label>
+                <input type="range" class="range-slider" id="calcCont" min="0" max="30" step="1" value="10" oninput="updateCalc()" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Expected Revenue ($/month)
+                  <span style="float:right; color:var(--color-green); font-weight:700;" id="revenueDisplay">$2.0M</span>
+                </label>
+                <input type="range" class="range-slider" id="monthRevenue" min="100000" max="50000000" step="100000" value="2000000" oninput="updateCalc()" />
+              </div>
+
+            </div>
+          </div>
+
+          <!-- RESULTS PANEL -->
+          <div style="display:flex; flex-direction:column; gap:20px;">
+
+            <!-- Summary Card -->
+            <div class="calc-panel animate-fade-up delay-1">
+              <div class="calc-panel-header">
+                <span class="calc-panel-title"><i class="fas fa-chart-pie" style="color:var(--color-gold);margin-right:8px;"></i>Financial Summary</span>
+                <span id="calcProjectLabel" style="font-size:0.78rem; color:var(--text-muted);">My Mining Project</span>
+              </div>
+              <div class="calc-panel-body">
+                <div class="result-row">
+                  <span class="result-row-label">Equipment CAPEX</span>
+                  <span class="result-row-value" id="rEquip" style="color:var(--color-accent);">$10.0M</span>
+                </div>
+                <div class="result-row">
+                  <span class="result-row-label">Labor OPEX (total)</span>
+                  <span class="result-row-value" id="rLabor" style="color:var(--color-blue);">$24.3M</span>
+                </div>
+                <div class="result-row">
+                  <span class="result-row-label">Fuel OPEX (total)</span>
+                  <span class="result-row-value" id="rFuel" style="color:var(--color-orange);">$4.3M</span>
+                </div>
+                <div class="result-row">
+                  <span class="result-row-label">Infrastructure</span>
+                  <span class="result-row-value" id="rInfra" style="color:var(--color-green);">$3.0M</span>
+                </div>
+                <div class="result-row">
+                  <span class="result-row-label">Contingency Reserve</span>
+                  <span class="result-row-value" id="rCont" style="color:var(--color-purple);">$4.2M</span>
+                </div>
+                <div class="result-total">
+                  <span class="result-total-label">Total Project Cost</span>
+                  <span class="result-total-value" id="rTotal">$45.8M</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ROI Card -->
+            <div class="calc-panel animate-fade-up delay-2">
+              <div class="calc-panel-header">
+                <span class="calc-panel-title"><i class="fas fa-chart-line" style="color:var(--color-green);margin-right:8px;"></i>ROI & NPV Analysis</span>
+              </div>
+              <div class="calc-panel-body">
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
+                  <div style="text-align:center; padding:16px; background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:var(--radius-md);">
+                    <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--color-green);" id="rPayback">23 mo</div>
+                    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Payback Period</div>
+                  </div>
+                  <div style="text-align:center; padding:16px; background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.15); border-radius:var(--radius-md);">
+                    <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--color-blue);" id="rNPV">$142M</div>
+                    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">10-yr NPV</div>
+                  </div>
+                  <div style="text-align:center; padding:16px; background:rgba(245,166,35,0.06); border:1px solid rgba(245,166,35,0.15); border-radius:var(--radius-md);">
+                    <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--color-accent);" id="rIRR">38%</div>
+                    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Est. IRR</div>
+                  </div>
+                </div>
+
+                <!-- Waterfall Chart -->
+                <div style="font-size:0.82rem; font-weight:700; margin-bottom:12px; color:var(--text-secondary);">Cost Breakdown</div>
+                <div id="waterfallChart">
+                  <div class="waterfall-bar">
+                    <span class="waterfall-label">Equipment</span>
+                    <div class="waterfall-track">
+                      <div class="waterfall-fill" id="wEquip" style="width:24%; background:var(--color-accent);">24%</div>
+                    </div>
+                    <span class="waterfall-val" id="wEquipVal" style="color:var(--color-accent);">$10.0M</span>
+                  </div>
+                  <div class="waterfall-bar">
+                    <span class="waterfall-label">Labor</span>
+                    <div class="waterfall-track">
+                      <div class="waterfall-fill" id="wLabor" style="width:53%; background:var(--color-blue);">53%</div>
+                    </div>
+                    <span class="waterfall-val" id="wLaborVal" style="color:var(--color-blue);">$24.3M</span>
+                  </div>
+                  <div class="waterfall-bar">
+                    <span class="waterfall-label">Fuel</span>
+                    <div class="waterfall-track">
+                      <div class="waterfall-fill" id="wFuel" style="width:9%; background:var(--color-orange);">9%</div>
+                    </div>
+                    <span class="waterfall-val" id="wFuelVal" style="color:var(--color-orange);">$4.3M</span>
+                  </div>
+                  <div class="waterfall-bar">
+                    <span class="waterfall-label">Infrastructure</span>
+                    <div class="waterfall-track">
+                      <div class="waterfall-fill" id="wInfra" style="width:7%; background:var(--color-green);">7%</div>
+                    </div>
+                    <span class="waterfall-val" id="wInfraVal" style="color:var(--color-green);">$3.0M</span>
+                  </div>
+                  <div class="waterfall-bar">
+                    <span class="waterfall-label">Contingency</span>
+                    <div class="waterfall-track">
+                      <div class="waterfall-fill" id="wCont" style="width:9%; background:var(--color-purple);">9%</div>
+                    </div>
+                    <span class="waterfall-val" id="wContVal" style="color:var(--color-purple);">$4.2M</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Saved Scenarios -->
+            <div class="calc-panel animate-fade-up delay-3">
+              <div class="calc-panel-header">
+                <span class="calc-panel-title"><i class="fas fa-code-branch" style="color:var(--color-purple);margin-right:8px;"></i>Saved Scenarios</span>
+                <span style="font-size:0.75rem; color:var(--text-muted);" id="scenarioCount">0 saved</span>
+              </div>
+              <div id="savedScenarios" style="padding:16px;">
+                <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:0.85rem;">
+                  <i class="fas fa-save" style="font-size:1.5rem; margin-bottom:8px; display:block; opacity:0.3;"></i>
+                  No scenarios saved yet. Adjust inputs and click Save Scenario.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    'use strict';
+
+    let currencyRate   = 1;
+    let currencySymbol = '$';
+    let savedScenarios = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.SESMine.initSidebar();
+      initCurrencyBtns();
+      updateCalc();
+    });
+
+    function initCurrencyBtns() {
+      document.querySelectorAll('.currency-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currencyRate   = parseFloat(btn.dataset.rate);
+          currencySymbol = btn.dataset.symbol;
+          updateCalc();
+        });
+      });
+    }
+
+    function fmt(usd) {
+      const v = usd * currencyRate;
+      if (v >= 1000) return currencySymbol + (v / 1000).toFixed(1) + 'B';
+      if (v >= 1)    return currencySymbol + v.toFixed(1) + 'M';
+      return currencySymbol + (v * 1000).toFixed(0) + 'K';
+    }
+
+    function updateCalc() {
+      const equip    = parseFloat(document.getElementById('equipCost').value)    || 10;
+      const labor    = parseInt(document.getElementById('laborCount').value)      || 150;
+      const salary   = parseFloat(document.getElementById('avgSalary').value)    || 4500;
+      const fuel     = parseFloat(document.getElementById('fuelMonth').value)    || 120000;
+      const infra    = parseFloat(document.getElementById('infraCost').value)    || 3;
+      const cont     = parseFloat(document.getElementById('calcCont').value)     || 10;
+      const duration = parseFloat(document.getElementById('calcDuration').value) || 36;
+      const revenue  = parseFloat(document.getElementById('monthRevenue').value) || 2000000;
+      const name     = document.getElementById('calcProjectName').value || 'My Mining Project';
+
+      // Calculations (all in $M)
+      const laborTotal = (labor * salary * duration) / 1_000_000;
+      const fuelTotal  = (fuel * duration) / 1_000_000;
+      const subtotal   = equip + laborTotal + fuelTotal + infra;
+      const contAmt    = subtotal * (cont / 100);
+      const total      = subtotal + contAmt;
+
+      // ROI
+      const monthlyProfit = (revenue / 1_000_000) - (fuelTotal / duration) - (laborTotal / duration);
+      const payback       = monthlyProfit > 0 ? Math.round(total / monthlyProfit) : 999;
+      const npv10yr       = Math.max(0, (revenue / 1_000_000 * 120) - total * 1.1);
+      const irr           = total > 0 ? Math.min(99, Math.round((npv10yr / total) * 10)) : 0;
+
+      // Update display labels
+      document.getElementById('equipDisplay').textContent    = fmt(equip);
+      document.getElementById('laborDisplay').textContent    = labor.toLocaleString();
+      document.getElementById('salaryDisplay').textContent   = currencySymbol + salary.toLocaleString();
+      document.getElementById('fuelMonthDisplay').textContent= currencySymbol + (fuel * currencyRate).toLocaleString();
+      document.getElementById('infraDisplay').textContent    = fmt(infra);
+      document.getElementById('calcContDisplay').textContent = cont + '%';
+      document.getElementById('revenueDisplay').textContent  = currencySymbol + (revenue * currencyRate / 1_000_000).toFixed(1) + 'M';
+      document.getElementById('calcProjectLabel').textContent= name;
+
+      // Update results
+      document.getElementById('rEquip').textContent = fmt(equip);
+      document.getElementById('rLabor').textContent = fmt(laborTotal);
+      document.getElementById('rFuel').textContent  = fmt(fuelTotal);
+      document.getElementById('rInfra').textContent = fmt(infra);
+      document.getElementById('rCont').textContent  = fmt(contAmt);
+      document.getElementById('rTotal').textContent = fmt(total);
+      document.getElementById('rPayback').textContent = payback < 999 ? payback + ' mo' : 'N/A';
+      document.getElementById('rNPV').textContent    = fmt(npv10yr);
+      document.getElementById('rIRR').textContent    = irr + '%';
+
+      // Waterfall
+      const items = [
+        { id:'wEquip', val: equip,      color:'var(--color-accent)' },
+        { id:'wLabor', val: laborTotal, color:'var(--color-blue)' },
+        { id:'wFuel',  val: fuelTotal,  color:'var(--color-orange)' },
+        { id:'wInfra', val: infra,      color:'var(--color-green)' },
+        { id:'wCont',  val: contAmt,    color:'var(--color-purple)' }
+      ];
+      items.forEach(item => {
+        const pct = total > 0 ? Math.round((item.val / total) * 100) : 0;
+        const fill = document.getElementById(item.id);
+        const valEl = document.getElementById(item.id + 'Val');
+        if (fill) { fill.style.width = pct + '%'; fill.textContent = pct + '%'; }
+        if (valEl) valEl.textContent = fmt(item.val);
+      });
+    }
+
+    function saveCalcScenario() {
+      const name  = document.getElementById('calcProjectName').value || 'Scenario ' + (savedScenarios.length + 1);
+      const total = document.getElementById('rTotal').textContent;
+      const npv   = document.getElementById('rNPV').textContent;
+      const payback = document.getElementById('rPayback').textContent;
+
+      savedScenarios.push({ name, total, npv, payback });
+      renderSavedScenarios();
+      window.SESMine.showToast(`"${name}" saved successfully`, 'success');
+    }
+
+    function renderSavedScenarios() {
+      const container = document.getElementById('savedScenarios');
+      const count     = document.getElementById('scenarioCount');
+      count.textContent = savedScenarios.length + ' saved';
+
+      container.innerHTML = savedScenarios.map((s, i) => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;
+          background:rgba(255,255,255,0.03);border:1px solid var(--border-color);
+          border-radius:var(--radius-sm);margin-bottom:8px;">
+          <div>
+            <strong style="font-size:0.85rem;">${s.name}</strong>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">
+              Total: <span style="color:var(--color-accent)">${s.total}</span> &nbsp;·&nbsp;
+              NPV: <span style="color:var(--color-blue)">${s.npv}</span> &nbsp;·&nbsp;
+              Payback: <span style="color:var(--color-green)">${s.payback}</span>
+            </div>
+          </div>
+          <button onclick="removeScenario(${i})" style="color:var(--text-muted);background:none;border:none;cursor:pointer;font-size:0.8rem;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function removeScenario(i) {
+      savedScenarios.splice(i, 1);
+      renderSavedScenarios();
+    }
+
+    function resetCalculator() {
+      document.getElementById('equipCost').value  = 10;
+      document.getElementById('laborCount').value = 150;
+      document.getElementById('avgSalary').value  = 4500;
+      document.getElementById('fuelMonth').value  = 120000;
+      document.getElementById('infraCost').value  = 3;
+      document.getElementById('calcCont').value   = 10;
+      document.getElementById('calcDuration').value = 36;
+      document.getElementById('monthRevenue').value = 2000000;
+      document.getElementById('calcProjectName').value = '';
+      updateCalc();
+      window.SESMine.showToast('Calculator reset', 'info');
+    }
+
+    function getCalcData() {
+      return [{
+        project: document.getElementById('calcProjectName').value || 'Project',
+        total:   document.getElementById('rTotal').textContent,
+        npv:     document.getElementById('rNPV').textContent,
+        payback: document.getElementById('rPayback').textContent,
+        irr:     document.getElementById('rIRR').textContent
+      }];
+    }
+  </script>
+</body>
+</html>

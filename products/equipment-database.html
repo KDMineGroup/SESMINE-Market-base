@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Equipment Database — SESMine</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .equip-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all var(--transition-normal);
+      cursor: pointer;
+    }
+    .equip-card:hover {
+      border-color: rgba(245,166,35,0.3);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+    .equip-card-img {
+      height: 140px;
+      background: linear-gradient(135deg, rgba(245,166,35,0.08), rgba(59,130,246,0.05));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+    }
+    .equip-card-body { padding: 16px; }
+    .equip-card-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+    .equip-card-maker { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px; }
+    .equip-card-specs { display: flex; flex-direction: column; gap: 4px; }
+    .equip-spec-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; }
+    .equip-spec-label { color: var(--text-muted); }
+    .equip-spec-val   { font-weight: 600; color: var(--text-secondary); }
+    .equip-card-footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .equip-price { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: var(--color-accent); }
+    .compare-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(15,23,42,0.97);
+      border-top: 1px solid var(--border-color);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 500;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      backdrop-filter: blur(12px);
+    }
+    .compare-bar.active { transform: translateY(0); }
+    .compare-slot {
+      width: 140px;
+      height: 48px;
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .compare-slot.filled {
+      border-style: solid;
+      border-color: var(--color-accent);
+      background: rgba(245,166,35,0.08);
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+    .view-toggle { display: flex; gap: 4px; }
+    .view-btn {
+      width: 34px; height: 34px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 0.85rem;
+      transition: all var(--transition-fast);
+    }
+    .view-btn.active {
+      background: rgba(245,166,35,0.12);
+      border-color: rgba(245,166,35,0.3);
+      color: var(--color-accent);
+    }
+    /* Detail Modal */
+    .spec-table { width: 100%; }
+    .spec-table tr td { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.875rem; }
+    .spec-table tr:last-child td { border-bottom: none; }
+    .spec-table td:first-child { color: var(--text-muted); width: 50%; }
+    .spec-table td:last-child  { font-weight: 600; color: var(--text-primary); }
+  </style>
+</head>
+<body class="bg-primary">
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-logo">
+          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Overview</div>
+          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
+          <a href="../dashboard/analytics.html" class="sidebar-link"><i class="fas fa-chart-bar"></i> Analytics</a>
+          <a href="../dashboard/esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Products</div>
+          <a href="ai-predictor.html" class="sidebar-link"><i class="fas fa-brain"></i> AI Predictor</a>
+          <a href="cost-calculator.html" class="sidebar-link"><i class="fas fa-calculator"></i> Cost Calculator</a>
+          <a href="equipment-database.html" class="sidebar-link active"><i class="fas fa-database"></i> Equipment DB</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Hubs</div>
+          <a href="../hubs/engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
+          <a href="../hubs/safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
+          <a href="../hubs/sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
+          <a href="../hubs/procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
+          <a href="../hubs/innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
+          <a href="../hubs/economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user          -avatar">JS</div>
+          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Equipment Database</div>
+        </div>
+        <div class="topbar-right">
+          <span style="font-size:0.8rem;color:var(--text-muted);">1,247 items</span>
+          <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="window.SESMine.exportToCSV(allEquipment,'equipment.csv')">
+            <i class="fas fa-download"></i> Export
+          </button>
+          <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="openAddEquipModal()">
+            <i class="fas fa-plus"></i> Add Equipment
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+
+        <div style="margin-bottom:24px;">
+          <h1 style="font-size:1.6rem;margin-bottom:6px;">Equipment Database</h1>
+          <p style="color:var(--text-muted);font-size:0.9rem;">Browse 1,247 mining equipment specifications, pricing benchmarks, and maintenance cost data from 80+ global manufacturers.</p>
+        </div>
+
+        <!-- Search & Filters -->
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:24px;flex-wrap:wrap;" class="animate-fade-up">
+          <div style="position:relative;flex:1;min-width:240px;">
+            <input type="text" id="equipSearch" placeholder="Search by name, manufacturer, or category..."
+              style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px 14px 10px 38px;color:var(--text-primary);font-size:0.875rem;outline:none;width:100%;"
+              onfocus="this.style.borderColor='var(--color-accent)'"
+              onblur="this.style.borderColor='var(--border-color)'"
+              oninput="filterEquipment()" />
+            <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.8rem;pointer-events:none;"></i>
+          </div>
+          <select class="form-select" id="categoryFilter" style="width:auto;" onchange="filterEquipment()">
+            <option value="">All Categories</option>
+            <option value="Haul Truck">Haul Trucks</option>
+            <option value="Excavator">Excavators</option>
+            <option value="Drill Rig">Drill Rigs</option>
+            <option value="Loader">Loaders</option>
+            <option value="Dozer">Dozers</option>
+            <option value="Crusher">Crushers</option>
+            <option value="Conveyor">Conveyors</option>
+            <option value="Pump">Pumps</option>
+          </select>
+          <select class="form-select" id="makerFilter" style="width:auto;" onchange="filterEquipment()">
+            <option value="">All Manufacturers</option>
+            <option value="Caterpillar">Caterpillar</option>
+            <option value="Komatsu">Komatsu</option>
+            <option value="Sandvik">Sandvik</option>
+            <option value="Atlas Copco">Atlas Copco</option>
+            <option value="Liebherr">Liebherr</option>
+            <option value="Hitachi">Hitachi</option>
+            <option value="Epiroc">Epiroc</option>
+          </select>
+          <select class="form-select" id="sortFilter" style="width:auto;" onchange="filterEquipment()">
+            <option value="name">Sort: Name A–Z</option>
+            <option value="price-asc">Sort: Price Low–High</option>
+            <option value="price-desc">Sort: Price High–Low</option>
+            <option value="payload">Sort: Payload</option>
+          </select>
+          <div class="view-toggle">
+            <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')" title="Grid view"><i class="fas fa-th"></i></button>
+            <button class="view-btn" id="listViewBtn" onclick="setView('list')" title="List view"><i class="fas fa-list"></i></button>
+          </div>
+        </div>
+
+        <!-- Results count -->
+        <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px;" id="equipResultCount">
+          Showing 12 of 1,247 items
+        </div>
+
+        <!-- Grid View -->
+        <div id="equipGridView" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:24px;" class="animate-fade-up delay-1">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- List View -->
+        <div id="equipListView" style="display:none;margin-bottom:24px;" class="animate-fade-up delay-1">
+          <div class="data-table-card">
+            <div style="overflow-x:auto;">
+              <table class="data-table" id="equipListTable">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" style="accent-color:var(--color-accent);" /></th>
+                    <th>Equipment</th>
+                    <th>Category</th>
+                    <th>Manufacturer</th>
+                    <th>Payload / Power</th>
+                    <th>Engine</th>
+                    <th>List Price</th>
+                    <th>Maint. Cost/yr</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="equipListBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;" class="animate-fade-up delay-2">
+          <span style="font-size:0.8rem;color:var(--text-muted);" id="equipPageInfo">Page 1 of 104</span>
+          <div style="display:flex;gap:6px;" id="equipPagination">
+            <button class="topbar-btn" disabled><i class="fas fa-chevron-left"></i></button>
+            <button class="topbar-btn" style="background:rgba(245,166,35,0.15);border-color:rgba(245,166,35,0.3);color:var(--color-accent);">1</button>
+            <button class="topbar-btn">2</button>
+            <button class="topbar-btn">3</button>
+            <button class="topbar-btn">…</button>
+            <button class="topbar-btn">104</button>
+            <button class="topbar-btn"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Compare Bar -->
+  <div class="compare-bar" id="compareBar">
+    <span style="font-size:0.82rem;font-weight:700;color:var(--text-muted);white-space:nowrap;">Compare:</span>
+    <div class="compare-slot" id="compareSlot1">+ Add item</div>
+    <div class="compare-slot" id="compareSlot2">+ Add item</div>
+    <div class="compare-slot" id="compareSlot3">+ Add item</div>
+    <div style="margin-left:auto;display:flex;gap:8px;flex-shrink:0;">
+      <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="clearCompare()">Clear</button>
+      <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="runCompare()">
+        <i class="fas fa-balance-scale"></i> Compare Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Equipment Detail Modal -->
+  <div class="modal" id="equipModal">
+    <div class="modal-overlay" onclick="window.SESMine.closeModal('equipModal')"></div>
+    <div class="modal-content" style="max-width:680px;">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;">
+        <h2 style="font-size:1.1rem;" id="equipModalTitle">Equipment Details</h2>
+        <button class="modal-close" onclick="window.SESMine.closeModal('equipModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div style="padding:24px;" id="equipModalBody"><!-- Populated by JS --></div>
+    </div>
+  </div>
+
+  <!-- Add Equipment Modal -->
+  <div class="modal" id="addEquipModal">
+    <div class="modal-overlay" onclick="window.SESMine.closeModal('addEquipModal')"></div>
+    <div class="modal-content" style="max-width:560px;">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;">
+        <h2 style="font-size:1.1rem;"><i class="fas fa-plus" style="color:var(--color-accent);margin-right:8px;"></i>Add New Equipment</h2>
+        <button class="modal-close" onclick="window.SESMine.closeModal('addEquipModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="addEquipForm" style="padding:24px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Equipment Name *</label>
+            <input type="text" class="form-input" id="eName" placeholder="e.g. CAT 793F" required />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Manufacturer *</label>
+            <input type="text" class="form-input" id="eMaker" placeholder="e.g. Caterpillar" required />
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Category *</label>
+            <select class="form-select" id="eCategory" required>
+              <option value="">Select...</option>
+              <option>Haul Truck</option>
+              <option>Excavator</option>
+              <option>Drill Rig</option>
+              <option>Loader</option>
+              <option>Dozer</option>
+              <option>Crusher</option>
+              <option>Conveyor</option>
+              <option>Pump</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">List Price (USD) *</label>
+            <input type="number" class="form-input" id="ePrice" placeholder="4200000" required />
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Payload (tonnes)</label>
+            <input type="text" class="form-input" id="ePayload" placeholder="227" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Engine Power (kW)</label>
+            <input type="text" class="form-input" id="ePower" placeholder="2013" />
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Fuel Consumption (L/hr)</label>
+            <input type="text" class="form-input" id="eFuel" placeholder="185" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Maint. Cost/yr (USD)</label>
+            <input type="number" class="form-input" id="eMaint" placeholder="280000" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:16px;">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" id="eNotes" placeholder="Additional specifications, availability, lead time..." style="min-height:70px;"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button type="button" class="btn btn-ghost btn-full" onclick="window.SESMine.closeModal('addEquipModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-save"></i> Save Equipment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    'use strict';
+
+    const allEquipment = [
+      { id:1,  name:'CAT 793F',           maker:'Caterpillar', category:'Haul Truck', payload:'227t',  power:'2013 kW', fuel:'185 L/hr', price:4200000,  maint:280000,  icon:'🚛', color:'#F5A623' },
+      { id:2,  name:'CAT 797F',           maker:'Caterpillar', category:'Haul Truck', payload:'363t',  power:'2983 kW', fuel:'310 L/hr', price:5800000,  maint:380000,  icon:'🚛', color:'#F5A623' },
+      { id:3,  name:'Komatsu 930E-5',     maker:'Komatsu',     category:'Haul Truck', payload:'291t',  power:'2240 kW', fuel:'220 L/hr', price:4600000,  maint:310000,  icon:'🚛', color:'#3B82F6' },
+      { id:4,  name:'Liebherr T 284',     maker:'Liebherr',    category:'Haul Truck', payload:'363t',  power:'3650 kW', fuel:'295 L/hr', price:6200000,  maint:420000,  icon:'🚛', color:'#22C55E' },
+      { id:5,  name:'Komatsu PC5500',     maker:'Komatsu',     category:'Excavator',  payload:'—',     power:'1491 kW', fuel:'145 L/hr', price:5800000,  maint:350000,  icon:'🏗️', color:'#3B82F6' },
+      { id:6,  name:'CAT 6060',           maker:'Caterpillar', category:'Excavator',  payload:'—',     power:'1715 kW', fuel:'168 L/hr', price:6400000,  maint:390000,  icon:'🏗️', color:'#F5A623' },
+      { id:7,  name:'Hitachi EX5600',     maker:'Hitachi',     category:'Excavator',  payload:'—',     power:'1491 kW', fuel:'142 L/hr', price:5600000,  maint:340000,  icon:'🏗️', color:'#EF4444' },
+      { id:8,  name:'Sandvik DD422i',     maker:'Sandvik',     category:'Drill Rig',  payload:'—',     power:'160 kW',  fuel:'28 L/hr',  price:1100000,  maint:95000,   icon:'⚙️', color:'#A855F7' },
+      { id:9,  name:'Epiroc Pit Viper 351',maker:'Epiroc',     category:'Drill Rig',  payload:'—',     power:'597 kW',  fuel:'82 L/hr',  price:2800000,  maint:180000,  icon:'⚙️', color:'#14B8A6' },
+      { id:10, name:'Atlas Copco ST14',   maker:'Atlas Copco', category:'Loader',     payload:'14t',   power:'186 kW',  fuel:'24 L/hr',  price:980000,   maint:72000,   icon:'🚜', color:'#F97316' },
+      { id:11, name:'CAT D11',            maker:'Caterpillar', category:'Dozer',      payload:'—',     power:'634 kW',  fuel:'95 L/hr',  price:1900000,  maint:140000,  icon:'🚧', color:'#F5A623' },
+      { id:12, name:'Metso HP500',        maker:'Metso',       category:'Crusher',    payload:'—',     power:'315 kW',  fuel:'—',        price:1400000,  maint:110000,  icon:'🔧', color:'#22C55E' }
+    ];
+
+    let filteredEquipment = [...allEquipment];
+    let currentView       = 'grid';
+    let compareList       = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.SESMine.initSidebar();
+      renderEquipment();
+    });
+
+    // ── Filters ──
+    function filterEquipment() {
+      const search   = document.getElementById('equipSearch').value.toLowerCase();
+      const category = document.getElementById('categoryFilter').value;
+      const maker    = document.getElementById('makerFilter').value;
+      const sort     = document.getElementById('sortFilter').value;
+
+      filteredEquipment = allEquipment.filter(e => {
+        const matchSearch   = !search   || e.name.toLowerCase().includes(search) || e.maker.toLowerCase().includes(search) || e.category.toLowerCase().includes(search);
+        const matchCategory = !category || e.category === category;
+        const matchMaker    = !maker    || e.maker === maker;
+        return matchSearch && matchCategory && matchMaker;
+      });
+
+      // Sort
+      filteredEquipment.sort((a, b) => {
+        if (sort === 'price-asc')  return a.price - b.price;
+        if (sort === 'price-desc') return b.price - a.price;
+        if (sort === 'payload')    return (parseFloat(b.payload) || 0) - (parseFloat(a.payload) || 0);
+        return a.name.localeCompare(b.name);
+      });
+
+      document.getElementById('equipResultCount').textContent =
+        `Showing ${filteredEquipment.length} of ${allEquipment.length} items`;
+
+      renderEquipment();
+    }
+
+    // ── Render ──
+    function renderEquipment() {
+      if (currentView === 'grid') renderGrid();
+      else renderList();
+    }
+
+    function renderGrid() {
+      const container = document.getElementById('equipGridView');
+      container.innerHTML = filteredEquipment.map(e => `
+        <div class="equip-card animate-fade-up" onclick="openEquipDetail(${e.id})">
+          <div class="equip-card-img">
+            <span style="font-size:3.5rem;">${e.icon}</span>
+            <div style="position:absolute;top:10px;right:10px;">
+              <span class="status-badge" style="background:rgba(0,0,0,0.3);color:${e.color};border-color:${e.color}40;">${e.category}</span>
+            </div>
+            <button onclick="event.stopPropagation();toggleCompare(${e.id})"
+              style="position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.4);border:1px solid var(--border-color);color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.75rem;transition:all 0.2s;"
+              id="compareBtn-${e.id}" title="Add to compare">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="equip-card-body">
+            <div class="equip-card-name">${e.name}</div>
+            <div class="equip-card-maker">${e.maker}</div>
+            <div class="equip-card-specs">
+              <div class="equip-spec-row">
+                <span class="equip-spec-label">Payload</span>
+                <span class="equip-spec-val">${e.payload}</span>
+              </div>
+              <div class="equip-spec-row">
+                <span class="equip-spec-label">Engine Power</span>
+                <span class="equip-spec-val">${e.power}</span>
+              </div>
+              <div class="equip-spec-row">
+                <span class="equip-spec-label">Fuel Consumption</span>
+                <span class="equip-spec-val">${e.fuel}</span>
+              </div>
+            </div>
+          </div>
+          <div class="equip-card-footer">
+            <div>
+              <div class="equip-price">${formatPrice(e.price)}</div>
+              <div style="font-size:0.7rem;color:var(--text-muted);">Maint: ${formatPrice(e.maint)}/yr</div>
+            </div>
+            <button class="btn btn-ghost" style="padding:5px 12px;font-size:0.78rem;" onclick="event.stopPropagation();addToPredictor(${e.id})">
+              <i class="fas fa-brain"></i> Use in AI
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderList() {
+      const tbody = document.getElementById('equipListBody');
+      tbody.innerHTML = filteredEquipment.map(e => `
+        <tr style="cursor:pointer;" onclick="openEquipDetail(${e.id})">
+          <td onclick="event.stopPropagation()"><input type="checkbox" style="accent-color:var(--color-accent);" /></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.4rem;">${e.icon}</span>
+              <strong style="color:var(--text-primary);">${e.name}</strong>
+            </div>
+          </td>
+          <td><span class="status-badge" style="background:rgba(0,0,0,0.2);color:${e.color};border-color:${e.color}40;">${e.category}</span></td>
+          <td>${e.maker}</td>
+          <td style="font-weight:600;">${e.payload} / ${e.power}</td>
+          <td style="color:var(--text-muted);">${e.fuel}</td>
+          <td style="color:var(--color-accent);font-weight:700;">${formatPrice(e.price)}</td>
+          <td style="color:var(--text-muted);">${formatPrice(e.maint)}/yr</td>
+          <td onclick="event.stopPropagation()">
+            <div style="display:flex;gap:4px;">
+              <button class="topbar-btn" title="View details" onclick="openEquipDetail(${e.id})"><i class="fas fa-eye"></i></button>
+              <button class="topbar-btn" title="Add to compare" onclick="toggleCompare(${e.id})"><i class="fas fa-balance-scale"></i></button>
+              <button class="topbar-btn" title="Use in AI Predictor" onclick="addToPredictor(${e.id})" style="color:var(--color-accent);"><i class="fas fa-brain"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ── Detail Modal ──
+    function openEquipDetail(id) {
+      const e = allEquipment.find(eq => eq.id === id);
+      if (!e) return;
+
+      document.getElementById('equipModalTitle').innerHTML =
+        `<span style="margin-right:8px;">${e.icon}</span>${e.name} — ${e.maker}`;
+
+      document.getElementById('equipModalBody').innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div>
+            <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:12px;">Technical Specifications</div>
+            <table class="spec-table">
+              <tr><td>Category</td><td>${e.category}</td></tr>
+              <tr><td>Manufacturer</td><td>${e.maker}</td></tr>
+              <tr><td>Payload Capacity</td><td>${e.payload}</td></tr>
+              <tr><td>Engine Power</td><td>${e.power}</td></tr>
+              <tr><td>Fuel Consumption</td><td>${e.fuel}</td></tr>
+              <tr><td>Operating Weight</td><td>${e.payload !== '—' ? Math.round(parseFloat(e.payload)*1.4) + 't (est.)' : 'N/A'}</td></tr>
+            </table>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:12px;">Cost Data</div>
+            <table class="spec-table">
+              <tr><td>List Price</td><td style="color:var(--color-accent);">${formatPrice(e.price)}</td></tr>
+              <tr><td>Annual Maintenance</td><td style="color:var(--color-orange);">${formatPrice(e.maint)}/yr</td></tr>
+              <tr><td>5-yr Total Cost</td><td style="color:var(--color-blue);">${formatPrice(e.price + e.maint * 5)}</td></tr>
+              <tr><td>Fuel Cost/hr (@ $1.80/L)</td><td>${e.fuel !== '—' ? '$' + (parseFloat(e.fuel)*1.8).toFixed(0) : 'N/A'}</td></tr>
+              <tr><td>Typical Lead Time</td><td>12–18 months</td></tr>
+              <tr><td>Warranty</td><td>2 years / 10,000 hrs</td></tr>
+            </table>
+          </div>
+        </div>
+        <div style="margin-top:20px;padding:14px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:var(--radius-md);">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--color-accent);margin-bottom:6px;"><i class="fas fa-brain"></i> AI Cost Insight</div>
+          <p style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
+            Based on 847 similar projects, the ${e.name} delivers an average productivity of
+            <strong style="color:var(--text-primary);">${e.payload !== '—' ? Math.round(parseFloat(e.payload)*0.85) + 't/hr' : '—'}</strong>
+            in open-pit operations. Total cost of ownership over 10 years is estimated at
+            <strong style="color:var(--color-accent);">${formatPrice(e.price + e.maint * 10)}</strong>.
+          </p>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          <button class="btn btn-ghost btn-full" onclick="toggleCompare(${e.id});window.SESMine.closeModal('equipModal')">
+            <i class="fas fa-balance-scale"></i> Add to Compare
+          </button>
+          <button class="btn btn-primary btn-full" onclick="addToPredictor(${e.id});window.SESMine.closeModal('equipModal')">
+            <i class="fas fa-brain"></i> Use in AI Predictor
+          </button>
+        </div>
+      `;
+
+      window.SESMine.openModal('equipModal');
+    }
+
+    // ── Compare ──
+    function toggleCompare(id) {
+      const e   = allEquipment.find(eq => eq.id === id);
+      const btn = document.getElementById(`compareBtn-${id}`);
+      const idx = compareList.findIndex(c => c.id === id);
+
+      if (idx > -1) {
+        compareList.splice(idx, 1);
+        if (btn) { btn.style.background = 'rgba(0,0,0,0.4)'; btn.style.color = 'var(--text-muted)'; btn.innerHTML = '<i class="fas fa-plus"></i>'; }
+      } else {
+        if (compareList.length >= 3) { window.SESMine.showToast('Maximum 3 items for comparison', 'warning'); return; }
+        compareList.push(e);
+        if (btn) { btn.style.background = 'rgba(245,166,35,0.2)'; btn.style.color = 'var(--color-accent)'; btn.innerHTML = '<i class="fas fa-check"></i>'; }
+      }
+
+      updateCompareBar();
+    }
+
+    function updateCompareBar() {
+      const bar = document.getElementById('compareBar');
+      bar.classList.toggle('active', compareList.length > 0);
+
+      [1,2,3].forEach(i => {
+        const slot = document.getElementById(`compareSlot${i}`);
+        const item = compareList[i-1];
+        if (item) {
+          slot.textContent = item.name;
+          slot.classList.add('filled');
+        } else {
+          slot.textContent = '+ Add item';
+          slot.classList.remove('filled');
+        }
+      });
+    }
+
+    function clearCompare() {
+      compareList = [];
+      updateCompareBar();
+      document.querySelectorAll('[id^="compareBtn-"]').forEach(btn => {
+        btn.style.background = 'rgba(0,0,0,0.4)';
+        btn.style.color      = 'var(--text-muted)';
+        btn.innerHTML        = '<i class="fas fa-plus"></i>';
+      });
+    }
+
+    function runCompare() {
+      if (compareList.length < 2) { window.SESMine.showToast('Select at least 2 items to compare', 'warning'); return; }
+      window.SESMine.showToast(`Comparing ${compareList.map(e => e.name).join(' vs ')}`, 'info');
+    }
+
+    // ── View Toggle ──
+    function setView(view) {
+      currentView = view;
+      document.getElementById('equipGridView').style.display = view === 'grid' ? 'grid' : 'none';
+      document.getElementById('equipListView').style.display = view === 'list' ? 'block' : 'none';
+      document.getElementById('gridViewBtn').classList.toggle('active', view === 'grid');
+      document.getElementById('listViewBtn').classList.toggle('active', view === 'list');
+      renderEquipment();
+    }
+
+    // ── Helpers ──
+    function formatPrice(val) {
+      if (val >= 1e6) return '$' + (val/1e6).toFixed(1) + 'M';
+      if (val >= 1e3) return '$' + (val/1e3).toFixed(0) + 'K';
+      return '$' + val;
+    }
+
+    function addToPredictor(id) {
+      const e = allEquipment.find(eq => eq.id === id);
+      if (!e) return;
+      window.SESMine.showToast(`${e.name} loaded into AI Predictor`, 'success');
+      setTimeout(() => window.location.href = 'ai-predictor.html', 1200);
+    }
+
+    function openAddEquipModal() { window.SESMine.openModal('addEquipModal'); }
+
+    document.getElementById('addEquipForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name  = document.getElementById('eName').value.trim();
+      const maker = document.getElementById('eMaker').value.trim();
+      const cat   = document.getElementById('eCategory').value;
+      const price = parseFloat(document.getElementById('ePrice').value);
+      if (!name || !maker || !cat || !price) { window.SESMine.showToast('Please fill all required fields','error'); return; }
+
+      allEquipment.unshift({
+        id: allEquipment.length + 1,
+        name, maker, category: cat,
+        payload: document.getElementById('ePayload').value || '—',
+        power:   document.getElementById('ePower').value   || '—',
+        fuel:    document.getElementById('eFuel').value    || '—',
+        price,
+        maint:   parseFloat(document.getElementById('eMaint').value) || 0,
+        icon:    '⚙️', color:'#F5A623'
+      });
+
+      filteredEquipment = [...allEquipment];
+      renderEquipment();
+      window.SESMine.closeModal('addEquipModal');
+      window.SESMine.showToast(`${name} added to database`, 'success');
+    });
+  </script>
+</body>
+</html>
+
