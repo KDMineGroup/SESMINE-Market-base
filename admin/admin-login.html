@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal — SESMine Intelligence Platform</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <style>
+    body {
+      min-height: 100vh;
+      background: #020810;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      position: relative; overflow: hidden;
+    }
+    /* Grid background */
+    body::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(212,175,55,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,175,55,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+    /* Ambient glows */
+    .admin-glow {
+      position: absolute; border-radius: 50%;
+      pointer-events: none; filter: blur(100px);
+    }
+    .admin-glow-1 {
+      width: 600px; height: 600px;
+      top: -200px; left: -200px;
+      background: radial-gradient(ellipse, rgba(212,175,55,0.06) 0%, transparent 65%);
+    }
+    .admin-glow-2 {
+      width: 400px; height: 400px;
+      bottom: -100px; right: -100px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.05) 0%, transparent 65%);
+    }
+    /* Card */
+    .admin-card {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 420px;
+      background: rgba(7,18,36,0.95);
+      border: 1px solid rgba(212,175,55,0.15);
+      border-radius: 24px; padding: 40px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7),
+                  0 0 0 1px rgba(212,175,55,0.05);
+      backdrop-filter: blur(20px);
+      animation: fadeInUp 0.45s ease both;
+    }
+    .admin-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent);
+      border-radius: 24px 24px 0 0;
+    }
+    /* Icon ring */
+    .admin-icon-ring {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(212,175,55,0.08);
+      border: 2px solid rgba(212,175,55,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: #D4AF37;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 24px rgba(212,175,55,0.15);
+    }
+    /* Security notice */
+    .security-notice {
+      background: rgba(249,115,22,0.06);
+      border: 1px solid rgba(249,115,22,0.15);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: 0.75rem; color: #F6AD55;
+      display: flex; align-items: flex-start; gap: 8px;
+      margin-bottom: 20px; line-height: 1.55;
+    }
+    /* MFA digit inputs */
+    .mfa-input-row {
+      display: flex; gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .mfa-digit {
+      width: 44px; height: 52px;
+      background: rgba(255,255,255,0.04);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem; font-weight: 700;
+      color: #F0F6FF; text-align: center;
+      transition: all 0.2s ease; outline: none;
+      caret-color: #D4AF37;
+    }
+    .mfa-digit:focus {
+      border-color: #D4AF37;
+      background: rgba(212,175,55,0.06);
+      box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+    }
+    .mfa-digit.filled { border-color: rgba(212,175,55,0.4); }
+    /* Attempt dots */
+    .attempt-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: all 0.3s ease;
+    }
+    .attempt-dot.used { background: #EF4444; border-color: #EF4444; }
+    /* Lockout bar */
+    .lockout-bar {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 10px; padding: 12px 14px;
+      font-size: 0.78rem; color: #FCA5A5;
+      text-align: center; margin-bottom: 16px;
+      display: none;
+    }
+    .lockout-bar.show { display: block; }
+  </style>
+</head>
+<body>
+
+<div class="admin-glow admin-glow-1"></div>
+<div class="admin-glow admin-glow-2"></div>
+
+<div class="admin-card">
+
+  <!-- Icon -->
+  <div class="admin-icon-ring">
+    <i class="fas fa-shield-alt"></i>
+  </div>
+
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:24px;">
+    <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#D4AF37;margin-bottom:6px;">
+      Restricted Access
+    </div>
+    <h1 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.015em;margin-bottom:6px;">
+      Admin Portal
+    </h1>
+    <p style="font-size:0.8rem;color:#8BA4BC;">SESMine Intelligence Platform v5.0</p>
+  </div>
+
+  <!-- Security notice -->
+  <div class="security-notice">
+    <i class="fas fa-exclamation-triangle" style="flex-shrink:0;margin-top:1px;"></i>
+    <span>This portal is for authorised administrators only. All access attempts are logged and monitored.</span>
+  </div>
+
+  <!-- Lockout bar -->
+  <div class="lockout-bar" id="lockoutBar">
+    <i class="fas fa-lock" style="margin-right:6px;"></i>
+    Account locked. Try again in <strong id="lockoutTimer">--</strong>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert alert-error mb-4" id="adminError">
+    <i class="fas fa-exclamation-circle"></i>
+    <span id="adminErrorMsg">Invalid credentials.</span>
+  </div>
+  <div class="alert alert-success mb-4" id="adminSuccess">
+    <i class="fas fa-check-circle"></i>
+    <span>Authentication successful. Redirecting to dashboard...</span>
+  </div>
+
+  <!-- ══ STEP 1: Credentials ══ -->
+  <div id="step1">
+    <form id="adminForm" novalidate>
+
+      <div class="form-group">
+        <label class="form-label" style="color:#D4AF37;">
+          <i class="fas fa-user-shield" style="margin-right:5px;"></i>Admin Email
+        </label>
+        <div class="input-icon-wrap">
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" class="form-input" id="adminEmail"
+                 placeholder="admin@sesmine.com"
+                 autocomplete="username" />
+        </div>
+        <div class="field-error" id="adminEmailErr">
+          <i class="fas fa-exclamation-circle"></i> Valid email required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" style="color:#D4AF37;">
+          <i class="fas fa-key" style="margin-right:5px;"></i>Admin Password
+        </label>
+        <div class="input-icon-wrap input-password-wrap">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" class="form-input" id="adminPassword"
+                 placeholder="Enter admin password"
+                 autocomplete="current-password" />
+          <button type="button" class="pw-toggle" id="adminPwToggle"
+                  onclick="togglePw('adminPassword','adminPwToggle')">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <div class="field-error" id="adminPasswordErr">
+          <i class="fas fa-exclamation-circle"></i> Password required
+        </div>
+      </div>
+
+      <!-- Attempt dots -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="font-size:0.7rem;color:#4A6478;">Login attempts remaining:</div>
+        <div style="display:flex;gap:5px;" id="attemptDots">
+          <div class="attempt-dot"></div>
+          <div class="attempt-dot"></div>
+          <div class="attempt-dot"></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-full btn-lg" id="adminBtn"
+              style="background:linear-gradient(135deg,#D4AF37,#F97316);color:#020810;font-weight:800;border:none;margin-bottom:16px;">
+        <i class="fas fa-shield-alt"></i>
+        <span class="btn-label">Authenticate</span>
+        <span class="btn-spinner"><i class="fas fa-spinner fa-spin"></i> Verifying...</span>
+      </button>
+    </form>
+
+    <!-- Demo hint -->
+    <div style="
+      background:rgba(212,175,55,0.05);
+      border:1px solid rgba(212,175,55,0.1);
+      border-radius:10px; padding:12px;
+      font-size:0.75rem; color:#8BA4BC;
+      text-align:center;
+    ">
+      <i class="fas fa-info-circle" style="color:#D4AF37;margin-right:5px;"></i>
+      Demo: <code style="color:#D4AF37;background:rgba(212,175,55,0.08);padding:1px 6px;border-radius:4px;">admin@sesmine.com</code>
+      &nbsp;/&nbsp;
+      <code style="color:#D4AF37;background:rgba(212,175,55,0.08);padding:1px 6px;border-radius:4px;">Admin@2026!</code>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: MFA ══ -->
+  <div id="step2" style="display:none;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="
+        width:52px;height:52px;border-radius:50%;
+        background:rgba(212,175,55,0.1);
+        border:2px solid rgba(212,175,55,0.2);
+        display:flex;align-items:center;justify-content:center;
+        margin:0 auto 12px;font-size:1.2rem;color:#D4AF37;
+      ">
+        <i class="fas fa-mobile-alt"></i>
+      </div>
+      <h3 style="font-size:1rem;font-weight:800;margin-bottom:6px;">Two-Factor Authentication</h3>
+      <p style="font-size:0.8rem;color:#8BA4BC;line-height:1.6;">
+        Enter the 6-digit code from your authenticator app.
+      </p>
+      <p style="font-size:0.72rem;color:rgba(212,175,55,0.7);margin-top:4px;">
+        <i class="fas fa-info-circle" style="margin-right:3px;"></i>
+        Demo: enter any 6 digits
+      </p>
+    </div>
+
+    <!-- OTP inputs -->
+    <div class="mfa-input-row" id="mfaInputRow">
+      <input type="text" inputmode="numeric" class="mfa-digit" maxlength="1" data-index="0" />
+      <input type="text" inputmode="numeric" class="mfa-digit" maxlength="1" data-index="1" />
+      <input type="text" inputmode="numeric" class="mfa-digit" maxlength="1" data-index="2" />
+      <input type="text" inputmode="numeric" class="mfa-digit" maxlength="1" data-index="3" />
+      <input type="text" inputmode="numeric" class="mfa-digit" maxlength="1" data-index="4" />
+      <input type="text" inputmode="numeric" class="mfa-digit" maxlength="1" data-index="5" />
+    </div>
+
+    <button onclick="verifyMFA()" class="btn btn-full btn-lg" id="mfaBtn"
+            style="background:linear-gradient(135deg,#D4AF37,#F97316);color:#020810;font-weight:800;border:none;margin-bottom:12px;">
+      <i class="fas fa-check-circle"></i>
+      <span class="btn-label">Verify Code</span>
+      <span class="btn-spinner"><i class="fas fa-spinner fa-spin"></i> Verifying...</span>
+    </button>
+
+    <button onclick="backToStep1()"
+            style="display:block;width:100%;text-align:center;font-size:0.78rem;color:#6688A0;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px;transition:color 0.2s ease;"
+            onmouseover="this.style.color='#8BA4BC'"
+            onmouseout="this.style.color='#6688A0'">
+      <i class="fas fa-arrow-left" style="margin-right:4px;"></i> Back to credentials
+    </button>
+  </div>
+
+  <!-- Back to site -->
+  <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05);">
+    <a href="../index.html"
+       style="font-size:0.75rem;color:#4A6478;text-decoration:none;transition:color 0.2s ease;"
+       onmouseover="this.style.color='#6688A0'"
+       onmouseout="this.style.color='#4A6478'">
+      <i class="fas fa-arrow-left" style="margin-right:4px;"></i> Return to SESMine
+    </a>
+  </div>
+
+</div><!-- /.admin-card -->
+
+<div id="toastContainer"></div>
+
+<!-- Correct relative paths from admin/ folder -->
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
+<script>
+'use strict';
+
+/* ── Constants ── */
+const MAX_ATTEMPTS  = 3;
+const LOCKOUT_SECS  = 120;
+const EMAIL_RX      = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/* ── State ── */
+let attempts         = 0;
+let lockoutInterval  = null;
+let adminCredentials = {};
+
+/* ── Redirect if already authenticated as admin ── */
+(function checkExistingSession() {
+  try {
+    const session = SESAuth.Store.get(SESAuth.KEYS.ADMIN_SESSION);
+    if (session) window.location.replace('admin-dashboard.html');
+  } catch(e) { /* storage unavailable */ }
+})();
+
+/* ── Step 1: Credential form ── */
+document.getElementById('adminForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (isLockedOut()) return;
+  hideAlerts();
+
+  const email = document.getElementById('adminEmail').value.trim();
+  const pw    = document.getElementById('adminPassword').value;
+  let valid   = true;
+
+  /* Validate */
+  if (!EMAIL_RX.test(email)) { setFieldErr('adminEmail','adminEmailErr',true);    valid = false; }
+  else                        { setFieldErr('adminEmail','adminEmailErr',false); }
+  if (!pw)                    { setFieldErr('adminPassword','adminPasswordErr',true);  valid = false; }
+  else                        { setFieldErr('adminPassword','adminPasswordErr',false); }
+  if (!valid) return;
+
+  /* Loading state */
+  setLoading('adminBtn', true);
+  await delay(900);
+
+  const result = SESAuth.loginAdmin(email, pw);
+  setLoading('adminBtn', false);
+
+  if (result.success) {
+    /* Store credentials temporarily for MFA step */
+    adminCredentials = { email, pw };
+    transitionToMFA();
+  } else {
+    attempts++;
+    updateAttemptDots();
+    SESAuth.auditLog('admin_login_failed', { email, attempt: attempts });
+
+    if (attempts >= MAX_ATTEMPTS) {
+      startLockout();
+    } else {
+      showAlert('adminError', 'adminErrorMsg',
+        result.error || `Invalid credentials. ${MAX_ATTEMPTS - attempts} attempt${MAX_ATTEMPTS - attempts !== 1 ? 's' : ''} remaining.`
+      );
+    }
+  }
+});
+
+/* ── Transition to MFA step ── */
+function transitionToMFA() {
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+  hideAlerts();
+  /* Focus first digit after short delay */
+  setTimeout(() => {
+    const first = document.querySelector('.mfa-digit');
+    if (first) first.focus();
+  }, 120);
+}
+
+/* ── MFA digit input wiring ── */
+document.querySelectorAll('.mfa-digit').forEach((input, i, all) => {
+  input.addEventListener('input', function() {
+    /* Strip non-digits, keep only last char */
+    this.value = this.value.replace(/\D/g, '').slice(-1);
+    if (this.value) {
+      this.classList.add('filled');
+      if (i < all.length - 1) all[i + 1].focus();
+      else checkMFAAutoSubmit();
+    } else {
+      this.classList.remove('filled');
+    }
+  });
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && !this.value && i > 0) {
+      all[i - 1].focus();
+      all[i - 1].value = '';
+      all[i - 1].classList.remove('filled');
+    }
+    if (e.key === 'ArrowLeft'  && i > 0)              all[i - 1].focus();
+    if (e.key === 'ArrowRight' && i < all.length - 1) all[i + 1].focus();
+  });
+
+  input.addEventListener('paste', function(e) {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    pasted.split('').forEach((ch, j) => {
+      if (all[j]) {
+        all[j].value = ch;
+        all[j].classList.add('filled');
+      }
+    });
+    if (pasted.length === 6) checkMFAAutoSubmit();
+    else if (all[pasted.length]) all[pasted.length].focus();
+  });
+});
+
+function checkMFAAutoSubmit() {
+  const digits = [...document.querySelectorAll('.mfa-digit')].map(d => d.value);
+  if (digits.every(d => d !== '')) verifyMFA();
+}
+
+/* ── Step 2: MFA verification ── */
+async function verifyMFA() {
+  const digits = [...document.querySelectorAll('.mfa-digit')].map(d => d.value);
+  if (digits.some(d => !d)) {
+    SES.Toast.warning('Please enter all 6 digits.');
+    return;
+  }
+
+  setLoading('mfaBtn', true);
+  await delay(1000);
+  setLoading('mfaBtn', false);
+
+  /* Demo: any 6 digits accepted — production would verify TOTP */
+  const code = digits.join('');
+  if (code.length === 6) {
+    /* Re-run login to get fresh session token */
+    const result = SESAuth.loginAdmin(adminCredentials.email, adminCredentials.pw);
+    if (result.success) {
+      showAlert('adminSuccess');
+      SESAuth.auditLog('admin_login_success', {
+        email: adminCredentials.email,
+        mfa: true,
+        timestamp: new Date().toISOString()
+      });
+      adminCredentials = {}; /* Clear from memory */
+      setTimeout(() => {
+        window.location.replace('admin-dashboard.html');
+      }, 1200);
+    } else {
+      showAlert('adminError', 'adminErrorMsg', 'Session expired. Please start again.');
+      setTimeout(backToStep1, 1500);
+    }
+  }
+}
+
+/* ── Back to step 1 ── */
+function backToStep1() {
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step1').style.display = 'block';
+  document.querySelectorAll('.mfa-digit').forEach(d => {
+    d.value = '';
+    d.classList.remove('filled');
+  });
+  adminCredentials = {};
+  hideAlerts();
+}
+
+/* ── Attempt dots ── */
+function updateAttemptDots() {
+  const dots = document.querySelectorAll('.attempt-dot');
+  dots.forEach((dot, i) => {
+    if (i < attempts) dot.classList.add('used');
+  });
+}
+
+/* ── Lockout ── */
+function isLockedOut() {
+  return document.getElementById('lockoutBar').classList.contains('show');
+}
+
+function startLockout() {
+  hideAlerts();
+  let remaining = LOCKOUT_SECS;
+  const bar     = document.getElementById('lockoutBar');
+  const timer   = document.getElementById('lockoutTimer');
+  const btn     = document.getElementById('adminBtn');
+
+  bar.classList.add('show');
+  if (btn) btn.disabled = true;
+
+  SESAuth.auditLog('admin_account_locked', { duration: LOCKOUT_SECS });
+
+  lockoutInterval = setInterval(() => {
+    remaining--;
+    const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const s = String(remaining % 60).padStart(2, '0');
+    if (timer) timer.textContent = `${m}:${s}`;
+
+    if (remaining <= 0) {
+      clearInterval(lockoutInterval);
+      bar.classList.remove('show');
+      if (btn) btn.disabled = false;
+      attempts = 0;
+      document.querySelectorAll('.attempt-dot').forEach(d => d.classList.remove('used'));
+    }
+  }, 1000);
+
+  if (timer) timer.textContent = `02:00`;
+}
+
+/* ── Helpers ── */
+function setLoading(btnId, state) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.disabled = state;
+  btn.classList.toggle('loading', state);
+}
+
+function showAlert(id, msgId, msg) {
+  if (msgId && msg) {
+    const el = document.getElementById(msgId);
+    if (el) el.textContent = msg;
+  }
+  document.getElementById(id)?.classList.add('show');
+}
+
+function hideAlerts() {
+  ['adminError', 'adminSuccess'].forEach(id => {
+    document.getElementById(id)?.classList.remove('show');
+  });
+}
+
+function setFieldErr(inputId, errId, show) {
+  document.getElementById(inputId)?.classList.toggle('error', show);
+  document.getElementById(errId)?.classList.toggle('show', show);
+}
+
+function togglePw(inputId, btnId) {
+  const input = document.getElementById(inputId);
+  const btn   = document.getElementById(btnId);
+  if (!input || !btn) return;
+  const show  = input.type === 'password';
+  input.type  = show ? 'text' : 'password';
+  btn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
+
+function delay(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+</script>
+</body>
+</html>
