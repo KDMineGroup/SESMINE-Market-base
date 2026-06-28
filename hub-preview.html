@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub Preview — SESMine Intelligence Platform</title>
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+  <style>
+    .preview-hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding: 40px 20px;
+    }
+    .preview-blur-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, #020810 0%, #071224 60%, #040c1a 100%);
+    }
+    .preview-blur-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    /* Blurred content behind */
+    .preview-content-blur {
+      position: absolute; inset: 0;
+      overflow: hidden; pointer-events: none;
+    }
+    .preview-fake-ui {
+      position: absolute; inset: 0;
+      padding: 80px 40px 40px;
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 20px; opacity: 0.15;
+      filter: blur(4px);
+    }
+    .fake-sidebar {
+      background: rgba(255,255,255,0.04);
+      border-radius: 16px; padding: 16px;
+    }
+    .fake-sidebar-item {
+      height: 32px; border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      margin-bottom: 8px;
+    }
+    .fake-main {
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .fake-chart {
+      background: rgba(255,255,255,0.04);
+      border-radius: 16px; height: 200px;
+    }
+    .fake-cards {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+    }
+    .fake-card {
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px; height: 80px;
+    }
+    /* Lock card */
+    .lock-card {
+      position: relative; z-index: 10;
+      background: rgba(7,18,36,0.92);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 24px;
+      padding: 48px 40px;
+      max-width: 520px; width: 100%;
+      text-align: center;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,212,255,0.05);
+      backdrop-filter: blur(20px);
+      animation: scaleIn 0.4s ease both;
+    }
+    .lock-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.5), transparent);
+      border-radius: 24px 24px 0 0;
+    }
+    .lock-icon-ring {
+      width: 80px; height: 80px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+    .lock-icon-ring::before {
+      content: '';
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      background: linear-gradient(135deg, rgba(0,212,255,0.3), rgba(168,85,247,0.3)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+    }
+    .hub-feature-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      text-align: left;
+    }
+    .hub-feature-row:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+<div class="preview-hero">
+  <div class="preview-blur-bg"></div>
+
+  <!-- Blurred fake UI behind -->
+  <div class="preview-content-blur">
+    <div class="preview-fake-ui">
+      <div class="fake-sidebar">
+        <div class="fake-sidebar-item" style="width:60%;margin-bottom:20px;"></div>
+        <div class="fake-sidebar-item"></div>
+        <div class="fake-sidebar-item"></div>
+        <div class="fake-sidebar-item"></div>
+        <div class="fake-sidebar-item"></div>
+        <div class="fake-sidebar-item"></div>
+      </div>
+      <div class="fake-main">
+        <div class="fake-cards">
+          <div class="fake-card"></div>
+          <div class="fake-card"></div>
+          <div class="fake-card"></div>
+          <div class="fake-card"></div>
+        </div>
+        <div class="fake-chart"></div>
+        <div class="fake-cards" style="grid-template-columns:repeat(3,1fr);">
+          <div class="fake-card" style="height:120px;"></div>
+          <div class="fake-card" style="height:120px;"></div>
+          <div class="fake-card" style="height:120px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lock card -->
+  <div class="lock-card" id="lockCard">
+    <!-- Hub icon -->
+    <div class="lock-icon-ring" id="hubIconRing">
+      <div style="
+        width:80px;height:80px;border-radius:50%;
+        display:flex;align-items:center;justify-content:center;
+        font-size:1.8rem;
+      " id="hubIconBg">
+        <i id="hubIcon" class="fas fa-lock"></i>
+      </div>
+    </div>
+
+    <!-- Hub name -->
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;" id="hubBadge">
+      Intelligence Hub
+    </div>
+    <h1 style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;" id="hubTitle">
+      Hub Access Required
+    </h1>
+    <p style="font-size:0.88rem;color:#8BA4BC;line-height:1.75;margin-bottom:24px;" id="hubDesc">
+      This intelligence hub requires an active subscription. Upgrade your plan to unlock full access.
+    </p>
+
+    <!-- Features preview -->
+    <div style="
+      background:rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:14px;padding:16px;
+      margin-bottom:24px;
+    " id="hubFeaturesList"></div>
+
+    <!-- Plan required -->
+    <div style="
+      display:inline-flex;align-items:center;gap:7px;
+      padding:6px 14px;border-radius:99px;
+      background:rgba(249,115,22,0.08);
+      border:1px solid rgba(249,115,22,0.2);
+      font-size:0.75rem;font-weight:700;
+      color:#F97316;margin-bottom:20px;
+    " id="planRequired">
+      <i class="fas fa-exclamation-circle"></i>
+      Requires Professional plan or above
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <a href="pricing.html" class="btn btn-cyan btn-full btn-lg" id="upgradeBtn">
+        <i class="fas fa-rocket"></i> Upgrade Plan
+      </a>
+      <a href="auth/signup.html" class="btn btn-ghost btn-full" id="trialBtn">
+        <i class="fas fa-play-circle"></i> Start 14-Day Free Trial
+      </a>
+      <a href="index.html" style="
+        font-size:0.78rem;color:#6688A0;
+        text-align:center;text-decoration:none;
+        padding:8px;transition:color 0.2s ease;
+      " onmouseover="this.style.color='#8BA4BC'"
+         onmouseout="this.style.color='#6688A0'">
+        <i class="fas fa-arrow-left" style="margin-right:4px;"></i> Back to Home
+      </a>
+    </div>
+
+    <!-- Logged-in variant: request access -->
+    <div id="requestAccessSection" style="display:none;">
+      <div style="height:1px;background:var(--border-default);margin:20px 0;"></div>
+      <p style="font-size:0.82rem;color:#8BA4BC;margin-bottom:12px;">
+        Already have an account? Request access to this hub from your dashboard.
+      </p>
+      <button onclick="requestHubAccess()" class="btn btn-ghost btn-full">
+        <i class="fas fa-paper-plane"></i> Request Hub Access
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+'use strict';
+
+/* ── Parse hub from URL ── */
+const params  = new URLSearchParams(window.location.search);
+const hubId   = params.get('hub') || 'economics';
+const hubCfg  = SESConfig.hubs.find(h => h.id === hubId) || SESConfig.hubs[0];
+
+/* ── Populate hub info ── */
+(function populateHub() {
+  const iconRing = document.getElementById('hubIconRing');
+  const iconBg   = document.getElementById('hubIconBg');
+  const icon     = document.getElementById('hubIcon');
+  const badge    = document.getElementById('hubBadge');
+  const title    = document.getElementById('hubTitle');
+  const desc     = document.getElementById('hubDesc');
+  const features = document.getElementById('hubFeaturesList');
+  const planReq  = document.getElementById('planRequired');
+  const upgradeBtn = document.getElementById('upgradeBtn');
+  const trialBtn   = document.getElementById('trialBtn');
+
+  if (iconBg) {
+    iconBg.style.background = hubCfg.colorBg;
+    iconBg.style.border     = `1px solid ${hubCfg.colorBorder}`;
+    iconBg.style.color      = hubCfg.color;
+  }
+  if (icon)  icon.className  = `fas ${hubCfg.icon}`;
+  if (badge) { badge.textContent = `${hubCfg.label} Hub`; badge.style.color = hubCfg.color; }
+  if (title) title.textContent = `${hubCfg.label} Hub Access Required`;
+  if (desc)  desc.textContent  = `The ${hubCfg.label} Hub provides ${hubCfg.description.toLowerCase()} Upgrade your plan to unlock full access.`;
+
+  if (features) {
+    features.innerHTML = `
+      <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#6688A0;margin-bottom:10px;">
+        <i class="fas fa-lock" style="margin-right:4px;color:${hubCfg.color};"></i> What's inside this hub
+      </div>
+      ${hubCfg.features.map(f => `
+        <div class="hub-feature-row">
+          <i class="fas fa-check-circle" style="color:${hubCfg.color};font-size:0.8rem;margin-top:2px;flex-shrink:0;"></i>
+          <span style="font-size:0.82rem;color:#B0C4D8;">${f}</span>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  /* Plan requirement label */
+  const planMap = {
+    economics:     'Professional',
+    engineering:   'Professional',
+    procurement:   'Professional',
+    safety:        'Starter',
+    sustainability:'Professional',
+    innovation:    'Enterprise'
+  };
+  const reqPlan = planMap[hubId] || 'Professional';
+  if (planReq) planReq.innerHTML = `<i class="fas fa-exclamation-circle"></i> Requires ${reqPlan} plan or above`;
+
+  if (upgradeBtn) upgradeBtn.href = `pricing.html#${hubId}`;
+  if (trialBtn)   trialBtn.href   = `auth/signup.html?plan=${reqPlan.toLowerCase()}&hub=${hubId}`;
+
+  /* Update page title */
+  document.title = `${hubCfg.label} Hub — SESMine`;
+})();
+
+/* ── Check if logged in (show request access) ── */
+(function checkUser() {
+  const user = SESAuth.Store.get(SESAuth.KEYS.CURRENT_USER);
+  if (!user) return;
+
+  /* User is logged in but doesn't have hub access */
+  const upgradeSection = document.getElementById('upgradeBtn')?.parentElement;
+  const requestSection = document.getElementById('requestAccessSection');
+
+  if (upgradeSection) upgradeSection.style.display = 'none';
+  if (requestSection) requestSection.style.display = 'block';
+})();
+
+/* ── Request hub access ── */
+function requestHubAccess() {
+  const user = SESAuth.Store.get(SESAuth.KEYS.CURRENT_USER);
+  if (!user) { window.location.href = 'auth/login.html'; return; }
+
+  const result = SESAuth.submitHubRequest(user.id, hubId);
+  if (result.success) {
+    SES.Toast.success(`Access request for ${hubCfg.label} Hub submitted. An admin will review shortly.`);
+    document.getElementById('requestAccessSection').innerHTML = `
+      <div style="height:1px;background:var(--border-default);margin:20px 0;"></div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#4ADE80;">
+        <i class="fas fa-check-circle"></i>
+        Request submitted — you'll be notified by email.
+      </div>
+    `;
+  } else {
+    SES.Toast.warning(result.error || 'Request already submitted.');
+  }
+}
+</script>
+</body>
+</html>
