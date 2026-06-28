@@ -3,1584 +3,661 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Start Free Trial — SESMine</title>
-  <meta name="description" content="Create your SESMine account and start your free 14-day trial. No credit card required." />
+  <title>Create Account — SESMine Intelligence Platform</title>
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    /* ══════════════════════════════════════════════
-       SIGNUP LAYOUT
-    ══════════════════════════════════════════════ */
-    html, body { height: 100%; }
-    body { overflow-x: hidden; }
-
-    .signup-root {
-      display: flex;
+    body {
       min-height: 100vh;
+      background: var(--bg-950);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 40px 20px;
     }
-
-    /* ── Left Panel ── */
-    .signup-left {
-      width: 42%;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .signup-left-bg { position: absolute; inset: 0; }
-    .signup-left-bg-img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      filter: saturate(0.4) brightness(0.38);
-      transform: scale(1.04);
-    }
-    .signup-left-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(160deg,
-        rgba(2,8,16,0.98) 0%,
-        rgba(4,12,26,0.9) 45%,
-        rgba(4,12,26,0.85) 70%,
-        rgba(2,8,16,0.97) 100%
-      );
-    }
-    .signup-left-grid {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-      background-size: 52px 52px;
-    }
-    .signup-left-glow {
-      position: absolute;
-      top: -60px; left: -60px;
-      width: 480px; height: 480px;
-      background: radial-gradient(ellipse, rgba(0,212,255,0.07) 0%, transparent 65%);
-      pointer-events: none;
-    }
-
-    .signup-left-content {
-      position: relative; z-index: 1;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      padding: 32px 40px;
-      overflow-y: auto;
-    }
-
-    /* Logo */
-    .signup-logo {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none;
-      margin-bottom: 32px;
-      width: fit-content;
-      flex-shrink: 0;
-    }
-    .signup-logo-img {
-      height: 42px; width: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 0 10px rgba(0,212,255,0.5));
-    }
-    .signup-logo-name {
-      font-family: var(--font-display);
-      font-size: 1.05rem; font-weight: 800;
-      letter-spacing: 0.08em;
-      color: var(--text-100);
-    }
-    .signup-logo-name em { color: var(--cyan-400); font-style: normal; }
-
-    /* Plan highlight card */
-    .plan-highlight {
-      background: linear-gradient(135deg,
-        rgba(0,212,255,0.08) 0%,
-        rgba(0,128,255,0.05) 100%
-      );
-      border: 1px solid rgba(0,212,255,0.2);
-      border-radius: var(--r-2xl);
-      padding: 22px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-    .plan-highlight::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--cyan-400), transparent);
-      opacity: 0.5;
-    }
-    .plan-trial-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: linear-gradient(135deg, var(--cyan-400), #0080FF);
-      color: var(--bg-900);
-      font-size: 0.65rem; font-weight: 800;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 3px 10px;
-      border-radius: var(--r-full);
-      margin-bottom: 12px;
-    }
-    .plan-name {
-      font-family: var(--font-display);
-      font-size: 1.1rem; font-weight: 800;
-      margin-bottom: 4px;
-    }
-    .plan-price {
-      font-family: var(--font-display);
-      font-size: 2rem; font-weight: 800;
-      color: var(--cyan-400);
-      line-height: 1;
-      margin-bottom: 3px;
-    }
-    .plan-price span { font-size: 0.9rem; color: var(--text-500); font-weight: 400; }
-    .plan-trial-note {
-      font-size: 0.75rem;
-      color: var(--green-400);
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-    .plan-features { display: flex; flex-direction: column; gap: 7px; }
-    .plan-feature {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 0.8rem;
-      color: var(--text-400);
-    }
-    .plan-feature i { color: var(--cyan-400); font-size: 0.7rem; flex-shrink: 0; }
-
-    /* Plan compare mini */
-    .plan-compare {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-      padding: 14px 16px;
-      margin-bottom: 16px;
-    }
-    .plan-compare-title {
-      font-size: 0.65rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--text-600);
-      margin-bottom: 10px;
-    }
-    .plan-compare-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      font-size: 0.75rem;
-    }
-    .plan-compare-row:last-child { border-bottom: none; }
-    .plan-compare-label { color: var(--text-500); }
-    .plan-compare-val   { font-weight: 700; color: var(--text-200); }
-    .plan-compare-val.cyan { color: var(--cyan-400); }
-
-    /* Social proof */
-    .signup-social-proof {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 14px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-      margin-top: auto;
-    }
-    .proof-avatars { display: flex; }
-    .proof-avatar {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      border: 2px solid var(--bg-700);
-      margin-left: -7px;
-      object-fit: cover;
-    }
-    .proof-avatar:first-child { margin-left: 0; }
-    .proof-text { font-size: 0.75rem; color: var(--text-500); line-height: 1.4; }
-    .proof-text strong { color: var(--text-200); }
-
-    /* ── Right Panel ── */
-    .signup-right {
-      flex: 1;
-      background: var(--bg-700);
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 40px 40px 80px;
-      overflow-y: auto;
-      position: relative;
-    }
-    .signup-right::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 1px; height: 100%;
-      background: linear-gradient(to bottom,
-        transparent 0%,
-        rgba(0,212,255,0.35) 25%,
-        rgba(0,212,255,0.35) 75%,
-        transparent 100%
-      );
-    }
-
-    /* ── Form Card ── */
-    .signup-form-card {
-      width: 100%;
-      max-width: 500px;
-      padding-top: 8px;
-    }
-
-    /* ── Progress Steps ── */
+    .signup-wrap { width: 100%; max-width: 680px; }
+    /* Progress */
     .progress-steps {
-      display: flex;
-      align-items: center;
-      margin-bottom: 36px;
+      display: flex; align-items: center;
+      margin-bottom: 32px;
     }
-    .progress-step {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .prog-step {
+      display: flex; align-items: center; gap: 8px;
       flex-shrink: 0;
     }
-    .progress-step-circle {
-      width: 32px; height: 32px;
-      border-radius: 50%;
+    .prog-circle {
+      width: 32px; height: 32px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 0.78rem; font-weight: 800;
-      border: 2px solid var(--border-default);
-      background: rgba(255,255,255,0.03);
-      color: var(--text-500);
-      transition: all var(--ease-normal);
-      flex-shrink: 0;
-      font-family: var(--font-display);
-    }
-    .progress-step-label {
-      font-size: 0.72rem; font-weight: 600;
+      background: rgba(255,255,255,0.06);
+      border: 2px solid rgba(255,255,255,0.1);
       color: var(--text-600);
-      white-space: nowrap;
-      transition: color var(--ease-normal);
+      transition: all 0.3s ease;
     }
-    .progress-step.active .progress-step-circle {
-      background: linear-gradient(135deg, var(--cyan-400), #0080FF);
-      border-color: transparent;
-      color: var(--bg-900);
-      box-shadow: 0 0 14px rgba(0,212,255,0.4);
+    .prog-step.active .prog-circle {
+      background: rgba(0,212,255,0.15);
+      border-color: var(--cyan-500);
+      color: var(--cyan-500);
+      box-shadow: 0 0 12px rgba(0,212,255,0.2);
     }
-    .progress-step.active .progress-step-label { color: var(--cyan-400); }
-    .progress-step.done .progress-step-circle {
+    .prog-step.done .prog-circle {
       background: rgba(34,197,94,0.15);
-      border-color: rgba(34,197,94,0.35);
+      border-color: var(--green-400);
       color: var(--green-400);
     }
-    .progress-step.done .progress-step-label { color: var(--green-400); }
-    .progress-line {
-      flex: 1;
-      height: 2px;
-      background: var(--border-subtle);
+    .prog-label {
+      font-size: 0.72rem; font-weight: 700;
+      color: var(--text-600);
+      transition: color 0.3s ease;
+    }
+    .prog-step.active .prog-label { color: var(--cyan-500); }
+    .prog-step.done   .prog-label { color: var(--green-400); }
+    .prog-line {
+      flex: 1; height: 2px;
+      background: rgba(255,255,255,0.07);
       margin: 0 8px;
-      border-radius: 1px;
-      transition: background var(--ease-normal);
-      position: relative;
-      overflow: hidden;
+      transition: background 0.4s ease;
     }
-    .progress-line::after {
-      content: '';
-      position: absolute; top: 0; left: 0;
-      height: 100%; width: 0%;
-      background: linear-gradient(90deg, var(--green-400), var(--cyan-400));
-      border-radius: 1px;
-      transition: width 0.5s ease;
-    }
-    .progress-line.done::after { width: 100%; }
-
-    /* ── Step panels ── */
-    .signup-panel { display: none; }
-    .signup-panel.active { display: block; animation: fadeInUp 0.38s cubic-bezier(0.4,0,0.2,1) both; }
-
-    /* Panel header */
-    .panel-title {
-      font-family: var(--font-display);
-      font-size: 1.55rem; font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
-    }
-    .panel-subtitle {
-      font-size: 0.875rem;
-      color: var(--text-500);
-      line-height: 1.65;
-      margin-bottom: 24px;
-    }
-
-    /* SSO */
-    .sso-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-    .sso-btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 10px 14px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-default);
-      border-radius: var(--r-md);
-      font-size: 0.82rem; font-weight: 600;
-      color: var(--text-300);
-      cursor: pointer;
-      transition: all var(--ease-fast);
-      font-family: var(--font-body);
-    }
-    .sso-btn:hover {
-      background: rgba(255,255,255,0.07);
-      border-color: var(--border-medium);
-      color: var(--text-100);
-      transform: translateY(-1px);
-    }
-
-    /* Divider */
-    .form-divider {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 20px;
-    }
-    .form-divider-line { flex: 1; height: 1px; background: var(--border-subtle); }
-    .form-divider-text { font-size: 0.72rem; color: var(--text-600); white-space: nowrap; }
-
-    /* Password strength */
-    .pw-strength { margin-top: 7px; }
-    .pw-strength-bars { display: flex; gap: 4px; margin-bottom: 4px; }
-    .pw-seg {
-      flex: 1; height: 3px;
-      border-radius: 2px;
-      background: rgba(255,255,255,0.07);
-      transition: background var(--ease-normal);
-    }
-    .pw-strength-text { font-size: 0.7rem; color: var(--text-500); transition: color var(--ease-fast); }
-
-    /* Submit */
-    .form-submit {
-      width: 100%;
-      padding: 13px;
-      background: linear-gradient(135deg, var(--cyan-400) 0%, #0080FF 100%);
-      border: none;
-      border-radius: var(--r-md);
-      font-size: 0.95rem; font-weight: 700;
-      color: var(--bg-900);
-      cursor: pointer;
-      transition: all var(--ease-fast);
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      box-shadow: 0 4px 20px rgba(0,212,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
-      margin-bottom: 16px;
-      font-family: var(--font-body);
-      position: relative;
-      overflow: hidden;
-    }
-    .form-submit:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 28px rgba(0,212,255,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
-    }
-    .form-submit:active { transform: translateY(0); }
-    .form-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-    .form-submit .spinner { display: none; }
-    .form-submit.loading .spinner { display: inline-flex; align-items: center; gap: 6px; }
-    .form-submit.loading .btn-label { display: none; }
-
-    /* Back button */
-    .btn-back {
-      display: flex; align-items: center; justify-content: center; gap: 7px;
-      padding: 11px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-default);
-      border-radius: var(--r-md);
-      font-size: 0.875rem; font-weight: 600;
-      color: var(--text-400);
-      cursor: pointer;
-      transition: all var(--ease-fast);
-      font-family: var(--font-body);
-      flex: 1;
-    }
-    .btn-back:hover { background: rgba(255,255,255,0.07); border-color: var(--border-medium); color: var(--text-200); }
-
-    /* Plan selector */
-    .plan-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .plan-option {
-      display: flex; align-items: center; gap: 14px;
-      padding: 16px 18px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-default);
-      border-radius: var(--r-lg);
-      cursor: pointer;
-      transition: all var(--ease-fast);
-      position: relative;
-    }
-    .plan-option:hover { border-color: var(--border-medium); background: rgba(0,212,255,0.04); }
-    .plan-option.selected {
-      border-color: var(--cyan-400);
-      background: rgba(0,212,255,0.07);
-      box-shadow: 0 0 0 1px rgba(0,212,255,0.2);
-    }
-    .plan-radio {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      border: 2px solid var(--border-default);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: all var(--ease-fast);
-    }
-    .plan-option.selected .plan-radio {
-      border-color: var(--cyan-400);
-      background: var(--cyan-400);
-    }
-    .plan-option.selected .plan-radio::after {
-      content: '';
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--bg-900);
-    }
-    .plan-option-info { flex: 1; min-width: 0; }
-    .plan-option-name  { font-weight: 700; font-size: 0.9rem; color: var(--text-100); margin-bottom: 2px; }
-    .plan-option-desc  { font-size: 0.75rem; color: var(--text-500); }
-    .plan-option-price { font-family: var(--font-display); font-size: 1rem; font-weight: 800; color: var(--text-200); white-space: nowrap; }
-    .plan-option.selected .plan-option-price { color: var(--cyan-400); }
-
-    /* Billing toggle */
-    .billing-toggle-row {
-      display: flex; align-items: center; justify-content: center; gap: 12px;
-      margin-bottom: 18px;
-      padding: 12px 16px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-    }
-    .billing-label { font-size: 0.82rem; color: var(--text-500); }
-    .billing-toggle {
-      width: 46px; height: 26px;
-      border-radius: var(--r-full);
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--border-default);
-      position: relative;
-      cursor: pointer;
-      transition: all var(--ease-normal);
-      flex-shrink: 0;
-    }
-    .billing-toggle-knob {
-      position: absolute;
-      top: 3px; left: 3px;
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      background: var(--text-500);
-      transition: all var(--ease-normal);
-    }
-    .billing-toggle.on { background: rgba(0,212,255,0.2); border-color: rgba(0,212,255,0.4); }
-    .billing-toggle.on .billing-toggle-knob {
-      background: var(--cyan-400);
-      transform: translateX(20px);
-      box-shadow: 0 0 8px rgba(0,212,255,0.4);
-    }
-    .billing-save-badge {
-      background: rgba(34,197,94,0.1);
-      border: 1px solid rgba(34,197,94,0.2);
-      color: var(--green-400);
-      font-size: 0.68rem; font-weight: 700;
-      padding: 2px 8px;
-      border-radius: var(--r-full);
-    }
-
-    /* Plan summary box */
-    .plan-summary {
-      background: rgba(0,212,255,0.05);
-      border: 1px solid rgba(0,212,255,0.15);
-      border-radius: var(--r-lg);
-      padding: 14px 16px;
-      margin-bottom: 20px;
-    }
-    .plan-summary-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .plan-summary-name  { font-weight: 700; font-size: 0.9rem; }
-    .plan-summary-price { font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; color: var(--cyan-400); }
-    .plan-summary-features { display: flex; flex-direction: column; gap: 5px; }
-    .plan-summary-feature {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 0.78rem; color: var(--text-400);
-    }
-    .plan-summary-feature i { color: var(--cyan-400); font-size: 0.68rem; flex-shrink: 0; }
-
-    /* Success screen */
-    .success-icon {
-      width: 84px; height: 84px;
-      border-radius: 50%;
-      background: rgba(34,197,94,0.1);
-      border: 2px solid rgba(34,197,94,0.3);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 24px;
-      font-size: 2.2rem;
-      color: var(--green-400);
-      box-shadow: 0 0 32px rgba(34,197,94,0.2);
-      animation: glowPulse 3s ease-in-out infinite;
-    }
-
-    /* Onboarding checklist */
-    .onboarding-list { display: flex; flex-direction: column; gap: 10px; }
-    .onboarding-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 14px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-md);
-      transition: all var(--ease-fast);
-    }
-    .onboarding-item:hover { border-color: var(--border-default); background: rgba(0,212,255,0.03); }
-    .onboarding-item.done { border-color: rgba(34,197,94,0.2); background: rgba(34,197,94,0.04); }
-    .onboarding-step-num {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background: rgba(0,212,255,0.1);
-      border: 1px solid rgba(0,212,255,0.2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.72rem; font-weight: 800;
-      color: var(--cyan-400);
-      flex-shrink: 0;
-    }
-    .onboarding-item.done .onboarding-step-num {
-      background: rgba(34,197,94,0.15);
-      border-color: rgba(34,197,94,0.3);
-      color: var(--green-400);
-    }
-    .onboarding-item-text { font-size: 0.85rem; color: var(--text-300); flex: 1; }
-    .onboarding-item.done .onboarding-item-text { text-decoration: line-through; opacity: 0.6; }
-
-    /* Trial countdown */
-    .trial-countdown {
-      display: flex; align-items: center; gap: 12px;
-      padding: 14px 16px;
-      background: rgba(245,166,35,0.06);
-      border: 1px solid rgba(245,166,35,0.15);
-      border-radius: var(--r-lg);
-      margin-bottom: 20px;
-    }
-    .trial-countdown-icon { font-size: 1.3rem; color: var(--gold-400); flex-shrink: 0; }
-    .trial-countdown-title { font-size: 0.875rem; font-weight: 700; color: var(--gold-400); }
-    .trial-countdown-sub   { font-size: 0.75rem; color: var(--text-500); margin-top: 1px; }
-
-    /* Alert */
-    .form-alert {
+    .prog-line.done { background: var(--green-400); }
+    /* Panel */
+    .signup-panel {
       display: none;
-      align-items: flex-start; gap: 10px;
-      padding: 12px 14px;
-      border-radius: var(--r-md);
-      font-size: 0.82rem;
-      line-height: 1.5;
-      margin-bottom: 18px;
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 20px; padding: 36px;
+      animation: fadeInUp 0.35s ease both;
     }
-    .form-alert.show { display: flex; }
-    .form-alert-error {
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.2);
-      color: var(--red-400);
+    .signup-panel.active { display: block; }
+    /* Plan cards */
+    .plan-card {
+      background: rgba(255,255,255,0.03);
+      border: 2px solid var(--border-default);
+      border-radius: 14px; padding: 18px;
+      cursor: pointer; transition: all 0.2s ease;
+      position: relative;
     }
-
-    /* Footer text */
-    .form-footer-text {
-      text-align: center;
-      font-size: 0.82rem;
-      color: var(--text-500);
+    .plan-card:hover { border-color: rgba(0,212,255,0.2); background: rgba(0,212,255,0.03); }
+    .plan-card.selected {
+      border-color: var(--cyan-500);
+      background: rgba(0,212,255,0.06);
+      box-shadow: 0 0 0 1px rgba(0,212,255,0.15);
     }
-    .form-footer-text a {
-      color: var(--cyan-400);
-      text-decoration: none;
-      font-weight: 600;
+    .plan-card.selected::before {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free'; font-weight: 900;
+      position: absolute; top: 12px; right: 12px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--cyan-500); color: var(--bg-900);
+      font-size: 0.6rem;
+      display: flex; align-items: center; justify-content: center;
     }
-    .form-footer-text a:hover { opacity: 0.8; }
-
-    /* Responsive */
-    @media (max-width: 960px) {
-      .signup-left { display: none; }
-      .signup-right { padding: 36px 24px 60px; }
-      .signup-right::before { display: none; }
-    }
-    @media (max-width: 480px) {
-      .sso-grid { grid-template-columns: 1fr; }
-      .progress-step-label { display: none; }
+    /* Password strength */
+    .pw-strength { display: flex; gap: 4px; margin-top: 6px; }
+    .pw-seg {
+      flex: 1; height: 3px; border-radius: 99px;
+      background: rgba(255,255,255,0.07);
+      transition: background 0.3s ease;
     }
   </style>
 </head>
 <body>
 
-<div class="signup-root">
+<div class="signup-wrap">
+  <!-- Logo -->
+  <div style="text-align:center;margin-bottom:28px;">
+    <a href="../index.html" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png"
+           style="height:36px;filter:drop-shadow(0 0 8px rgba(0,212,255,0.4));" />
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:0.07em;color:#F0F6FF;">
+        SES<em style="color:#00D4FF;font-style:normal;">MINE</em>
+      </span>
+    </a>
+  </div>
 
-  <!-- ══════════════════════════════════════════════
-       LEFT PANEL
-  ══════════════════════════════════════════════ -->
-  <div class="signup-left">
-    <div class="signup-left-bg">
-      <img class="signup-left-bg-img"
-           src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1400&q=80&auto=format&fit=crop"
-           alt="Mining equipment" />
-      <div class="signup-left-overlay"></div>
-      <div class="signup-left-grid"></div>
-      <div class="signup-left-glow"></div>
+  <!-- Progress -->
+  <div class="progress-steps">
+    <div class="prog-step active" id="prog-1">
+      <div class="prog-circle" id="prog-circle-1">1</div>
+      <span class="prog-label">Account</span>
     </div>
-
-    <div class="signup-left-content">
-      <!-- Logo -->
-      <a href="../index.html" class="signup-logo">
-        <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png"
-             alt="SESMine" class="signup-logo-img" />
-        <span class="signup-logo-name">SES<em>_</em>MINE</span>
-      </a>
-
-      <!-- Plan highlight -->
-      <div class="plan-highlight hero-anim-1">
-        <div class="plan-trial-badge">
-          <i class="fas fa-rocket"></i> Free 14-Day Trial
-        </div>
-        <div class="plan-name">Professional Plan</div>
-        <div class="plan-price">$299<span>/month after trial</span></div>
-        <div class="plan-trial-note">
-          <i class="fas fa-check-circle"></i> No credit card required · Cancel anytime
-        </div>
-        <div class="plan-features">
-          <div class="plan-feature"><i class="fas fa-check"></i> Full AI Cost Predictor (unlimited)</div>
-          <div class="plan-feature"><i class="fas fa-check"></i> Real-time Cost Calculator</div>
-          <div class="plan-feature"><i class="fas fa-check"></i> Equipment Database (1,247+ items)</div>
-          <div class="plan-feature"><i class="fas fa-check"></i> ESG Dashboard & reporting</div>
-          <div class="plan-feature"><i class="fas fa-check"></i> All 6 specialist hubs</div>
-          <div class="plan-feature"><i class="fas fa-check"></i> Advanced analytics & PDF export</div>
-          <div class="plan-feature"><i class="fas fa-check"></i> API access + Priority support</div>
-        </div>
-      </div>
-
-      <!-- Plan compare -->
-      <div class="plan-compare hero-anim-2">
-        <div class="plan-compare-title">What's included</div>
-        <div class="plan-compare-row">
-          <span class="plan-compare-label">AI Predictions / month</span>
-          <span class="plan-compare-val cyan">Unlimited</span>
-        </div>
-        <div class="plan-compare-row">
-          <span class="plan-compare-label">Projects</span>
-          <span class="plan-compare-val">Up to 25</span>
-        </div>
-        <div class="plan-compare-row">
-          <span class="plan-compare-label">Team members</span>
-          <span class="plan-compare-val">Up to 5</span>
-        </div>
-        <div class="plan-compare-row">
-          <span class="plan-compare-label">CSV / PDF export</span>
-          <span class="plan-compare-val cyan"><i class="fas fa-check"></i></span>
-        </div>
-        <div class="plan-compare-row">
-          <span class="plan-compare-label">REST API access</span>
-          <span class="plan-compare-val cyan"><i class="fas fa-check"></i></span>
-        </div>
-        <div class="plan-compare-row">
-          <span class="plan-compare-label">SSO / SAML</span>
-          <span class="plan-compare-val" style="color:var(--text-600);">Enterprise only</span>
-        </div>
-      </div>
-
-      <!-- Social proof -->
-      <div class="signup-social-proof hero-anim-3">
-        <div class="proof-avatars">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
-          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
-          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
-          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&q=80&auto=format&fit=crop&crop=face" class="proof-avatar" alt="" />
-        </div>
-        <div class="proof-text">
-          <strong>1,200+ professionals</strong> joined this month<br/>
-          <span style="color:var(--gold-400);">★★★★★</span>
-          <span> 4.9/5 average rating</span>
-        </div>
-      </div>
+    <div class="prog-line" id="prog-line-1"></div>
+    <div class="prog-step" id="prog-2">
+      <div class="prog-circle" id="prog-circle-2">2</div>
+      <span class="prog-label">Profile</span>
+    </div>
+    <div class="prog-line" id="prog-line-2"></div>
+    <div class="prog-step" id="prog-3">
+      <div class="prog-circle" id="prog-circle-3">3</div>
+      <span class="prog-label">Plan</span>
+    </div>
+    <div class="prog-line" id="prog-line-3"></div>
+    <div class="prog-step" id="prog-4">
+      <div class="prog-circle" id="prog-circle-4"><i class="fas fa-check" style="font-size:0.6rem;"></i></div>
+      <span class="prog-label">Done</span>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════
-       RIGHT PANEL
-  ══════════════════════════════════════════════ -->
-  <div class="signup-right">
-    <div class="signup-form-card">
+  <!-- ═══ PANEL 1 — Account ═══ -->
+  <div class="signup-panel active" id="panel-1">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:6px;">
+        Create Your Account
+      </h2>
+      <p style="font-size:0.85rem;color:#8BA4BC;">
+        Already have an account?
+        <a href="login.html" style="color:#00D4FF;font-weight:600;">Sign in</a>
+      </p>
+    </div>
 
-      <!-- ── Progress Steps ── -->
-      <div class="progress-steps" id="progressSteps">
-        <div class="progress-step active" id="prog-1">
-          <div class="progress-step-circle">1</div>
-          <div class="progress-step-label">Account</div>
-        </div>
-        <div class="progress-line" id="line-1"></div>
-        <div class="progress-step" id="prog-2">
-          <div class="progress-step-circle">2</div>
-          <div class="progress-step-label">Profile</div>
-        </div>
-        <div class="progress-line" id="line-2"></div>
-        <div class="progress-step" id="prog-3">
-          <div class="progress-step-circle">3</div>
-          <div class="progress-step-label">Plan</div>
-        </div>
-        <div class="progress-line" id="line-3"></div>
-        <div class="progress-step" id="prog-4">
-          <div class="progress-step-circle">
-            <i class="fas fa-check" style="font-size:0.6rem;"></i>
+    <div class="alert alert-error mb-4" id="p1Alert">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="p1AlertMsg">Please fix the errors below.</span>
+    </div>
+
+    <form id="form1" novalidate>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label class="form-label">First Name <span class="form-label-required">*</span></label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-user input-icon"></i>
+            <input type="text" class="form-input" id="firstName" placeholder="James" />
           </div>
-          <div class="progress-step-label">Done</div>
+          <div class="field-error" id="firstNameErr"><i class="fas fa-exclamation-circle"></i> Required</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name <span class="form-label-required">*</span></label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-user input-icon"></i>
+            <input type="text" class="form-input" id="lastName" placeholder="Whitfield" />
+          </div>
+          <div class="field-error" id="lastNameErr"><i class="fas fa-exclamation-circle"></i> Required</div>
         </div>
       </div>
 
-      <!-- ════════════════════════════
-           PANEL 1 — Account Details
-      ════════════════════════════ -->
-      <div class="signup-panel active" id="panel-1">
-        <h2 class="panel-title">Create Your Account</h2>
-        <p class="panel-subtitle">Start your free 14-day trial — no credit card required.</p>
-
-        <!-- Error alert -->
-        <div class="form-alert form-alert-error" id="p1Alert">
-          <i class="fas fa-exclamation-circle" style="flex-shrink:0;margin-top:1px;"></i>
-          <span id="p1AlertMsg">Please fix the errors below.</span>
+      <div class="form-group">
+        <label class="form-label">Work Email <span class="form-label-required">*</span></label>
+        <div class="input-icon-wrap">
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" class="form-input" id="regEmail" placeholder="you@company.com" />
         </div>
-
-        <!-- SSO -->
-        <div class="sso-grid">
-          <button class="sso-btn" onclick="handleSSO('google',this)">
-            <svg width="16" height="16" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
-            Sign up with Google
-          </button>
-          <button class="sso-btn" onclick="handleSSO('microsoft',this)">
-            <svg width="16" height="16" viewBox="0 0 24 24">
-              <path fill="#f25022" d="M1 1h10v10H1z"/>
-              <path fill="#00a4ef" d="M13 1h10v10H13z"/>
-              <path fill="#7fba00" d="M1 13h10v10H1z"/>
-              <path fill="#ffb900" d="M13 13h10v10H13z"/>
-            </svg>
-            Sign up with Microsoft
-          </button>
-        </div>
-
-        <div class="form-divider">
-          <div class="form-divider-line"></div>
-          <span class="form-divider-text">or create with email</span>
-          <div class="form-divider-line"></div>
-        </div>
-
-        <form id="form-1" novalidate autocomplete="on">
-          <!-- Name row -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-            <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="firstName">
-                First Name <span class="form-label-required">*</span>
-              </label>
-              <input type="text" class="form-input" id="firstName"
-                     placeholder="James"
-                     autocomplete="given-name" required />
-              <div class="field-error" id="firstNameErr">
-                <i class="fas fa-exclamation-circle"></i> Required
-              </div>
-            </div>
-            <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="lastName">
-                Last Name <span class="form-label-required">*</span>
-              </label>
-              <input type="text" class="form-input" id="lastName"
-                     placeholder="Whitfield"
-                     autocomplete="family-name" required />
-              <div class="field-error" id="lastNameErr">
-                <i class="fas fa-exclamation-circle"></i> Required
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-top:14px;">
-            <label class="form-label" for="signupEmail">
-              Work Email <span class="form-label-required">*</span>
-            </label>
-            <div class="input-icon-wrap">
-              <input type="email" class="form-input" id="signupEmail"
-                     placeholder="you@company.com"
-                     autocomplete="email" required />
-              <i class="fas fa-envelope input-icon"></i>
-            </div>
-            <div class="field-error" id="signupEmailErr">
-              <i class="fas fa-exclamation-circle"></i> Please enter a valid work email.
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="signupPassword">
-              Password <span class="form-label-required">*</span>
-            </label>
-            <div class="input-password-wrap">
-              <input type="password" class="form-input" id="signupPassword"
-                     placeholder="Create a strong password (min. 8 chars)"
-                     autocomplete="new-password" required
-                     oninput="updatePasswordStrength(this.value)" />
-              <button type="button" class="pw-toggle"
-                      onclick="togglePw('signupPassword',this)"
-                      aria-label="Toggle password">
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
-            <div class="pw-strength" id="pwStrength">
-              <div class="pw-strength-bars">
-                <div class="pw-seg" id="seg1"></div>
-                <div class="pw-seg" id="seg2"></div>
-                <div class="pw-seg" id="seg3"></div>
-                <div class="pw-seg" id="seg4"></div>
-              </div>
-              <div class="pw-strength-text" id="pwStrengthText">Enter a password</div>
-            </div>
-            <div class="field-error" id="signupPasswordErr">
-              <i class="fas fa-exclamation-circle"></i> Password must be at least 8 characters.
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="confirmPassword">
-              Confirm Password <span class="form-label-required">*</span>
-            </label>
-            <div class="input-password-wrap">
-              <input type="password" class="form-input" id="confirmPassword"
-                     placeholder="Repeat your password"
-                     autocomplete="new-password" required />
-              <button type="button" class="pw-toggle"
-                      onclick="togglePw('confirmPassword',this)"
-                      aria-label="Toggle password">
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
-            <div class="field-error" id="confirmPasswordErr">
-              <i class="fas fa-exclamation-circle"></i> Passwords do not match.
-            </div>
-          </div>
-
-          <div class="checkbox-wrap" style="margin-bottom:6px;">
-            <input type="checkbox" id="termsCheck" />
-            <span class="checkbox-label">
-              I agree to the <a href="#">Terms of Service</a> and
-              <a href="#">Privacy Policy</a>. I understand my data will be
-              processed in accordance with GDPR.
-            </span>
-          </div>
-          <div class="field-error" id="termsErr" style="margin-bottom:14px;">
-            <i class="fas fa-exclamation-circle"></i> You must accept the terms to continue.
-          </div>
-
-          <button type="submit" class="form-submit" id="p1Btn">
-            <span class="btn-label">Continue <i class="fas fa-arrow-right"></i></span>
-            <span class="spinner"><i class="fas fa-spinner fa-spin"></i> Checking...</span>
-          </button>
-        </form>
-
-        <p class="form-footer-text">
-          Already have an account? <a href="login.html">Sign in</a>
-        </p>
+        <div class="field-error" id="regEmailErr"><i class="fas fa-exclamation-circle"></i> Valid email required</div>
       </div>
 
-      <!-- ════════════════════════════
-           PANEL 2 — Professional Profile
-      ════════════════════════════ -->
-      <div class="signup-panel" id="panel-2">
-        <h2 class="panel-title">Your Professional Profile</h2>
-        <p class="panel-subtitle">Help us personalise your SESMine experience with your role and industry context.</p>
+      <div class="form-group">
+        <label class="form-label">Password <span class="form-label-required">*</span></label>
+        <div class="input-icon-wrap input-password-wrap">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" class="form-input" id="regPassword"
+                 placeholder="Min. 8 characters"
+                 oninput="updateStrength(this.value)" />
+          <button type="button" class="pw-toggle" id="regPwToggle"
+                  onclick="togglePw('regPassword','regPwToggle')">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <div class="pw-strength">
+          <div class="pw-seg" id="seg1"></div>
+          <div class="pw-seg" id="seg2"></div>
+          <div class="pw-seg" id="seg3"></div>
+          <div class="pw-seg" id="seg4"></div>
+        </div>
+        <div style="font-size:0.7rem;color:#6688A0;margin-top:4px;" id="pwText">Enter a password</div>
+        <div class="field-error" id="regPasswordErr"><i class="fas fa-exclamation-circle"></i> Min. 8 chars, uppercase, number, special char</div>
+      </div>
 
-        <form id="form-2" novalidate>
-          <div class="form-group">
-            <label class="form-label" for="company">
-              Company / Organisation <span class="form-label-required">*</span>
-            </label>
-            <div class="input-icon-wrap">
-              <input type="text" class="form-input" id="company"
-                     placeholder="e.g. Rio Tinto, BHP, Newmont..."
-                     required />
-              <i class="fas fa-building input-icon"></i>
-            </div>
-            <div class="field-error" id="companyErr">
-              <i class="fas fa-exclamation-circle"></i> Company name is required.
-            </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password <span class="form-label-required">*</span></label>
+        <div class="input-icon-wrap input-password-wrap">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" class="form-input" id="confirmPassword" placeholder="Repeat password" />
+          <button type="button" class="pw-toggle" id="confPwToggle"
+                  onclick="togglePw('confirmPassword','confPwToggle')">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <div class="field-error" id="confirmPasswordErr"><i class="fas fa-exclamation-circle"></i> Passwords do not match</div>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-wrap">
+          <input type="checkbox" id="termsCheck" />
+          <span class="checkbox-label">
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+          </span>
+        </label>
+        <div class="field-error" id="termsErr"><i class="fas fa-exclamation-circle"></i> You must accept to continue</div>
+      </div>
+
+      <button type="submit" class="btn btn-cyan btn-full btn-lg" id="p1Btn">
+        Continue <i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+  </div>
+
+  <!-- ═══ PANEL 2 — Profile ═══ -->
+  <div class="signup-panel" id="panel-2">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:6px;">
+        Your Professional Profile
+      </h2>
+      <p style="font-size:0.85rem;color:#8BA4BC;">Help us tailor your experience.</p>
+    </div>
+
+    <form id="form2" novalidate>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label class="form-label">Company <span class="form-label-required">*</span></label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-building input-icon"></i>
+            <input type="text" class="form-input" id="company" placeholder="Rio Tinto" />
           </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-            <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="jobTitle">
-                Job Title <span class="form-label-required">*</span>
-              </label>
-              <input type="text" class="form-input" id="jobTitle"
-                     placeholder="e.g. Chief Engineer" required />
-              <div class="field-error" id="jobTitleErr">
-                <i class="fas fa-exclamation-circle"></i> Required
-              </div>
-            </div>
-            <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="department">Department</label>
-              <select class="form-select" id="department">
-                <option value="">Select...</option>
-                <option>Engineering</option>
-                <option>Finance</option>
-                <option>Operations</option>
-                <option>Sustainability / ESG</option>
-                <option>Procurement</option>
-                <option>Safety</option>
-                <option>Executive / C-Suite</option>
-                <option>Consulting</option>
-                <option>Other</option>
-              </select>
-            </div>
+          <div class="field-error" id="companyErr"><i class="fas fa-exclamation-circle"></i> Required</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Job Title <span class="form-label-required">*</span></label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-briefcase input-icon"></i>
+            <input type="text" class="form-input" id="jobTitle" placeholder="Mine Engineer" />
           </div>
+          <div class="field-error" id="jobTitleErr"><i class="fas fa-exclamation-circle"></i> Required</div>
+        </div>
+      </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
-            <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="mineType">Primary Mine Type</label>
-              <select class="form-select" id="mineType">
-                <option value="">Select...</option>
-                <option>Open-pit</option>
-                <option>Underground</option>
-                <option>In-Situ Leach (ISL)</option>
-                <option>Placer</option>
-                <option>Dredging</option>
-                <option>Multiple types</option>
-              </select>
-            </div>
-            <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="teamSize">Team Size</label>
-              <select class="form-select" id="teamSize">
-                <option value="">Select...</option>
-                <option>Just me</option>
-                <option>2–5 people</option>
-                <option>6–20 people</option>
-                <option>21–100 people</option>
-                <option>100+ people</option>
-              </select>
-            </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label class="form-label">Department</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-sitemap input-icon"></i>
+            <select class="form-select" id="department" style="padding-left:38px;">
+              <option value="">Select...</option>
+              <option>Engineering</option>
+              <option>Finance</option>
+              <option>Operations</option>
+              <option>Sustainability</option>
+              <option>Procurement</option>
+              <option>Safety & Health</option>
+              <option>Innovation & Technology</option>
+              <option>Executive</option>
+            </select>
           </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mine Type</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-mountain input-icon"></i>
+            <select class="form-select" id="mineType" style="padding-left:38px;">
+              <option value="">Select...</option>
+              <option>Open Cut</option>
+              <option>Underground</option>
+              <option>Both</option>
+              <option>Processing Only</option>
+              <option>Exploration</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-          <div class="form-group" style="margin-top:14px;">
-            <label class="form-label" for="country">
-              Country / Region <span class="form-label-required">*</span>
-            </label>
-            <select class="form-select" id="country" required>
-              <option value="">Select your country...</option>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label class="form-label">Country <span class="form-label-required">*</span></label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-globe input-icon"></i>
+            <select class="form-select" id="country" style="padding-left:38px;">
+              <option value="">Select country...</option>
               <option>Australia</option>
               <option>Canada</option>
-              <option>United States</option>
-              <option>South Africa</option>
               <option>Chile</option>
-              <option>Peru</option>
+              <option>South Africa</option>
+              <option>United States</option>
               <option>Brazil</option>
+              <option>Peru</option>
               <option>Ghana</option>
-              <option>Democratic Republic of Congo</option>
-              <option>Kazakhstan</option>
-              <option>Russia</option>
-              <option>China</option>
               <option>Indonesia</option>
-              <option>Philippines</option>
-              <option>Papua New Guinea</option>
               <option>Mongolia</option>
               <option>United Kingdom</option>
-              <option>Sweden</option>
-              <option>Finland</option>
-              <option>Iran</option>
               <option>Other</option>
             </select>
-            <div class="field-error" id="countryErr">
-              <i class="fas fa-exclamation-circle"></i> Please select your country.
-            </div>
           </div>
-
-          <div class="form-group">
-            <label class="form-label" for="primaryUse">Primary Use Case</label>
-            <select class="form-select" id="primaryUse">
-              <option value="">Select your main goal...</option>
-              <option>CAPEX / OPEX estimation</option>
-              <option>Project feasibility studies</option>
-              <option>ESG & sustainability reporting</option>
-              <option>Equipment procurement</option>
-              <option>Project performance monitoring</option>
-              <option>Financial modelling & NPV</option>
-              <option>Team collaboration</option>
-              <option>Research & benchmarking</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="referral">How did you hear about SESMine?</label>
-            <select class="form-select" id="referral">
+          <div class="field-error" id="countryErr"><i class="fas fa-exclamation-circle"></i> Required</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Primary Use</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-bullseye input-icon"></i>
+            <select class="form-select" id="primaryUse" style="padding-left:38px;">
               <option value="">Select...</option>
-              <option>Google / Search</option>
-              <option>LinkedIn</option>
-              <option>Colleague / Word of mouth</option>
-              <option>Mining conference or event</option>
-              <option>Industry publication</option>
-              <option>YouTube</option>
-              <option>Other</option>
+              <option>CAPEX / OPEX Modelling</option>
+              <option>ESG Reporting</option>
+              <option>Mine Planning</option>
+              <option>Safety Management</option>
+              <option>Procurement</option>
+              <option>Innovation Tracking</option>
+              <option>General Analytics</option>
             </select>
           </div>
-
-          <div style="display:flex;gap:10px;">
-            <button type="button" class="btn-back" onclick="goToPanel(1)">
-              <i class="fas fa-arrow-left"></i> Back
-            </button>
-            <button type="submit" class="form-submit" id="p2Btn" style="margin-bottom:0;flex:2;">
-              <span class="btn-label">Continue <i class="fas fa-arrow-right"></i></span>
-              <span class="spinner"><i class="fas fa-spinner fa-spin"></i> Saving...</span>
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- ════════════════════════════
-           PANEL 3 — Choose Plan
-      ════════════════════════════ -->
-      <div class="signup-panel" id="panel-3">
-        <h2 class="panel-title">Choose Your Plan</h2>
-        <p class="panel-subtitle">All plans include a full 14-day free trial. No credit card required to start.</p>
-
-        <!-- Billing toggle -->
-        <div class="billing-toggle-row">
-          <span class="billing-label">Monthly</span>
-          <div class="billing-toggle" id="billingToggle" onclick="toggleBilling()">
-            <div class="billing-toggle-knob" id="billingKnob"></div>
-          </div>
-          <span class="billing-label">Annual</span>
-          <span class="billing-save-badge">Save 20%</span>
-        </div>
-
-        <!-- Plan options -->
-        <div class="plan-selector" id="planSelector">
-          <div class="plan-option" data-plan="starter" onclick="selectPlan('starter')">
-            <div class="plan-radio"></div>
-            <div class="plan-option-info">
-              <div class="plan-option-name">Starter</div>
-              <div class="plan-option-desc">Up to 5 projects · 1 user · 50 AI predictions/mo</div>
-            </div>
-            <div class="plan-option-price" id="price-starter">$99/mo</div>
-            <span class="badge badge-gray" style="margin-left:8px;">Trial</span>
-          </div>
-
-          <div class="plan-option selected" data-plan="professional" onclick="selectPlan('professional')">
-            <div class="plan-radio"></div>
-            <div class="plan-option-info">
-              <div class="plan-option-name">
-                Professional
-                <span style="color:var(--cyan-400);font-size:0.72rem;font-weight:600;"> · Recommended</span>
-              </div>
-              <div class="plan-option-desc">Up to 25 projects · 5 users · Unlimited AI</div>
-            </div>
-            <div class="plan-option-price" id="price-professional">$299/mo</div>
-            <span class="badge badge-cyan" style="margin-left:8px;">Popular</span>
-          </div>
-
-          <div class="plan-option" data-plan="enterprise" onclick="selectPlan('enterprise')">
-            <div class="plan-radio"></div>
-            <div class="plan-option-info">
-              <div class="plan-option-name">Enterprise</div>
-              <div class="plan-option-desc">Unlimited projects & users · SSO · SLA</div>
-            </div>
-            <div class="plan-option-price" id="price-enterprise">$899/mo</div>
-            <span class="badge badge-gold" style="margin-left:8px;">Full Power</span>
-          </div>
-        </div>
-
-        <!-- Plan summary -->
-        <div class="plan-summary" id="planSummary">
-          <div class="plan-summary-header">
-            <div class="plan-summary-name" id="summaryName">Professional Plan</div>
-            <div class="plan-summary-price" id="summaryPrice">$299/mo</div>
-          </div>
-          <div class="plan-summary-features" id="summaryFeatures"></div>
-        </div>
-
-        <div style="display:flex;gap:10px;">
-          <button type="button" class="btn-back" onclick="goToPanel(2)">
-            <i class="fas fa-arrow-left"></i> Back
-          </button>
-          <button type="button" class="form-submit" id="p3Btn"
-                  onclick="completeSignup()" style="margin-bottom:0;flex:2;">
-            <span class="btn-label"><i class="fas fa-rocket"></i> Start Free Trial</span>
-            <span class="spinner"><i class="fas fa-spinner fa-spin"></i> Creating account...</span>
-          </button>
-        </div>
-
-        <p style="text-align:center;font-size:0.75rem;color:var(--text-600);margin-top:12px;">
-          <i class="fas fa-lock" style="color:var(--cyan-400);margin-right:3px;"></i>
-          Secure sign-up · No credit card · Cancel anytime
-        </p>
-      </div>
-
-      <!-- ════════════════════════════
-           PANEL 4 — Success
-      ════════════════════════════ -->
-      <div class="signup-panel" id="panel-4">
-        <div style="text-align:center;">
-          <div class="success-icon">
-            <i class="fas fa-check"></i>
-          </div>
-          <h2 class="panel-title" style="margin-bottom:8px;">Welcome to SESMine!</h2>
-          <p style="font-size:0.9rem;color:var(--text-500);line-height:1.72;margin-bottom:6px;">
-            Your account has been created successfully.
-          </p>
-          <p style="font-size:0.875rem;color:var(--text-400);margin-bottom:24px;">
-            Confirmation sent to
-            <strong id="successEmail" style="color:var(--text-100);"></strong>
-          </p>
-
-          <!-- Trial countdown -->
-          <div class="trial-countdown" style="text-align:left;">
-            <div class="trial-countdown-icon"><i class="fas fa-clock"></i></div>
-            <div>
-              <div class="trial-countdown-title">14-day free trial started</div>
-              <div class="trial-countdown-sub">
-                Trial ends <strong id="trialEndDate" style="color:var(--text-200);"></strong>
-                · No charge until then
-              </div>
-            </div>
-          </div>
-
-          <!-- Onboarding checklist -->
-          <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border-subtle);border-radius:var(--r-xl);padding:18px;margin-bottom:22px;text-align:left;">
-            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-600);margin-bottom:14px;">
-              <i class="fas fa-list-check" style="color:var(--cyan-400);margin-right:5px;"></i>
-              Your Onboarding Checklist
-            </div>
-            <div class="onboarding-list">
-              <div class="onboarding-item done">
-                <div class="onboarding-step-num"><i class="fas fa-check" style="font-size:0.6rem;"></i></div>
-                <div class="onboarding-item-text">Create your account</div>
-              </div>
-              <div class="onboarding-item">
-                <div class="onboarding-step-num">2</div>
-                <div class="onboarding-item-text">Verify your email address</div>
-              </div>
-              <div class="onboarding-item">
-                <div class="onboarding-step-num">3</div>
-                <div class="onboarding-item-text">Create your first project</div>
-              </div>
-              <div class="onboarding-item">
-                <div class="onboarding-step-num">4</div>
-                <div class="onboarding-item-text">Run your first AI cost prediction</div>
-              </div>
-              <div class="onboarding-item">
-                <div class="onboarding-step-num">5</div>
-                <div class="onboarding-item-text">Invite your team members</div>
-              </div>
-            </div>
-          </div>
-
-          <a href="../dashboard/main-dashboard.html"
-             class="form-submit" style="text-decoration:none;display:flex;margin-bottom:12px;">
-            <i class="fas fa-th-large"></i> Go to Dashboard
-          </a>
-
-          <p class="form-footer-text">
-            Need help?
-            <a href="../contact.html">Contact our onboarding team</a>
-          </p>
         </div>
       </div>
 
-    </div><!-- /signup-form-card -->
-  </div><!-- /signup-right -->
-</div><!-- /signup-root -->
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button type="button" class="btn btn-ghost btn-full" onclick="goPanel(1)">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button type="submit" class="btn btn-cyan btn-full btn-lg" id="p2Btn">
+          Continue <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ═══ PANEL 3 — Plan ═══ -->
+  <div class="signup-panel" id="panel-3">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:6px;">
+        Choose Your Plan
+      </h2>
+      <p style="font-size:0.85rem;color:#8BA4BC;">14-day free trial on all plans. No credit card required.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;" id="planCards"></div>
+
+    <div style="display:flex;gap:10px;">
+      <button type="button" class="btn btn-ghost btn-full" onclick="goPanel(2)">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <button type="button" class="btn btn-cyan btn-full btn-lg" id="p3Btn"
+              onclick="submitRegistration()">
+        <i class="fas fa-rocket"></i> Start Free Trial
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ PANEL 4 — Success ═══ -->
+  <div class="signup-panel" id="panel-4">
+    <div style="text-align:center;padding:20px 0;">
+      <div style="
+        width:72px;height:72px;border-radius:50%;
+        background:rgba(34,197,94,0.1);
+        border:2px solid rgba(34,197,94,0.25);
+        display:flex;align-items:center;justify-content:center;
+        margin:0 auto 20px;font-size:1.8rem;color:#22C55E;
+        animation:scaleInBounce 0.5s ease both;
+      "><i class="fas fa-check"></i></div>
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:10px;">
+        Account Created!
+      </h2>
+      <p style="font-size:0.88rem;color:#8BA4BC;line-height:1.75;max-width:380px;margin:0 auto 24px;">
+        Your account is <strong style="color:#F0F6FF;">pending admin approval</strong>.
+        You'll receive an email once your account is activated.
+      </p>
+
+      <!-- Summary -->
+      <div style="
+        background:rgba(255,255,255,0.02);
+        border:1px solid var(--border-default);
+        border-radius:12px;padding:16px;
+        margin-bottom:20px;text-align:left;
+      ">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#6688A0;margin-bottom:12px;">
+          Registration Summary
+        </div>
+        <div id="regSummary" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <!-- Next steps -->
+      <div style="
+        background:rgba(249,115,22,0.06);
+        border:1px solid rgba(249,115,22,0.15);
+        border-radius:12px;padding:16px;
+        margin-bottom:20px;text-align:left;
+      ">
+        <div style="font-size:0.72rem;font-weight:700;color:#F6AD55;margin-bottom:10px;">
+          <i class="fas fa-clock" style="margin-right:5px;"></i> What happens next?
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:#8BA4BC;">
+            <i class="fas fa-check-circle" style="color:#22C55E;flex-shrink:0;"></i> Account registered
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:#8BA4BC;">
+            <i class="fas fa-user-shield" style="color:#F97316;flex-shrink:0;"></i> Admin reviews your account (typically within 2 hours)
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:#8BA4BC;">
+            <i class="fas fa-envelope" style="color:#00D4FF;flex-shrink:0;"></i> You receive access confirmation email
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:#8BA4BC;">
+            <i class="fas fa-rocket" style="color:#A855F7;flex-shrink:0;"></i> Full hub access unlocked
+          </div>
+        </div>
+      </div>
+
+      <a href="login.html" class="btn btn-cyan btn-full btn-lg">
+        <i class="fas fa-sign-in-alt"></i> Go to Sign In
+      </a>
+    </div>
+  </div>
+</div>
 
 <div id="toastContainer"></div>
-
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
 <script src="../js/main.js"></script>
 <script>
 'use strict';
 
-// ── State ──────────────────────────────────────────────────────────────────
+const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 let currentPanel  = 1;
 let selectedPlan  = 'professional';
-let isAnnual      = false;
+const formData    = {};
 
-const PLANS = {
-  starter: {
-    name: 'Starter Plan',
-    monthly: 99, annual: 79,
-    features: [
-      '14-day free trial included',
-      'AI Predictor (50 predictions/mo)',
-      'Up to 5 projects · 1 user',
-      'Cost Calculator access',
-      'Email support'
-    ]
-  },
-  professional: {
-    name: 'Professional Plan',
-    monthly: 299, annual: 239,
-    features: [
-      '14-day free trial included',
-      'Unlimited AI predictions',
-      'Up to 25 projects · 5 users',
-      'All 6 hubs + Equipment DB',
-      'API access + Priority support'
-    ]
-  },
-  enterprise: {
-    name: 'Enterprise Plan',
-    monthly: 899, annual: 719,
-    features: [
-      '14-day free trial included',
-      'Unlimited everything',
-      'SSO/SAML + custom RBAC',
-      'Dedicated account manager',
-      'SLA 99.9% uptime guarantee'
-    ]
-  }
-};
+/* ── Redirect if logged in ── */
+(function() {
+  const user = SESAuth.Store.get(SESAuth.KEYS.CURRENT_USER);
+  if (user) window.location.href = '../dashboard/main-dashboard.html';
+  /* Pre-select plan from URL */
+  const urlPlan = new URLSearchParams(window.location.search).get('plan');
+  if (urlPlan) selectedPlan = urlPlan;
+})();
 
-// ── Panel navigation ───────────────────────────────────────────────────────
-function goToPanel(n) {
+/* ── Panel navigation ── */
+function goPanel(n) {
   document.getElementById(`panel-${currentPanel}`)?.classList.remove('active');
-
-  // Update progress indicators
   for (let i = 1; i <= 4; i++) {
-    const step = document.getElementById(`prog-${i}`);
-    if (!step) continue;
+    const step   = document.getElementById(`prog-${i}`);
+    const circle = document.getElementById(`prog-circle-${i}`);
+    const line   = document.getElementById(`prog-line-${i}`);
     step.classList.remove('active','done');
-    if (i < n)      step.classList.add('done');
-    else if (i === n) step.classList.add('active');
-
-    // Restore number or checkmark
-    const circle = step.querySelector('.progress-step-circle');
-    if (circle) {
-      if (i < n) {
-        circle.innerHTML = '<i class="fas fa-check" style="font-size:0.6rem;"></i>';
-      } else if (i === 4) {
-        circle.innerHTML = '<i class="fas fa-check" style="font-size:0.6rem;"></i>';
-      } else {
-        circle.textContent = i;
-      }
-    }
-  }
-
-  // Update progress lines
-  for (let i = 1; i <= 3; i++) {
-    const line = document.getElementById(`line-${i}`);
+    if (i < n)      { step.classList.add('done');   circle.innerHTML = '<i class="fas fa-check" style="font-size:0.6rem;"></i>'; }
+    else if (i === n){ step.classList.add('active'); if (i < 4) circle.textContent = i; }
+    else             { if (i < 4) circle.textContent = i; }
     if (line) line.classList.toggle('done', i < n);
   }
-
   currentPanel = n;
-  const panel = document.getElementById(`panel-${n}`);
-  if (panel) {
-    panel.classList.add('active');
-    // Scroll to top of form
-    panel.closest('.signup-right')?.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById(`panel-${n}`)?.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Render plan cards ── */
+function renderPlanCards() {
+  const el = document.getElementById('planCards');
+  if (!el) return;
+  el.innerHTML = SESConfig.plans.map(plan => `
+    <div class="plan-card ${plan.id === selectedPlan ? 'selected' : ''}"
+         data-plan="${plan.id}"
+         onclick="selectPlan('${plan.id}')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="
+            width:36px;height:36px;border-radius:10px;
+            background:rgba(${plan.popular ? '0,212,255' : plan.id === 'enterprise' ? '212,175,55' : '96,165,250'},0.1);
+            display:flex;align-items:center;justify-content:center;
+            font-size:0.9rem;color:${plan.color};
+          ">
+            <i class="fas ${plan.id === 'starter' ? 'fa-seedling' : plan.id === 'professional' ? 'fa-rocket' : 'fa-building'}"></i>
+          </div>
+          <div>
+            <div style="font-weight:800;font-size:0.95rem;">${plan.name}</div>
+            <div style="font-size:0.72rem;color:#6688A0;">${plan.description.split('.')[0]}</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:${plan.color};">
+            $${plan.price}
+          </div>
+          <div style="font-size:0.68rem;color:#6688A0;">/ month</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">
+        ${plan.features.filter(f => f.included).slice(0,4).map(f => `
+          <span style="
+            font-size:0.62rem;font-weight:700;
+            padding:2px 8px;border-radius:99px;
+            background:rgba(${plan.popular ? '0,212,255' : '255,255,255'},0.06);
+            border:1px solid rgba(${plan.popular ? '0,212,255' : '255,255,255'},0.1);
+            color:#B0C4D8;
+          ">${f.text}</span>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  document.querySelectorAll('.plan-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.plan === plan);
+  });
+}
+
+/* ── Password strength ── */
+function updateStrength(val) {
+  const checks = [val.length >= 8, /[A-Z]/.test(val) && /[a-z]/.test(val), /\d/.test(val), /[^A-Za-z0-9]/.test(val)];
+  const score  = checks.filter(Boolean).length;
+  const levels = [
+    { color:'#EF4444', text:'Too weak' },
+    { color:'#F97316', text:'Weak — add uppercase & lowercase' },
+    { color:'#D4AF37', text:'Fair — add a number' },
+    { color:'#22C55E', text:'Strong password!' }
+  ];
+  const level = val.length === 0 ? null : levels[Math.max(0, score - 1)];
+  for (let i = 1; i <= 4; i++) {
+    const seg = document.getElementById(`seg${i}`);
+    if (seg) seg.style.background = (level && i <= score) ? level.color : 'rgba(255,255,255,0.07)';
   }
+  const txt = document.getElementById('pwText');
+  if (txt) { txt.textContent = level?.text || 'Enter a password'; txt.style.color = level?.color || '#6688A0'; }
 }
 
-// ── SSO ────────────────────────────────────────────────────────────────────
-function handleSSO(provider, btn) {
-  const orig = btn.innerHTML;
-  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Connecting...`;
-  btn.disabled = true;
-  setTimeout(() => {
-    btn.innerHTML = orig;
-    btn.disabled = false;
-    showToast(`${provider.charAt(0).toUpperCase()+provider.slice(1)} SSO — configure in Admin → Security → Identity Providers`, 'info', 4000);
-  }, 1800);
-}
-
-// ── Password toggle ────────────────────────────────────────────────────────
-function togglePw(inputId, btn) {
-  const input = document.getElementById(inputId);
-  if (!input) return;
-  const show = input.type === 'password';
-  input.type = show ? 'text' : 'password';
+function togglePw(id, btnId) {
+  const input = document.getElementById(id);
+  const btn   = document.getElementById(btnId);
+  const show  = input.type === 'password';
+  input.type  = show ? 'text' : 'password';
   btn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
 }
 
-// ── Password strength ──────────────────────────────────────────────────────
-function updatePasswordStrength(val) {
-  const segs  = [1,2,3,4].map(i => document.getElementById(`seg${i}`));
-  const label = document.getElementById('pwStrengthText');
-  if (!segs[0] || !label) return;
-
-  const checks = [
-    val.length >= 8,
-    /[A-Z]/.test(val) && /[a-z]/.test(val),
-    /\d/.test(val),
-    /[^A-Za-z0-9]/.test(val) && val.length >= 12
-  ];
-  const score = checks.filter(Boolean).length;
-
-  const levels = [
-    { color: 'var(--red-400)',    text: 'Too weak',   label: 'Use 8+ characters' },
-    { color: 'var(--orange-400)', text: 'Weak',        label: 'Add uppercase & lowercase' },
-    { color: 'var(--gold-400)',   text: 'Fair',        label: 'Add numbers' },
-    { color: 'var(--green-400)',  text: 'Strong',      label: 'Excellent password!' }
-  ];
-
-  const level = val.length === 0 ? null : levels[Math.max(0, score - 1)];
-
-  segs.forEach((seg, i) => {
-    seg.style.background = (level && i < score)
-      ? level.color
-      : 'rgba(255,255,255,0.07)';
-  });
-
-  if (!level) {
-    label.textContent = 'Enter a password';
-    label.style.color = 'var(--text-500)';
-  } else {
-    label.textContent = `${level.text} — ${level.label}`;
-    label.style.color = level.color;
-  }
+function setErr(inputId, errId, show) {
+  document.getElementById(inputId)?.classList.toggle('error', show);
+  document.getElementById(errId)?.classList.toggle('show', show);
 }
 
-// ── Field validation helpers ───────────────────────────────────────────────
-const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function setField(id, errId, valid) {
-  const input = document.getElementById(id);
-  const err   = document.getElementById(errId);
-  if (input) {
-    input.classList.toggle('error',   !valid);
-    input.classList.toggle('success',  valid);
-  }
-  if (err) err.classList.toggle('show', !valid);
-  return valid;
-}
-
-function clearField(id, errId) {
-  document.getElementById(id)?.classList.remove('error','success');
-  document.getElementById(errId)?.classList.remove('show');
-}
-
-function setLoading(btnId, state) {
-  const btn = document.getElementById(btnId);
-  if (!btn) return;
-  btn.classList.toggle('loading', state);
-  btn.disabled = state;
-}
-
-function showFormAlert(alertId, msgId, msg) {
-  const alert = document.getElementById(alertId);
-  const msgEl = document.getElementById(msgId);
-  if (alert) alert.classList.add('show');
-  if (msgEl && msg) msgEl.textContent = msg;
-}
-
-function hideFormAlert(alertId) {
-  document.getElementById(alertId)?.classList.remove('show');
-}
-
-// ── Panel 1 submit ─────────────────────────────────────────────────────────
-document.getElementById('form-1')?.addEventListener('submit', e => {
+/* ── Panel 1 submit ── */
+document.getElementById('form1').addEventListener('submit', function(e) {
   e.preventDefault();
-  hideFormAlert('p1Alert');
-
-  const firstName = document.getElementById('firstName').value.trim();
-  const lastName  = document.getElementById('lastName').value.trim();
-  const email     = document.getElementById('signupEmail').value.trim();
-  const password  = document.getElementById('signupPassword').value;
-  const confirm   = document.getElementById('confirmPassword').value;
-  const terms     = document.getElementById('termsCheck').checked;
+  document.getElementById('p1Alert')?.classList.remove('show');
+  const fn = document.getElementById('firstName').value.trim();
+  const ln = document.getElementById('lastName').value.trim();
+  const em = document.getElementById('regEmail').value.trim();
+  const pw = document.getElementById('regPassword').value;
+  const cp = document.getElementById('confirmPassword').value;
+  const tc = document.getElementById('termsCheck').checked;
   let valid = true;
 
-  if (!firstName) { setField('firstName','firstNameErr',false); valid = false; }
-  else             setField('firstName','firstNameErr',true);
-
-  if (!lastName)  { setField('lastName','lastNameErr',false); valid = false; }
-  else             setField('lastName','lastNameErr',true);
-
-  if (!emailRx.test(email)) { setField('signupEmail','signupEmailErr',false); valid = false; }
-  else                        setField('signupEmail','signupEmailErr',true);
-
-  if (password.length < 8) { setField('signupPassword','signupPasswordErr',false); valid = false; }
-  else                       setField('signupPassword','signupPasswordErr',true);
-
-  if (confirm !== password || !confirm) {
-    setField('confirmPassword','confirmPasswordErr',false);
-    valid = false;
-  } else {
-    setField('confirmPassword','confirmPasswordErr',true);
-  }
-
-  if (!terms) {
-    document.getElementById('termsErr')?.classList.add('show');
-    valid = false;
-  } else {
-    document.getElementById('termsErr')?.classList.remove('show');
-  }
+  if (!fn) { setErr('firstName','firstNameErr',true); valid=false; } else setErr('firstName','firstNameErr',false);
+  if  (!ln) { setErr('lastName','lastNameErr',true); valid=false; } else setErr('lastName','lastNameErr',false);
+  if (!emailRx.test(em)) { setErr('regEmail','regEmailErr',true); valid=false; } else setErr('regEmail','regEmailErr',false);
+  if (pw.length < 8 || !/[A-Z]/.test(pw) || !/\d/.test(pw) || !/[^A-Za-z0-9]/.test(pw)) {
+    setErr('regPassword','regPasswordErr',true); valid=false;
+  } else setErr('regPassword','regPasswordErr',false);
+  if (pw !== cp) { setErr('confirmPassword','confirmPasswordErr',true); valid=false; } else setErr('confirmPassword','confirmPasswordErr',false);
+  if (!tc) { document.getElementById('termsErr')?.classList.add('show'); valid=false; }
+  else     { document.getElementById('termsErr')?.classList.remove('show'); }
 
   if (!valid) {
-    showFormAlert('p1Alert','p1AlertMsg','Please fix the errors below before continuing.');
+    document.getElementById('p1Alert')?.classList.add('show');
     return;
   }
-
-  setLoading('p1Btn', true);
-  // Simulate email uniqueness check
-  setTimeout(() => {
-    setLoading('p1Btn', false);
-    goToPanel(2);
-  }, 1100);
+  Object.assign(formData, { firstName:fn, lastName:ln, email:em, password:pw });
+  goPanel(2);
 });
 
-// ── Panel 2 submit ─────────────────────────────────────────────────────────
-document.getElementById('form-2')?.addEventListener('submit', e => {
+/* ── Panel 2 submit ── */
+document.getElementById('form2').addEventListener('submit', function(e) {
   e.preventDefault();
-
-  const company  = document.getElementById('company').value.trim();
-  const jobTitle = document.getElementById('jobTitle').value.trim();
-  const country  = document.getElementById('country').value;
+  const co = document.getElementById('company').value.trim();
+  const jt = document.getElementById('jobTitle').value.trim();
+  const ct = document.getElementById('country').value;
   let valid = true;
 
-  if (!company)  { setField('company','companyErr',false); valid = false; }
-  else            setField('company','companyErr',true);
-
-  if (!jobTitle) { setField('jobTitle','jobTitleErr',false); valid = false; }
-  else            setField('jobTitle','jobTitleErr',true);
-
-  if (!country)  { setField('country','countryErr',false); valid = false; }
-  else            setField('country','countryErr',true);
+  if (!co) { setErr('company','companyErr',true); valid=false; } else setErr('company','companyErr',false);
+  if (!jt) { setErr('jobTitle','jobTitleErr',true); valid=false; } else setErr('jobTitle','jobTitleErr',false);
+  if (!ct) { setErr('country','countryErr',true); valid=false; } else setErr('country','countryErr',false);
 
   if (!valid) return;
-
-  setLoading('p2Btn', true);
-  setTimeout(() => {
-    setLoading('p2Btn', false);
-    goToPanel(3);
-    updatePlanSummary();
-  }, 900);
+  Object.assign(formData, {
+    company:    co,
+    jobTitle:   jt,
+    department: document.getElementById('department').value,
+    mineType:   document.getElementById('mineType').value,
+    country:    ct,
+    primaryUse: document.getElementById('primaryUse').value
+  });
+  renderPlanCards();
+  goPanel(3);
 });
 
-// ── Plan selection ─────────────────────────────────────────────────────────
-function selectPlan(plan) {
-  selectedPlan = plan;
-  document.querySelectorAll('.plan-option').forEach(opt => {
-    opt.classList.toggle('selected', opt.dataset.plan === plan);
-  });
-  updatePlanSummary();
-}
+/* ── Final registration ── */
+async function submitRegistration() {
+  const btn = document.getElementById('p3Btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
 
-function updatePlanSummary() {
-  const data  = PLANS[selectedPlan];
-  const price = isAnnual ? data.annual : data.monthly;
-  const suffix = isAnnual ? '/mo (billed annually)' : '/mo';
+  formData.plan = selectedPlan;
+  await new Promise(r => setTimeout(r, 1200));
 
-  const nameEl     = document.getElementById('summaryName');
-  const priceEl    = document.getElementById('summaryPrice');
-  const featuresEl = document.getElementById('summaryFeatures');
+  const result = SESAuth.registerUser(formData);
 
-  if (nameEl)  nameEl.textContent  = data.name;
-  if (priceEl) priceEl.textContent = `$${price}${suffix}`;
-
-  if (featuresEl) {
-    featuresEl.innerHTML = data.features.map(f => `
-      <div class="plan-summary-feature">
-        <i class="fas fa-check"></i> ${f}
-      </div>
-    `).join('');
-  }
-
-  // Update price labels in plan options
-  const prices = {
-    starter:      { monthly: 99,  annual: 79  },
-    professional: { monthly: 299, annual: 239 },
-    enterprise:   { monthly: 899, annual: 719 }
-  };
-  Object.entries(prices).forEach(([key, val]) => {
-    const el = document.getElementById(`price-${key}`);
-    if (el) el.textContent = `$${isAnnual ? val.annual : val.monthly}/mo`;
-  });
-}
-
-// ── Billing toggle ─────────────────────────────────────────────────────────
-function toggleBilling() {
-  isAnnual = !isAnnual;
-  const toggle = document.getElementById('billingToggle');
-  if (toggle) toggle.classList.toggle('on', isAnnual);
-  updatePlanSummary();
-  showToast(
-    isAnnual
-      ? '🎉 Annual billing selected — you save 20%!'
-      : 'Monthly billing selected',
-    isAnnual ? 'success' : 'info',
-    2500
-  );
-}
-
-// ── Complete signup ────────────────────────────────────────────────────────
-function completeSignup() {
-  setLoading('p3Btn', true);
-
-  setTimeout(() => {
-    setLoading('p3Btn', false);
-
-    // Populate success screen
-    const email = document.getElementById('signupEmail')?.value || 'your email';
-    const successEmailEl = document.getElementById('successEmail');
-    if (successEmailEl) successEmailEl.textContent = email;
-
-    // Trial end date — 14 days from now
-    const trialEnd = new Date();
-    trialEnd.setDate(trialEnd.getDate() + 14);
-    const trialEndEl = document.getElementById('trialEndDate');
-    if (trialEndEl) {
-      trialEndEl.textContent = trialEnd.toLocaleDateString('en-AU', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
+  if (result.success) {
+    /* Render summary */
+    const plan = SESConfig.plans.find(p => p.id === selectedPlan);
+    const summaryEl = document.getElementById('regSummary');
+    if (summaryEl) {
+      const rows = [
+        { label:'Name',    value:`${formData.firstName} ${formData.lastName}` },
+        { label:'Email',   value:formData.email },
+        { label:'Company', value:formData.company },
+        { label:'Role',    value:formData.jobTitle },
+        { label:'Plan',    value:plan?.name || selectedPlan },
+        { label:'Status',  value:'Pending Admin Approval', color:'#F97316' }
+      ];
+      summaryEl.innerHTML = rows.map(r => `
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
+          <span style="color:#6688A0;">${r.label}</span>
+          <span style="font-weight:600;color:${r.color || '#F0F6FF'};">${r.value}</span>
+        </div>
+      `).join('');
     }
-
-    goToPanel(4);
-    showToast('Account created! Welcome to SESMine 🎉', 'success', 5000);
-  }, 2200);
+    SES.Toast.success('Account created successfully!');
+    goPanel(4);
+  } else {
+    SES.Toast.error(result.error || 'Registration failed. Please try again.');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-rocket"></i> Start Free Trial';
+  }
 }
 
-// ── Clear errors on input ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Auto-clear field errors
-  const fieldMap = {
-    firstName:       'firstNameErr',
-    lastName:        'lastNameErr',
-    signupEmail:     'signupEmailErr',
-    signupPassword:  'signupPasswordErr',
-    confirmPassword: 'confirmPasswordErr',
-    company:         'companyErr',
-    jobTitle:        'jobTitleErr',
-    country:         'countryErr'
-  };
-  Object.entries(fieldMap).forEach(([id, errId]) => {
-    const el = document.getElementById(id);
-    el?.addEventListener('input',  () => { clearField(id, errId); hideFormAlert('p1Alert'); });
-    el?.addEventListener('change', () => { clearField(id, errId); });
-  });
-
-  // Terms checkbox
-  document.getElementById('termsCheck')?.addEventListener('change', () => {
-    document.getElementById('termsErr')?.classList.remove('show');
-  });
-
-  // Init plan summary
-  updatePlanSummary();
+  renderPlanCards();
 });
-
-// ── Toast ──────────────────────────────────────────────────────────────────
-function showToast(msg, type = 'info', duration = 3500) {
-  const icons = {
-    success: 'fa-check-circle',
-    error:   'fa-exclamation-circle',
-    warning: 'fa-exclamation-triangle',
-    info:    'fa-info-circle'
-  };
-  const container = document.getElementById('toastContainer');
-  if (!container) return;
-
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.innerHTML = `
-    <i class="fas ${icons[type] || icons.info} toast-icon"></i>
-    <span class="toast-msg">${msg}</span>
-    <i class="fas fa-times toast-close" onclick="this.parentElement.remove()"></i>
-    <div class="toast-progress" style="animation-duration:${duration}ms;"></div>
-  `;
-  container.appendChild(toast);
-  requestAnimationFrame(() => toast.classList.add('show'));
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 400);
-  }, duration);
-}
 </script>
 </body>
 </html>
