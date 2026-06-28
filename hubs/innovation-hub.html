@@ -1,158 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Innovation Hub — SESMine</title>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Innovation Hub — SESMine Intelligence Platform</title>
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../assets/css/main.css" />
   <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .dash-layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+    .dash-sidebar{background:rgba(4,10,24,0.98);border-right:1px solid rgba(0,212,255,0.06);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+    .dash-sidebar-logo{padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:10px}
+    .dash-sidebar-logo img{height:30px}
+    .dash-nav{padding:10px;flex:1}
+    .dash-nav-section{font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#4A6478;padding:10px 10px 5px}
+    .dash-nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:0.82rem;font-weight:600;color:var(--text-500);text-decoration:none;transition:all 0.2s ease;margin-bottom:2px}
+    .dash-nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text-200)}
+    .dash-nav-item.active{background:rgba(212,175,55,0.08);color:#D4AF37;border:1px solid rgba(212,175,55,0.12)}
+    .dash-nav-item i{width:16px;text-align:center}
+    .dash-sidebar-footer{padding:12px 10px;border-top:1px solid rgba(255,255,255,0.05)}
+    .dash-main{background:var(--bg-900)}
+    .dash-topbar{background:rgba(4,10,24,0.95);border-bottom:1px solid rgba(255,255,255,0.05);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+    .dash-content{padding:24px}
+    .hub-card{background:var(--bg-700);border:1px solid var(--border-default);border-radius:16px;padding:20px}
+    .hub-hero{background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(249,115,22,0.04));border:1px solid rgba(212,175,55,0.12);border-radius:18px;padding:24px 28px;margin-bottom:22px;position:relative;overflow:hidden}
+    /* Tech card */
+    .tech-card{
+      padding:16px;background:rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:14px;transition:all 0.2s ease;cursor:pointer;
+    }
+    .tech-card:hover{background:rgba(212,175,55,0.04);border-color:rgba(212,175,55,0.12);transform:translateY(-2px)}
+    /* Patent row */
+    .patent-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .patent-row:last-child{border-bottom:none}
+    @media(max-width:900px){.dash-layout{grid-template-columns:1fr}.dash-sidebar{display:none}}
+  </style>
 </head>
-<body class="bg-primary">
-  <div class="app-layout">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <a href="../index.html" class="nav-logo">
-          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
-          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
-        </a>
-      </div>
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Overview</div>
-          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
-          <a href="../dashboard/esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Hubs</div>
-          <a href="engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
-          <a href="safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
-          <a href="sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
-          <a href="procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
-          <a href="innovation-hub.html" class="sidebar-link active"><i class="fas fa-lightbulb"></i> Innovation</a>
-          <a href="economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
-        </div>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="user-avatar">JS</div>
-          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
-        </div>
-      </div>
-    </aside>
-    <div class="main-content">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-          <div class="topbar-title">Innovation Hub</div>
-        </div>
-        <div class="topbar-right">
-          <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="window.SESMine.showToast('New idea submitted!','success')">
-            <i class="fas fa-plus"></i> Submit Idea
-          </button>
-        </div>
-      </header>
-      <main class="page-content">
-
-        <!-- Hero -->
-        <div style="background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(59,130,246,0.06));border:1px solid rgba(168,85,247,0.2);border-radius:var(--radius-xl);padding:32px;margin-bottom:28px;display:flex;align-items:center;gap:24px;" class="animate-fade-up">
-          <div style="width:72px;height:72px;background:rgba(168,85,247,0.15);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--color-purple);flex-shrink:0;">
-            <i class="fas fa-lightbulb"></i>
-          </div>
-          <div style="flex:1;">
-            <h1 style="font-size:1.6rem;margin-bottom:6px;">Innovation Hub</h1>
-            <p style="color:var(--text-muted);font-size:0.9rem;">Track emerging mining technologies, R&D projects, autonomous systems adoption, and innovation pipeline management.</p>
-          </div>
-          <div style="display:flex;gap:20px;flex-shrink:0;">
-            <div style="text-align:center;"><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-purple);">14</div><div style="font-size:0.72rem;color:var(--text-muted);">Active R&D Projects</div></div>
-            <div style="text-align:center;"><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-blue);">$4.2M</div><div style="font-size:0.72rem;color:var(--text-muted);">R&D Budget</div></div>
-            <div style="text-align:center;"><div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-green);">6</div><div style="font-size:0.72rem;color:var(--text-muted);">Patents Filed</div></div>
-          </div>
-        </div>
-
-        <!-- Tech Cards Grid -->
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;" class="animate-fade-up delay-1">
-          <div style="padding:22px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(168,85,247,0.3)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
-            <div style="width:44px;height:44px;background:rgba(168,85,247,0.12);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--color-purple);font-size:1.1rem;margin-bottom:14px;"><i class="fas fa-robot"></i></div>
-            <strong style="font-size:0.95rem;display:block;margin-bottom:6px;">Autonomous Haulage</strong>
-            <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:12px;">Komatsu FrontRunner AHS deployment — Alpha Gold Mine. 4 trucks currently operating autonomously.</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span class="status-badge status-active">Live — 4 trucks</span>
-              <span style="font-size:0.75rem;color:var(--color-green);">+18% productivity</span>
-            </div>
-          </div>
-          <div style="padding:22px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(59,130,246,0.3)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
-            <div style="width:44px;height:44px;background:rgba(59,130,246,0.12);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--color-blue);font-size:1.1rem;margin-bottom:14px;"><i class="fas fa-drone"></i></div>
-            <strong style="font-size:0.95rem;display:block;margin-bottom:6px;">Drone Surveying</strong>
-            <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:12px;">DJI Matrice 300 RTK fleet for weekly pit surveys. Replacing traditional survey crews — 90% time reduction.</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span class="status-badge status-active">Deployed — 3 sites</span>
-              <span style="font-size:0.75rem;color:var(--color-green);">-90% survey time</span>
-            </div>
-          </div>
-          <div style="padding:22px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(34,197,94,0.3)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
-            <div style="width:44px;height:44px;background:rgba(34,197,94,0.12);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--color-green);font-size:1.1rem;margin-bottom:14px;"><i class="fas fa-brain"></i></div>
-            <strong style="font-size:0.95rem;display:block;margin-bottom:6px;">Predictive Maintenance AI</strong>
-            <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:12px;">ML model predicting equipment failures 72hrs in advance. Currently monitoring 48 machines across all sites.</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span class="status-badge status-active">Active — 48 machines</span>
-              <span style="font-size:0.75rem;color:var(--color-green);">-34% downtime</span>
-            </div>
-          </div>
-          <div style="padding:22px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(245,166,35,0.3)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
-            <div style="width:44px;height:44px;background:rgba(245,166,35,0.12);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--color-accent);font-size:1.1rem;margin-bottom:14px;"><i class="fas fa-vr-cardboard"></i></div>
-            <strong style="font-size:0.95rem;display:block;margin-bottom:6px;">AR Safety Training</strong>
-            <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:12px;">Microsoft HoloLens 2 for immersive safety training simulations. Piloting at Copper Ridge underground operations.</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span class="status-badge status-warning">Pilot — 1 site</span>
-              <span style="font-size:0.75rem;color:var(--color-accent);">Q3 2026 rollout</span>
-            </div>
-          </div>
-          <div style="padding:22px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(20,184,166,0.3)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
-            <div style="width:44px;height:44px;background:rgba(20,184,166,0.12);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--color-teal);font-size:1.1rem;margin-bottom:14px;"><i class="fas fa-satellite"></i></div>
-            <strong style="font-size:0.95rem;display:block;margin-bottom:6px;">IoT Sensor Network</strong>
-            <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:12px;">2,400+ IoT sensors deployed across all sites monitoring vibration, gas levels, temperature, and structural movement.</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span class="status-badge status-active">2,400+ sensors live</span>
-              <span style="font-size:0.75rem;color:var(--color-teal);">Real-time data</span>
-            </div>
-          </div>
-          <div style="padding:22px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(239,68,68,0.3)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
-            <div style="width:44px;height:44px;background:rgba(239,68,68,0.12);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--color-red);font-size:1.1rem;margin-bottom:14px;"><i class="fas fa-flask"></i></div>
-            <strong style="font-size:0.95rem;display:block;margin-bottom:6px;">Bioleaching Research</strong>
-            <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:12px;">Partnering with CSIRO to develop low-energy bioleaching for copper extraction. Targeting 40% energy reduction.</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span class="status-badge status-info">R&D Phase</span>
-              <span style="font-size:0.75rem;color:var(--color-red);">2028 target</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- R&D Budget Chart -->
-        <div class="chart-card animate-fade-up delay-2">
-          <div class="chart-card-header" style="margin-bottom:16px;">
-            <div>
-              <div class="chart-card-title"><i class="fas fa-chart-bar" style="color:var(--color-purple);margin-right:6px;"></i>R&D Budget Allocation</div>
-              <div class="chart-card-subtitle">$4.2M total — FY2026</div>
-            </div>
-          </div>
-          <canvas id="rdBudgetChart" width="800" height="160"></canvas>
-        </div>
-
-      </main>
+<body>
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div class="dash-sidebar-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" alt="SESMine" />
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:800;color:#F0F6FF;">SES<em style="color:#00D4FF;font-style:normal;">MINE</em></span>
     </div>
-  </div>
-  <script src="../js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      window.SESMine.initSidebar();
-      window.SESMine.renderBarChart('rdBudgetChart',
-        [1.2, 0.8, 0.7, 0.6, 0.5, 0.4],
-        ['Autonomous Systems','Predictive AI','Drone Fleet','IoT Network','AR Training','Bioleaching R&D'],
-        '#A855F7'
-      );
-    });
-  </script>
+    <nav class="dash-nav">
+      <div class="dash-nav-section">Main</div>
+      <a href="../dashboard/main-dashboard.html" class="dash-nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="../dashboard/analytics.html"      class="dash-nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+      <a href="../dashboard/esg-dashboard.html"  class="dash-nav-item"><i class="fas fa-leaf"></i> ESG</a>
+      <div class="dash-nav-section">Hubs</div>
+      <a href="economics-hub.html"      class="dash-nav-item"><i class="fas fa-chart-bar"  style="color:#00D4FF;"></i> Economics</a>
+      <a href="engineering-hub.html"    class="dash-nav-item"><i class="fas fa-cogs"       style="color:#F97316;"></i> Engineering</a>
+      <a href="procurement-hub.html"    class="dash-nav-item"><i class="fas fa-boxes"      style="color:#A855F7;"></i> Procurement</a>
+      <a href="safety-hub.html"         class="dash-nav-item"><i class="fas fa-hard-hat"   style="color:#EF4444;"></i> Safety</a>
+      <a href="sustainability-hub.html" class="dash-nav-item"><i class="fas fa-seedling"   style="color:#22C55E;"></i> Sustainability</a>
+      <a href="innovation-hub.html"     class="dash-nav-item active"><i class="fas fa-lightbulb" style="color:#D4AF37;"></i> Innovation</a>
+    </nav>
+    <div class="dash-sidebar-footer">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.03);margin-bottom:8px;">
+        <div id="sbAvatarInn"></div>
+        <div>
+          <div style="font-size:0.78rem;font-weight:700;color:#F0F6FF;" id="sbNameInn">User</div>
+          <div style="font-size:0.65rem;color:#6688A0;" id="sbRoleInn">Member</div>
+        </div>
+      </div>
+      <button onclick="SESAuth.logout()" class="dash-nav-item" style="width:100%;background:none;border:none;cursor:pointer;font-family:inherit;color:var(--text-500);text-align:left;">
+        <i class="fas fa-sign-out-alt" style="color:#EF4444;"></i> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);display:flex;align-items:center;justify-content:center;color:#D4AF37;">
+          <i class="fas fa-lightbulb"></i>
+        </div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:800;color:#F0F6FF;">Innovation Hub</div>
+          <div style="font-size:0.68rem;color:#6688A0;">Emerging tech · R&D pipeline · Patent intelligence · Startup ecosystem</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="exportInn()" class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> Export</button>
+        <div id="tbAvatarInn"></div>
+      </div>
+    </div>
+
+    <div class="dash-content">
+
+      <!-- Hero -->
+      <div class="hub-hero animate-fade-up">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+          <div>
+            <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#D4AF37;margin-bottom:6px;"><i class="fas fa-lightbulb" style="margin-right:4px;"></i> Innovation Hub</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:6px;">Mining Technology & Innovation Intelligence</div>
+            <div style="font-size:0.82rem;color:#8BA4BC;max-width:520px;line-height:1.6;">Track emerging technologies, R&D investment trends, patent filings, startup activity, and technology adoption curves across the global mining industry.</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
+            <div><div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:#D4AF37;">840+</div><div style="font-size:0.68rem;color:#6688A0;">Technologies tracked</div></div>
+            <div><div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:#D4AF37;">$18B</div><div style="font-size:0.68rem;color:#6688A0;">R&D spend monitored</div></div>
+            <div><div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:#D4AF37;">320</div><div style="font-size:0.68rem;color:#6688A0;">Active startups</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- R&D spend + tech adoption -->
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:18px;">
+        <div class="hub-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Global Mining R&D Investment</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">By technology category · $B annually</div>
+          <div style="height:210px;"><canvas id="rdChart"></canvas></div>
+        </div>
+        <div class="hub-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Technology Adoption Curve</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">Industry adoption rate by technology</div>
+          <div style="height:210px;"><canvas id="adoptionChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Emerging tech cards -->
+      <div class="hub-card animate-fade-up" style="margin-bottom:18px;">
+        <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Emerging Technology Radar</div>
+        <div style="font-size:0.7rem;color:#6688A0;margin-bottom:16px;">Maturity and impact assessment · click to explore</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;" id="techCards"></div>
+      </div>
+
+      <!-- Patent intelligence + startup ecosystem -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="hub-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Patent Intelligence</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">Recent high-impact mining technology patents</div>
+          <div id="patentList"></div>
+        </div>
+        <div class="hub-card animate-fade-up">
+          <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Startup Ecosystem</div>
+          <div style="font-size:0.7rem;color:#6688A0;margin-bottom:14px;">Notable mining tech startups by funding stage</div>
+          <div id="startupList"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div id="toastContainer"></div>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/main.js"></script>
+<script>
+'use strict';
+const currentUser = SESAuth.checkAuth();
+SESAuth.checkHubAccess('innovation');
+
+document.getElementById('sbAvatarInn').innerHTML = SESAuth.renderUserAvatar(currentUser,32);
+document.getElementById('sbNameInn').textContent  = `${currentUser.firstName} ${currentUser.lastName}`;
+document.getElementById('sbRoleInn').textContent  = SESAuth.getRoleInfo(currentUser.role)?.label||currentUser.role;
+document.getElementById('tbAvatarInn').innerHTML  = SESAuth.renderUserAvatar(currentUser,34);
+
+function renderRD() {
+  const years=['2022','2023','2024','2025','2026'];
+  SES.Charts.bar('rdChart',years,[
+    { label:'Automation & Robotics', data:[2.8,3.4,4.1,5.2,6.4], color:'#D4AF37' },
+    { label:'AI & Data Analytics',  data:[1.9,2.6,3.4,4.6,5.8], color:'#A855F7' },
+    { label:'Clean Energy',         data:[1.4,1.8,2.3,3.1,4.0], color:'#22C55E' }
+  ],{ plugins:{ legend:{ display:true, position:'top' } }, scales:{ x:{ stacked:false, grid:{ display:false } } } });
+}
+
+function renderAdoption() {
+  SES.Charts.bar('adoptionChart',
+    ['Autonomous Haulage','AI Ore Sorting','Digital Twin','Drone Survey','Predictive Maint.','Battery EV'],
+    [{ label:'Adoption %', data:[38,24,52,78,61,18], color:'#D4AF37' }],
+    { plugins:{ legend:{ display:false } }, scales:{ x:{ grid:{ display:false } } } }
+  );
+}
+
+function renderTechCards() {
+  const el = document.getElementById('techCards');
+  if (!el) return;
+  const techs = [
+    { title:'Autonomous Haulage',     maturity:'Mature',       impact:'Very High', icon:'fa-truck',         color:'#00D4FF', trl:8 },
+    { title:'AI Ore Sorting',         maturity:'Growth',       impact:'High',      icon:'fa-brain',         color:'#A855F7', trl:6 },
+    { title:'Digital Twin',           maturity:'Mainstream',   impact:'Very High', icon:'fa-cube',          color:'#F97316', trl:7 },
+    { title:'Battery EV Fleet',       maturity:'Early',        impact:'Very High', icon:'fa-bolt',          color:'#22C55E', trl:5 },
+    { title:'Drone Inspection',       maturity:'Mainstream',   impact:'Medium',    icon:'fa-helicopter',    color:'#D4AF37', trl:8 },
+    { title:'Predictive Maintenance', maturity:'Growth',       impact:'High',      icon:'fa-tools',         color:'#EF4444', trl:7 },
+    { title:'Hydrogen Haulage',       maturity:'Emerging',     impact:'Very High', icon:'fa-atom',          color:'#60A5FA', trl:4 },
+    { title:'In-Situ Recovery',       maturity:'Early',        impact:'High',      icon:'fa-flask',         color:'#4ADE80', trl:5 }
+  ];
+  const matCfg = {
+    'Emerging':   { color:'#EF4444', bg:'rgba(239,68,68,0.1)',  border:'rgba(239,68,68,0.2)' },
+    'Early':      { color:'#F97316', bg:'rgba(249,115,22,0.1)', border:'rgba(249,115,22,0.2)' },
+    'Growth':     { color:'#D4AF37', bg:'rgba(212,175,55,0.1)', border:'rgba(212,175,55,0.2)' },
+    'Mainstream': { color:'#00D4FF', bg:'rgba(0,212,255,0.1)',  border:'rgba(0,212,255,0.2)' },
+    'Mature':     { color:'#22C55E', bg:'rgba(34,197,94,0.1)',  border:'rgba(34,197,94,0.2)' }
+  };
+  el.innerHTML = techs.map(t => {
+    const mc = matCfg[t.maturity];
+    return `
+      <div class="tech-card" onclick="SES.Toast.info('${t.title} — TRL ${t.trl} · ${t.impact} impact')">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="width:34px;height:34px;border-radius:9px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.15);display:flex;align-items:center;justify-content:center;color:${t.color};font-size:0.85rem;">
+            <i class="fas ${t.icon}"></i>
+          </div>
+          <span style="padding:2px 7px;border-radius:99px;font-size:0.6rem;font-weight:800;background:${mc.bg};border:1px solid ${mc.border};color:${mc.color};">${t.maturity}</span>
+        </div>
+        <div style="font-size:0.82rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">${t.title}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:0.65rem;color:#6688A0;">TRL ${t.trl}/9</span>
+          <span style="font-size:0.65rem;color:#8BA4BC;">${t.impact} impact</span>
+        </div>
+        <div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+          <div style="width:${(t.trl/9)*100}%;height:100%;background:${t.color};border-radius:99px;"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderPatents() {
+  const el = document.getElementById('patentList');
+  if (!el) return;
+  const patents = [
+    { title:'Autonomous drill pattern optimisation using ML',         assignee:'Epiroc',       year:2026, category:'Automation' },
+    { title:'Real-time ore grade prediction via hyperspectral imaging',assignee:'Rio Tinto',    year:2026, category:'AI/ML' },
+    { title:'Battery-electric haul truck regenerative braking system',assignee:'Komatsu',      year:2025, category:'Clean Energy' },
+    { title:'Digital twin synchronisation for processing plants',     assignee:'FLSmidth',     year:2025, category:'Digital' },
+    { title:'Hydrogen fuel cell integration for surface mining fleet', assignee:'Anglo American',year:2025,category:'Clean Energy' }
+  ];
+  const catColors = {
+    'Automation':  '#F97316',
+    'AI/ML':       '#A855F7',
+    'Clean Energy':'#22C55E',
+    'Digital':     '#00D4FF'
+  };
+  el.innerHTML = patents.map(p => {
+    const color = catColors[p.category] || '#D4AF37';
+    return `
+      <div class="patent-row">
+        <div style="width:28px;height:28px;border-radius:7px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.15);display:flex;align-items:center;justify-content:center;color:#D4AF37;font-size:0.7rem;flex-shrink:0;">
+          <i class="fas fa-certificate"></i>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.78rem;font-weight:700;color:#D4E0F0;line-height:1.4;margin-bottom:3px;">${p.title}</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:0.65rem;color:#6688A0;">${p.assignee} · ${p.year}</span>
+            <span style="padding:1px 6px;border-radius:99px;font-size:0.58rem;font-weight:800;background:rgba(${color==='#F97316'?'249,115,22':color==='#A855F7'?'168,85,247':color==='#22C55E'?'34,197,94':'0,212,255'},0.1);color:${color};">${p.category}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderStartups() {
+  const el = document.getElementById('startupList');
+  if (!el) return;
+  const startups = [
+    { name:'Plotlogic',      focus:'AI Ore Sorting',        stage:'Series B', raised:'$42M',  country:'Australia', color:'#A855F7' },
+    { name:'Minesense',      focus:'Sensor-based Sorting',  stage:'Series C', raised:'$68M',  country:'Canada',    color:'#00D4FF' },
+    { name:'Exodigo',        focus:'Underground Mapping',   stage:'Series B', raised:'$105M', country:'Israel',    color:'#F97316' },
+    { name:'Strayos',        focus:'AI Blast Analytics',    stage:'Series A', raised:'$18M',  country:'USA',       color:'#D4AF37' },
+    { name:'Hexagon Mining', focus:'Digital Mine Planning', stage:'Acquired', raised:'—',     country:'Sweden',    color:'#22C55E' },
+    { name:'Perceptive Eng.',focus:'Autonomous Drilling',   stage:'Seed',     raised:'$8M',   country:'Australia', color:'#EF4444' }
+  ];
+  const stageCfg = {
+    'Seed':     { color:'#F97316', bg:'rgba(249,115,22,0.1)',  border:'rgba(249,115,22,0.2)' },
+    'Series A': { color:'#D4AF37', bg:'rgba(212,175,55,0.1)',  border:'rgba(212,175,55,0.2)' },
+    'Series B': { color:'#00D4FF', bg:'rgba(0,212,255,0.1)',   border:'rgba(0,212,255,0.2)' },
+    'Series C': { color:'#A855F7', bg:'rgba(168,85,247,0.1)',  border:'rgba(168,85,247,0.2)' },
+    'Acquired': { color:'#22C55E', bg:'rgba(34,197,94,0.1)',   border:'rgba(34,197,94,0.2)' }
+  };
+  el.innerHTML = startups.map(s => {
+    const sc = stageCfg[s.stage] || stageCfg['Seed'];
+    return `
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.15);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:${s.color};flex-shrink:0;">
+          ${s.name.slice(0,2).toUpperCase()}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.8rem;font-weight:700;color:#F0F6FF;">${s.name}</div>
+          <div style="font-size:0.65rem;color:#6688A0;">${s.focus} · ${s.country}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <span style="display:block;padding:2px 7px;border-radius:99px;font-size:0.6rem;font-weight:800;background:${sc.bg};border:1px solid ${sc.border};color:${sc.color};margin-bottom:2px;">${s.stage}</span>
+          <span style="font-size:0.65rem;font-family:'JetBrains Mono',monospace;color:#6688A0;">${s.raised}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function exportInn() {
+  SES.Toast.success('Innovation data exported.');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderRD(); renderAdoption(); renderTechCards(); renderPatents(); renderStartups();
+});
+</script>
 </body>
 </html>
