@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management — SESMine</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .admin-badge{background:rgba(239,68,68,0.12);color:var(--color-red);border:1px solid rgba(239,68,68,0.25);padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+    .role-badge-superadmin { background:rgba(239,68,68,0.12);  color:var(--color-red);    border:1px solid rgba(239,68,68,0.25); }
+    .role-badge-admin      { background:rgba(245,166,35,0.12); color:var(--color-accent); border:1px solid rgba(245,166,35,0.25); }
+    .role-badge-hubmanager { background:rgba(168,85,247,0.12); color:var(--color-purple); border:1px solid rgba(168,85,247,0.25); }
+    .role-badge-engineer   { background:rgba(59,130,246,0.12); color:var(--color-blue);   border:1px solid rgba(59,130,246,0.25); }
+    .role-badge-viewer     { background:rgba(100,116,139,0.12);color:var(--text-muted);   border:1px solid rgba(100,116,139,0.25); }
+    .user-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:9998;display:none; }
+    .user-modal-overlay.active { display:flex;align-items:center;justify-content:center;padding:24px; }
+    .user-modal { background:var(--color-primary-light);border:1px solid var(--border-color);border-radius:var(--radius-xl);width:100%;max-width:520px;overflow:hidden; }
+    .user-modal-header { padding:20px 24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between; }
+    .user-modal-body   { padding:24px; }
+    .user-modal-footer { padding:16px 24px;border-top:1px solid var(--border-color);display:flex;gap:10px;justify-content:flex-end; }
+  </style>
+</head>
+<body class="bg-primary">
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-logo">
+          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Admin</div>
+          <a href="admin-dashboard.html" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> Admin Overview</a>
+          <a href="user-management.html" class="sidebar-link active"><i class="fas fa-users"></i> User Management</a>
+          <a href="content-management.html" class="sidebar-link"><i class="fas fa-file-alt"></i> Content Management</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Platform</div>
+          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Main Dashboard</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar" style="background:var(--color-red);">SA</div>
+          <div class="user-info"><strong>Super Admin</strong><span>Full Access</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">User Management</div>
+          <span class="admin-badge">Admin</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="openAddUserModal()">
+            <i class="fas fa-user-plus"></i> Add User
+          </button>
+          <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;"
+            onclick="window.SESMine.exportToCSV(allUsers,'users.csv')">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+
+        <div style="margin-bottom:24px;">
+          <h1 style="font-size:1.6rem;margin-bottom:6px;">User Management</h1>
+          <p style="color:var(--text-muted);font-size:0.9rem;">Manage user accounts, roles, permissions, and access control across the platform.</p>
+        </div>
+
+        <!-- Stats Row -->
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:28px;" class="animate-fade-up">
+          <div style="padding:16px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--text-primary);">1,284</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Total Users</div>
+          </div>
+          <div style="padding:16px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-green);">1,142</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Active</div>
+          </div>
+          <div style="padding:16px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-accent);">12</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Pending</div>
+          </div>
+          <div style="padding:16px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-red);">8</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Suspended</div>
+          </div>
+          <div style="padding:16px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-blue);">47</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">New This Month</div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;" class="animate-fade-up delay-1">
+          <div style="position:relative;flex:1;min-width:200px;">
+            <input type="text" id="userSearch" placeholder="Search by name, email, or company..."
+              style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:9px 14px 9px 36px;color:var(--text-primary);font-size:0.875rem;outline:none;width:100%;"
+              onfocus="this.style.borderColor='var(--color-accent)'"
+              onblur="this.style.borderColor='var(--border-color)'"
+              oninput="filterUsers()" />
+            <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.8rem;"></i>
+          </div>
+          <select class="form-select" id="roleFilter" style="width:auto;" onchange="filterUsers()">
+            <option value="">All Roles</option>
+            <option value="Super Admin">Super Admin</option>
+            <option value="Admin">Admin</option>
+            <option value="Hub Manager">Hub Manager</option>
+            <option value="Engineer">Engineer</option>
+            <option value="Viewer">Viewer</option>
+          </select>
+          <select class="form-select" id="statusFilter" style="width:auto;" onchange="filterUsers()">
+            <option value="">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Pending">Pending</option>
+            <option value="Suspended">Suspended</option>
+          </select>
+          <select class="form-select" id="planFilter" style="width:auto;" onchange="filterUsers()">
+            <option value="">All Plans</option>
+            <option value="Enterprise">Enterprise</option>
+            <option value="Professional">Professional</option>
+            <option value="Starter">Starter</option>
+          </select>
+        </div>
+
+        <!-- Users Table -->
+        <div class="data-table-card animate-fade-up delay-2">
+          <div style="overflow-x:auto;">
+            <table class="data-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" style="accent-color:var(--color-accent);cursor:pointer;" /></th>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Company</th>
+                  <th>Plan</th>
+                  <th>Last Active</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+          <div style="padding:16px 24px;border-top:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.8rem;color:var(--text-muted);" id="tableInfo">Showing 10 of 1,284 users</span>
+            <div style="display:flex;gap:6px;" id="pagination"></div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Add/Edit User Modal -->
+  <div class="user-modal-overlay" id="userModalOverlay">
+    <div class="user-modal">
+      <div class="user-modal-header">
+        <h2 style="font-size:1.1rem;" id="userModalTitle"><i class="fas fa-user-plus" style="color:var(--color-accent);margin-right:8px;"></i>Add New User</h2>
+        <button onclick="closeUserModal()" style="color:var(--text-muted);background:none;border:none;cursor:pointer;font-size:1rem;"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="user-modal-body">
+        <form id="userForm">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-input" id="uFirstName" placeholder="John" required />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-input" id="uLastName" placeholder="Smith" required />
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:16px;">
+            <label class="form-label">Work Email</label>
+            <input type="email" class="form-input" id="uEmail" placeholder="john@company.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company</label>
+            <input type="text" class="form-input" id="uCompany" placeholder="Mining Corp Ltd" required />
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Role</label>
+              <select class="form-select" id="uRole" required>
+                <option value="">Select role...</option>
+                <option value="Super Admin">Super Admin</option>
+                <option value="Admin">Admin</option>
+                <option value="Hub Manager">Hub Manager</option>
+                <option value="Engineer">Engineer</option>
+                <option value="Viewer">Viewer</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Plan</label>
+              <select class="form-select" id="uPlan" required>
+                <option value="">Select plan...</option>
+                <option value="Starter">Starter</option>
+                <option value="Professional">Professional</option>
+                <option value="Enterprise">Enterprise</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:16px;">
+            <label class="form-label">Hub Access</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" checked style="accent-color:var(--color-accent);" /> Engineering
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" checked style="accent-color:var(--color-accent);" /> Safety
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" checked style="accent-color:var(--color-accent);" /> Sustainability
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" checked style="accent-color:var(--color-accent);" /> Procurement
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" style="accent-color:var(--color-accent);" /> Innovation
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" style="accent-color:var(--color-accent);" /> Economics
+              </label>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+            <input type="checkbox" id="uSendInvite" checked style="accent-color:var(--color-accent);cursor:pointer;" />
+            <label for="uSendInvite" style="font-size:0.85rem;color:var(--text-secondary);cursor:pointer;">Send welcome email with login instructions</label>
+          </div>
+        </form>
+      </div>
+      <div class="user-modal-footer">
+        <button class="btn btn-ghost" onclick="closeUserModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveUser()"><i class="fas fa-save"></i> Save User</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    'use strict';
+
+    const allUsers = [
+      { id:1, name:'John Smith',      email:'john.smith@globalmine.com',    company:'GlobalMine Corp',    role:'Super Admin', plan:'Enterprise',   lastActive:'Just now',    status:'Active' },
+      { id:2, name:'Sarah Johnson',   email:'s.johnson@minemax.com',        company:'MineMax Ltd',        role:'Hub Manager', plan:'Professional', lastActive:'2h ago',      status:'Active' },
+      { id:3, name:'Michael Chen',    email:'m.chen@ecomine.com',           company:'EcoMine Inc',        role:'Engineer',    plan:'Professional', lastActive:'1h ago',      status:'Active' },
+      { id:4, name:'Emily Rodriguez', email:'e.rodriguez@pacificmining.com',company:'Pacific Mining',     role:'Admin',       plan:'Enterprise',   lastActive:'30m ago',     status:'Active' },
+      { id:5, name:'David Thompson',  email:'d.thompson@northern.ca',       company:'Northern Resources', role:'Engineer',    plan:'Professional', lastActive:'Yesterday',   status:'Active' },
+      { id:6, name:'Lisa Wang',       email:'l.wang@asianmining.co',        company:'Asian Mining Co',    role:'Engineer',    plan:'Starter',      lastActive:'3 days ago',  status:'Active' },
+      { id:7, name:'Carlos Mendez',   email:'c.mendez@pacificmining.com',   company:'Pacific Mining',     role:'Hub Manager', plan:'Professional', lastActive:'Pending',     status:'Pending' },
+      { id:8, name:'Amara Diallo',    email:'a.diallo@northern.ca',         company:'Northern Resources', role:'Viewer',      plan:'Starter',      lastActive:'Pending',     status:'Pending' },
+      { id:9, name:'James Okafor',    email:'j.okafor@globalmine.com',      company:'GlobalMine Corp',    role:'Engineer',    plan:'Enterprise',   lastActive:'1 week ago',  status:'Suspended' },
+      { id:10,name:'Priya Sharma',    email:'p.sharma@ecomine.com',         company:'EcoMine Inc',        role:'Viewer',      plan:'Starter',      lastActive:'2 weeks ago', status:'Active' }
+    ];
+
+    let filteredUsers = [...allUsers];
+    let currentPage  = 1;
+    const perPage    = 10;
+
+    const roleClasses = {
+      'Super Admin':'role-badge-superadmin',
+      'Admin':'role-badge-admin',
+      'Hub Manager':'role-badge-hubmanager',
+      'Engineer':'role-badge-engineer',
+      'Viewer':'role-badge-viewer'
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.SESMine.initSidebar();
+      renderTable();
+    });
+
+    function renderTable() {
+      const tbody  = document.getElementById('usersTableBody');
+      const start  = (currentPage - 1) * perPage;
+      const slice  = filteredUsers.slice(start, start + perPage);
+
+      tbody.innerHTML = slice.map(u => `
+        <tr data-id="${u.id}">
+          <td><input type="checkbox" style="accent-color:var(--color-accent);cursor:pointer;" /></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="user-avatar" style="width:32px;height:32px;font-size:0.7rem;flex-shrink:0;">
+                ${u.name.split(' ').map(n=>n[0]).join('')}
+              </div>
+              <div>
+                <strong style="font-size:0.875rem;color:var(--text-primary);">${u.name}</strong>
+                <div style="font-size:0.75rem;color:var(--text-muted);">${u.email}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="status-badge ${roleClasses[u.role]||''}">${u.role}</span></td>
+          <td style="font-size:0.875rem;">${u.company}</td>
+          <td><span class="status-badge ${u.plan==='Enterprise'?'status-active':u.plan==='Professional'?'status-info':'status-warning'}">${u.plan}</span></td>
+          <td style="font-size:0.82rem;color:var(--text-muted);">${u.lastActive}</td>
+          <td><span class="status-badge ${u.status==='Active'?'status-active':u.status==='Pending'?'status-warning':'status-critical'}">${u.status}</span></td>
+          <td>
+            <div style="display:flex;gap:4px;">
+              <button class="topbar-btn" title="Edit" onclick="editUser(${u.id})"><i class="fas fa-edit"></i></button>
+              <button class="topbar-btn" title="${u.status==='Suspended'?'Activate':'Suspend'}"
+                onclick="toggleUserStatus(${u.id},this)"
+                style="color:${u.status==='Suspended'?'var(--color-green)':'var(--color-orange)'};">
+                <i class="fas fa-${u.status==='Suspended'?'check-circle':'ban'}"></i>
+              </button>
+              <button class="topbar-btn" title="Delete" onclick="deleteUser(${u.id},this)" style="color:var(--color-red);"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('tableInfo').textContent =
+        `Showing ${Math.min(start+1,filteredUsers.length)}–${Math.min(start+perPage,filteredUsers.length)} of ${filteredUsers.length} users`;
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.ceil(filteredUsers.length / perPage);
+      const container  = document.getElementById('pagination');
+      let html = `<button class="topbar-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>
+                    <i class="fas fa-chevron-left"></i></button>`;
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        html += `<button class="topbar-btn" onclick="changePage(${i})"
+          style="${i===currentPage?'background:rgba(245,166,35,0.15);border-color:rgba(245,166,35,0.3);color:var(--color-accent);':''}">${i}</button>`;
+      }
+      html += `<button class="topbar-btn" onclick="changePage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>
+                 <i class="fas fa-chevron-right"></i></button>`;
+      container.innerHTML = html;
+    }
+
+    function changePage(page) {
+      const totalPages = Math.ceil(filteredUsers.length / perPage);
+      if (page < 1 || page > totalPages) return;
+      currentPage = page;
+      renderTable();
+    }
+
+    function filterUsers() {
+      const search = document.getElementById('userSearch').value.toLowerCase();
+      const role   = document.getElementById('roleFilter').value;
+      const status = document.getElementById('statusFilter').value;
+      const plan   = document.getElementById('planFilter').value;
+
+      filteredUsers = allUsers.filter(u => {
+        const matchSearch = !search || u.name.toLowerCase().includes(search) ||
+                            u.email.toLowerCase().includes(search) ||
+                            u.company.toLowerCase().includes(search);
+        const matchRole   = !role   || u.role   === role;
+        const matchStatus = !status || u.status === status;
+        const matchPlan   = !plan   || u.plan   === plan;
+        return matchSearch && matchRole && matchStatus && matchPlan;
+      });
+
+      currentPage = 1;
+      renderTable();
+    }
+
+    function toggleSelectAll(cb) {
+      document.querySelectorAll('#usersTableBody input[type="checkbox"]')
+        .forEach(c => c.checked = cb.checked);
+    }
+
+    function openAddUserModal() {
+      document.getElementById('userModalTitle').innerHTML =
+        '<i class="fas fa-user-plus" style="color:var(--color-accent);margin-right:8px;"></i>Add New User';
+      document.getElementById('userForm').reset();
+      document.getElementById('userModalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function editUser(id) {
+      const user = allUsers.find(u => u.id === id);
+      if (!user) return;
+      document.getElementById('userModalTitle').innerHTML =
+        `<i class="fas fa-user-edit" style="color:var(--color-blue);margin-right:8px;"></i>Edit User — ${user.name}`;
+      document.getElementById('uFirstName').value = user.name.split(' ')[0];
+      document.getElementById('uLastName').value  = user.name.split(' ')[1] || '';
+      document.getElementById('uEmail').value     = user.email;
+      document.getElementById('uCompany').value   = user.company;
+      document.getElementById('uRole').value      = user.role;
+      document.getElementById('uPlan').value      = user.plan;
+      document.getElementById('userModalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeUserModal() {
+      document.getElementById('userModalOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function saveUser() {
+      const firstName = document.getElementById('uFirstName').value.trim();
+      const lastName  = document.getElementById('uLastName').value.trim();
+      const email     = document.getElementById('uEmail').value.trim();
+      const company   = document.getElementById('uCompany').value.trim();
+      const role      = document.getElementById('uRole').value;
+      const plan      = document.getElementById('uPlan').value;
+
+      if (!firstName || !lastName || !email || !company || !role || !plan) {
+        window.SESMine.showToast('Please fill in all required fields', 'error');
+        return;
+      }
+
+      const newUser = {
+        id: allUsers.length + 1,
+        name: `${firstName} ${lastName}`,
+        email, company, role, plan,
+        lastActive: 'Just now',
+        status: 'Active'
+      };
+
+      allUsers.unshift(newUser);
+      filteredUsers = [...allUsers];
+      renderTable();
+      closeUserModal();
+      window.SESMine.showToast(`${newUser.name} added successfully`, 'success');
+    }
+
+    function toggleUserStatus(id, btn) {
+      const user = allUsers.find(u => u.id === id);
+      if (!user) return;
+      user.status = user.status === 'Suspended' ? 'Active' : 'Suspended';
+      filteredUsers = [...allUsers];
+      renderTable();
+      window.SESMine.showToast(`${user.name} ${user.status === 'Active' ? 'activated' : 'suspended'}`,
+        user.status === 'Active' ? 'success' : 'error');
+    }
+
+    function deleteUser(id, btn) {
+      const user  = allUsers.find(u => u.id === id);
+      if (!user) return;
+      const row   = btn.closest('tr');
+      row.style.opacity    = '0';
+      row.style.transition = 'opacity 0.3s ease';
+      setTimeout(() => {
+        const idx = allUsers.findIndex(u => u.id === id);
+        if (idx > -1) allUsers.splice(idx, 1);
+        filteredUsers = [...allUsers];
+        renderTable();
+        window.SESMine.showToast(`${user.name} removed`, 'error');
+      }, 300);
+    }
+
+    document.getElementById('userModalOverlay')?.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('userModalOverlay')) closeUserModal();
+    });
+  </script>
+</body>
+</html>

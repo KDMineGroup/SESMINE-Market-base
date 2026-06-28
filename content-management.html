@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Content Management — SESMine</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .admin-badge { background:rgba(239,68,68,0.12);color:var(--color-red);border:1px solid rgba(239,68,68,0.25);padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase; }
+    .cms-tabs { display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:4px;width:fit-content;margin-bottom:28px; }
+    .cms-tab { padding:8px 18px;border-radius:var(--radius-sm);font-size:0.875rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all var(--transition-fast);border:none;background:none;display:flex;align-items:center;gap:7px; }
+    .cms-tab.active { background:var(--color-primary-mid);color:var(--text-primary);box-shadow:var(--shadow-sm); }
+    .cms-tab-panel { display:none; }
+    .cms-tab-panel.active { display:block; }
+    .content-item { display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,0.02);border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:8px;transition:all var(--transition-fast); }
+    .content-item:hover { border-color:var(--border-color-hover);background:rgba(255,255,255,0.04); }
+    .content-thumb { width:48px;height:48px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0; }
+    .content-meta { flex:1;min-width:0; }
+    .content-title { font-weight:700;font-size:0.875rem;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .content-sub   { font-size:0.75rem;color:var(--text-muted);margin-top:2px; }
+    .editor-toolbar { display:flex;gap:4px;flex-wrap:wrap;padding:10px 14px;background:rgba(0,0,0,0.2);border-bottom:1px solid var(--border-color); }
+    .editor-btn { width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid transparent;background:transparent;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.8rem;transition:all var(--transition-fast); }
+    .editor-btn:hover { background:rgba(255,255,255,0.08);color:var(--text-primary);border-color:var(--border-color); }
+    .editor-btn.active { background:rgba(245,166,35,0.12);color:var(--color-accent);border-color:rgba(245,166,35,0.3); }
+    .editor-divider { width:1px;height:20px;background:var(--border-color);margin:5px 4px;align-self:center; }
+    .editor-area { min-height:280px;padding:20px;outline:none;font-size:0.9rem;line-height:1.8;color:var(--text-primary);font-family:var(--font-body); }
+    .editor-area:focus { background:rgba(255,255,255,0.01); }
+    .media-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px; }
+    .media-item { background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;cursor:pointer;transition:all var(--transition-normal); }
+    .media-item:hover { border-color:rgba(245,166,35,0.3);transform:translateY(-2px); }
+    .media-item.selected { border-color:var(--color-accent);background:rgba(245,166,35,0.06); }
+    .media-preview { height:90px;display:flex;align-items:center;justify-content:center;font-size:2rem;background:rgba(0,0,0,0.2); }
+    .media-info { padding:8px 10px; }
+    .media-name { font-size:0.72rem;font-weight:600;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .media-size { font-size:0.68rem;color:var(--text-muted);margin-top:2px; }
+    .seo-score { width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1rem;font-weight:800;flex-shrink:0; }
+    .seo-good    { background:rgba(34,197,94,0.12);color:var(--color-green);border:2px solid rgba(34,197,94,0.3); }
+    .seo-medium  { background:rgba(245,166,35,0.12);color:var(--color-accent);border:2px solid rgba(245,166,35,0.3); }
+    .seo-poor    { background:rgba(239,68,68,0.12);color:var(--color-red);border:2px solid rgba(239,68,68,0.3); }
+    .drop-zone { border:2px dashed var(--border-color);border-radius:var(--radius-lg);padding:48px 24px;text-align:center;transition:all var(--transition-fast);cursor:pointer; }
+    .drop-zone:hover,.drop-zone.dragover { border-color:var(--color-accent);background:rgba(245,166,35,0.04); }
+  </style>
+</head>
+<body class="bg-primary">
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-logo">
+          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Admin</div>
+          <a href="admin-dashboard.html" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> Admin Overview</a>
+          <a href="user-management.html" class="sidebar-link"><i class="fas fa-users"></i> User Management</a>
+          <a href="content-management.html" class="sidebar-link active"><i class="fas fa-file-alt"></i> Content Management</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Platform</div>
+          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Main Dashboard</a>
+          <a href="../dashboard/analytics.html" class="sidebar-link"><i class="fas fa-chart-bar"></i> Analytics</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar" style="background:var(--color-red);">SA</div>
+          <div class="user-info"><strong>Super Admin</strong><span>Full Access</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Content Management</div>
+          <span class="admin-badge">Admin</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="switchCMSTab('editor');newPost()">
+            <i class="fas fa-plus"></i> New Post
+          </button>
+          <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="publishContent()">
+            <i class="fas fa-globe"></i> Publish
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+
+        <div style="margin-bottom:24px;">
+          <h1 style="font-size:1.6rem;margin-bottom:6px;">Content Management</h1>
+          <p style="color:var(--text-muted);font-size:0.9rem;">Manage blog posts, resources, announcements, media library, and platform notifications.</p>
+        </div>
+
+        <!-- Stats Row -->
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:28px;" class="animate-fade-up">
+          <div style="padding:16px;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-blue);">84</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Published Posts</div>
+          </div>
+          <div style="padding:16px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-accent);">7</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Drafts</div>
+          </div>
+          <div style="padding:16px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-green);">1,247</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Media Files</div>
+          </div>
+          <div style="padding:16px;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.15);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-purple);">12</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Announcements</div>
+          </div>
+          <div style="padding:16px;background:rgba(20,184,166,0.06);border:1px solid rgba(20,184,166,0.15);border-radius:var(--radius-md);text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--color-teal);">48.2K</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Total Page Views</div>
+          </div>
+        </div>
+
+        <!-- CMS Tabs -->
+        <div class="cms-tabs animate-fade-up delay-1">
+          <button class="cms-tab active" data-tab="posts" onclick="switchCMSTab('posts')">
+            <i class="fas fa-newspaper" style="color:var(--color-blue);"></i> Posts
+          </button>
+          <button class="cms-tab" data-tab="editor" onclick="switchCMSTab('editor')">
+            <i class="fas fa-edit" style="color:var(--color-accent);"></i> Editor
+          </button>
+          <button class="cms-tab" data-tab="media" onclick="switchCMSTab('media')">
+            <i class="fas fa-photo-video" style="color:var(--color-green);"></i> Media
+          </button>
+          <button class="cms-tab" data-tab="announcements" onclick="switchCMSTab('announcements')">
+            <i class="fas fa-bullhorn" style="color:var(--color-orange);"></i> Announcements
+          </button>
+          <button class="cms-tab" data-tab="seo" onclick="switchCMSTab('seo')">
+            <i class="fas fa-search" style="color:var(--color-purple);"></i> SEO
+          </button>
+        </div>
+
+        <!-- ── POSTS TAB ── -->
+        <div class="cms-tab-panel active" id="panel-posts">
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;" class="animate-fade-up delay-2">
+            <div style="position:relative;flex:1;min-width:200px;">
+              <input type="text" id="postSearch" placeholder="Search posts..."
+                style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:9px 14px 9px 36px;color:var(--text-primary);font-size:0.875rem;outline:none;width:100%;"
+                oninput="filterPosts()" />
+              <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.8rem;pointer-events:none;"></i>
+            </div>
+            <select class="form-select" id="postStatusFilter" style="width:auto;" onchange="filterPosts()">
+              <option value="">All Status</option>
+              <option value="Published">Published</option>
+              <option value="Draft">Draft</option>
+              <option value="Scheduled">Scheduled</option>
+            </select>
+            <select class="form-select" id="postCatFilter" style="width:auto;" onchange="filterPosts()">
+              <option value="">All Categories</option>
+              <option value="Blog">Blog</option>
+              <option value="Case Study">Case Study</option>
+              <option value="Guide">Guide</option>
+              <option value="News">News</option>
+            </select>
+          </div>
+
+          <div id="postsList" class="animate-fade-up delay-2"><!-- Populated by JS --></div>
+        </div>
+
+        <!-- ── EDITOR TAB ── -->
+        <div class="cms-tab-panel" id="panel-editor">
+          <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;" class="animate-fade-up delay-2">
+
+            <!-- Main Editor -->
+            <div>
+              <div class="form-group" style="margin-bottom:16px;">
+                <input type="text" class="form-input" id="postTitle" placeholder="Post title..."
+                  style="font-size:1.3rem;font-weight:700;padding:14px 16px;background:rgba(255,255,255,0.04);" />
+              </div>
+              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);overflow:hidden;">
+                <!-- Toolbar -->
+                <div class="editor-toolbar">
+                  <button class="editor-btn" onclick="execCmd('bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                  <button class="editor-btn" onclick="execCmd('italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                  <button class="editor-btn" onclick="execCmd('underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                  <button class="editor-btn" onclick="execCmd('strikeThrough')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
+                  <div class="editor-divider"></div>
+                  <button class="editor-btn" onclick="execCmd('formatBlock','H2')" title="Heading 2"><i class="fas fa-heading"></i></button>
+                  <button class="editor-btn" onclick="execCmd('formatBlock','H3')" title="Heading 3" style="font-size:0.65rem;font-weight:800;">H3</button>
+                  <div class="editor-divider"></div>
+                  <button class="editor-btn" onclick="execCmd('insertUnorderedList')" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                  <button class="editor-btn" onclick="execCmd('insertOrderedList')" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                  <div class="editor-divider"></div>
+                  <button class="editor-btn" onclick="execCmd('justifyLeft')" title="Align Left"><i class="fas fa-align-left"></i></button>
+                  <button class="editor-btn" onclick="execCmd('justifyCenter')" title="Align Center"><i class="fas fa-align-center"></i></button>
+                  <button class="editor-btn" onclick="execCmd('justifyRight')" title="Align Right"><i class="fas fa-align-right"></i></button>
+                  <div class="editor-divider"></div>
+                  <button class="editor-btn" onclick="insertLink()" title="Insert Link"><i class="fas fa-link"></i></button>
+                  <button class="editor-btn" onclick="switchCMSTab('media')" title="Insert Image"><i class="fas fa-image"></i></button>
+                  <div class="editor-divider"></div>
+                  <button class="editor-btn" onclick="execCmd('undo')" title="Undo"><i class="fas fa-undo"></i></button>
+                  <button class="editor-btn" onclick="execCmd('redo')" title="Redo"><i class="fas fa-redo"></i></button>
+                  <div class="editor-divider"></div>
+                  <button class="editor-btn" onclick="togglePreview()" title="Preview" id="previewBtn"><i class="fas fa-eye"></i></button>
+                </div>
+                <!-- Editable Area -->
+                <div class="editor-area" id="editorArea" contenteditable="true"
+                  style="min-height:320px;padding:20px;"
+                  data-placeholder="Start writing your content here...">
+                </div>
+                <!-- Preview Area (hidden) -->
+                <div id="previewArea" style="display:none;padding:20px;min-height:320px;font-size:0.9rem;line-height:1.8;color:var(--text-secondary);">
+                </div>
+              </div>
+              <!-- Word count -->
+              <div style="display:flex;justify-content:space-between;padding:8px 4px;font-size:0.75rem;color:var(--text-muted);">
+                <span id="wordCount">0 words</span>
+                <span id="readTime">0 min read</span>
+              </div>
+            </div>
+
+            <!-- Sidebar Settings -->
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+              <!-- Publish Settings -->
+              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);overflow:hidden;">
+                <div style="padding:14px 16px;border-bottom:1px solid var(--border-color);font-weight:700;font-size:0.875rem;">
+                  <i class="fas fa-cog" style="color:var(--color-accent);margin-right:6px;"></i>Publish Settings
+                </div>
+                <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="postStatus">
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                      <option value="scheduled">Scheduled</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;" id="scheduleGroup" style="display:none;">
+                    <label class="form-label">Publish Date</label>
+                    <input type="datetime-local" class="form-input" id="scheduleDate" />
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" id="postCategory">
+                      <option>Blog</option>
+                      <option>Case Study</option>
+                      <option>Guide</option>
+                      <option>News</option>
+                      <option>Announcement</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">Author</label>
+                    <input type="text" class="form-input" value="John Smith" />
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn btn-ghost btn-full" style="padding:8px;" onclick="saveDraft()">
+                      <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button class="btn btn-primary btn-full" style="padding:8px;" onclick="publishContent()">
+                      <i class="fas fa-globe"></i> Publish
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Featured Image -->
+              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);overflow:hidden;">
+                <div style="padding:14px 16px;border-bottom:1px solid var(--border-color);font-weight:700;font-size:0.875rem;">
+                  <i class="fas fa-image" style="color:var(--color-blue);margin-right:6px;"></i>Featured Image
+                </div>
+                <div style="padding:16px;">
+                  <div id="featuredImgPreview" style="height:120px;background:rgba(255,255,255,0.04);border:2px dashed var(--border-color);border-radius:var(--radius-md);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all var(--transition-fast);"
+                    onclick="window.SESMine.showToast('Image picker — connect to media library','info')"
+                    onmouseover="this.style.borderColor='var(--color-accent)'"
+                    onmouseout="this.style.borderColor='var(--border-color)'">
+                    <i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:var(--text-muted);"></i>
+                    <span style="font-size:0.78rem;color:var(--text-muted);">Click to set image</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tags -->
+              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);overflow:hidden;">
+                <div style="padding:14px 16px;border-bottom:1px solid var(--border-color);font-weight:700;font-size:0.875rem;">
+                  <i class="fas fa-tags" style="color:var(--color-green);margin-right:6px;"></i>Tags
+                </div>
+                <div style="padding:16px;">
+                  <input type="text" class="form-input" id="tagInput" placeholder="Add tag and press Enter..."
+                    style="margin-bottom:10px;" onkeydown="addTag(event)" />
+                  <div id="tagContainer" style="display:flex;flex-wrap:wrap;gap:6px;">
+                    <span class="tag-chip">mining</span>
+                    <span class="tag-chip">CAPEX</span>
+                    <span class="tag-chip">AI</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SEO Preview -->
+              <div style              ="background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);overflow:hidden;">
+                <div style="padding:14px 16px;border-bottom:1px solid var(--border-color);font-weight:700;font-size:0.875rem;">
+                  <i class="fas fa-search" style="color:var(--color-purple);margin-right:6px;"></i>SEO Preview
+                </div>
+                <div style="padding:16px;">
+                  <div style="background:rgba(255,255,255,0.04);border-radius:var(--radius-sm);padding:14px;">
+                    <div style="font-size:0.72rem;color:var(--color-green);margin-bottom:4px;">sesmine.com/blog/your-post-slug</div>
+                    <div style="font-size:0.9rem;font-weight:700;color:#4A90E2;margin-bottom:4px;" id="seoTitle">Post Title Preview</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;" id="seoDesc">Your meta description will appear here. Keep it between 120–160 characters for best results.</div>
+                  </div>
+                  <div class="form-group" style="margin-top:12px;margin-bottom:0;">
+                    <label class="form-label">Meta Description</label>
+                    <textarea class="form-textarea" id="metaDesc" placeholder="Write a compelling meta description..." style="min-height:60px;" oninput="updateSEOPreview()"></textarea>
+                    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;" id="metaCharCount">0 / 160 characters</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ── MEDIA TAB ── -->
+        <div class="cms-tab-panel" id="panel-media">
+
+          <!-- Upload Zone -->
+          <div class="drop-zone animate-fade-up delay-2" id="dropZone"
+            ondragover="event.preventDefault();this.classList.add('dragover')"
+            ondragleave="this.classList.remove('dragover')"
+            ondrop="handleDrop(event)"
+            onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-cloud-upload-alt" style="font-size:2.5rem;color:var(--color-accent);margin-bottom:12px;display:block;"></i>
+            <div style="font-weight:700;font-size:1rem;margin-bottom:6px;">Drop files here or click to upload</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Supports: JPG, PNG, SVG, PDF, DWG, XLSX — Max 50MB per file</div>
+            <input type="file" id="fileInput" multiple style="display:none;" onchange="handleFileSelect(this.files)" />
+          </div>
+
+          <!-- Media Filters -->
+          <div style="display:flex;gap:12px;align-items:center;margin:20px 0;flex-wrap:wrap;" class="animate-fade-up delay-2">
+            <div style="position:relative;flex:1;min-width:200px;">
+              <input type="text" id="mediaSearch" placeholder="Search media files..."
+                style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:9px 14px 9px 36px;color:var(--text-primary);font-size:0.875rem;outline:none;width:100%;"
+                oninput="filterMedia()" />
+              <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.8rem;pointer-events:none;"></i>
+            </div>
+            <select class="form-select" id="mediaTypeFilter" style="width:auto;" onchange="filterMedia()">
+              <option value="">All Types</option>
+              <option value="image">Images</option>
+              <option value="document">Documents</option>
+              <option value="cad">CAD Files</option>
+              <option value="spreadsheet">Spreadsheets</option>
+            </select>
+            <span style="font-size:0.82rem;color:var(--text-muted);" id="mediaCount">1,247 files · 4.8 GB used</span>
+            <div style="display:flex;gap:6px;margin-left:auto;">
+              <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" id="deleteSelectedBtn" style="display:none;" onclick="deleteSelected()">
+                <i class="fas fa-trash"></i> Delete Selected
+              </button>
+            </div>
+          </div>
+
+          <!-- Media Grid -->
+          <div class="media-grid animate-fade-up delay-3" id="mediaGrid">
+            <!-- Populated by JS -->
+          </div>
+
+        </div>
+
+        <!-- ── ANNOUNCEMENTS TAB ── -->
+        <div class="cms-tab-panel" id="panel-announcements">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="animate-fade-up delay-2">
+
+            <!-- Active Announcements -->
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:14px;">
+                Active Platform Announcements
+              </div>
+              <div id="announcementsList">
+                <div class="content-item">
+                  <div class="content-thumb" style="background:rgba(34,197,94,0.12);color:var(--color-green);">📢</div>
+                  <div class="content-meta">
+                    <div class="content-title">AI Model v3.2 Now Live — 94.2% Accuracy</div>
+                    <div class="content-sub">Published · All users · Jun 20, 2026</div>
+                  </div>
+                  <span class="status-badge status-active">Live</span>
+                  <div style="display:flex;gap:4px;flex-shrink:0;">
+                    <button class="topbar-btn" title="Edit" onclick="editAnnouncement(this)"><i class="fas fa-edit"></i></button>
+                    <button class="topbar-btn" title="Delete" style="color:var(--color-red);" onclick="deleteAnnouncement(this)"><i class="fas fa-trash"></i></button>
+                  </div>
+                </div>
+                <div class="content-item">
+                  <div class="content-thumb" style="background:rgba(245,166,35,0.12);color:var(--color-accent);">🔧</div>
+                  <div class="content-meta">
+                    <div class="content-title">Scheduled Maintenance — Jul 4, 2026 02:00–04:00 AEST</div>
+                    <div class="content-sub">Scheduled · All users · Publishes Jun 30, 2026</div>
+                  </div>
+                  <span class="status-badge status-warning">Scheduled</span>
+                  <div style="display:flex;gap:4px;flex-shrink:0;">
+                    <button class="topbar-btn" title="Edit" onclick="editAnnouncement(this)"><i class="fas fa-edit"></i></button>
+                    <button class="topbar-btn" title="Delete" style="color:var(--color-red);" onclick="deleteAnnouncement(this)"><i class="fas fa-trash"></i></button>
+                  </div>
+                </div>
+                <div class="content-item">
+                  <div class="content-thumb" style="background:rgba(59,130,246,0.12);color:var(--color-blue);">🎉</div>
+                  <div class="content-meta">
+                    <div class="content-title">New Feature: Scenario Comparison in AI Predictor</div>
+                    <div class="content-sub">Published · Professional + Enterprise · Jun 15, 2026</div>
+                  </div>
+                  <span class="status-badge status-active">Live</span>
+                  <div style="display:flex;gap:4px;flex-shrink:0;">
+                    <button class="topbar-btn" title="Edit" onclick="editAnnouncement(this)"><i class="fas fa-edit"></i></button>
+                    <button class="topbar-btn" title="Delete" style="color:var(--color-red);" onclick="deleteAnnouncement(this)"><i class="fas fa-trash"></i></button>
+                  </div>
+                </div>
+                <div class="content-item">
+                  <div class="content-thumb" style="background:rgba(168,85,247,0.12);color:var(--color-purple);">📊</div>
+                  <div class="content-meta">
+                    <div class="content-title">Q2 2026 Platform Usage Report Available</div>
+                    <div class="content-sub">Published · Admins only · Jun 10, 2026</div>
+                  </div>
+                  <span class="status-badge status-active">Live</span>
+                  <div style="display:flex;gap:4px;flex-shrink:0;">
+                    <button class="topbar-btn" title="Edit" onclick="editAnnouncement(this)"><i class="fas fa-edit"></i></button>
+                    <button class="topbar-btn" title="Delete" style="color:var(--color-red);" onclick="deleteAnnouncement(this)"><i class="fas fa-trash"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- New Announcement Form -->
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:14px;">
+                Create Announcement
+              </div>
+              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;">
+                <form id="announcementForm">
+                  <div class="form-group">
+                    <label class="form-label">Title *</label>
+                    <input type="text" class="form-input" id="annTitle" placeholder="Announcement title..." required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Message *</label>
+                    <textarea class="form-textarea" id="annMessage" placeholder="Write your announcement message..." required style="min-height:90px;"></textarea>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                      <label class="form-label">Type</label>
+                      <select class="form-select" id="annType">
+                        <option value="info">ℹ️ Info</option>
+                        <option value="success">✅ Success</option>
+                        <option value="warning">⚠️ Warning</option>
+                        <option value="maintenance">🔧 Maintenance</option>
+                        <option value="feature">🎉 New Feature</option>
+                      </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                      <label class="form-label">Audience</label>
+                      <select class="form-select" id="annAudience">
+                        <option value="all">All Users</option>
+                        <option value="enterprise">Enterprise Only</option>
+                        <option value="professional">Pro + Enterprise</option>
+                        <option value="admins">Admins Only</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                      <label class="form-label">Status</label>
+                      <select class="form-select" id="annStatus" onchange="toggleScheduleField()">
+                        <option value="published">Publish Now</option>
+                        <option value="scheduled">Schedule</option>
+                        <option value="draft">Save as Draft</option>
+                      </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;" id="annScheduleGroup" style="display:none;">
+                      <label class="form-label">Publish Date</label>
+                      <input type="datetime-local" class="form-input" id="annScheduleDate" />
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:14px;margin-bottom:14px;">
+                    <input type="checkbox" id="annDismissible" checked style="accent-color:var(--color-accent);cursor:pointer;" />
+                    <label for="annDismissible" style="font-size:0.85rem;color:var(--text-secondary);cursor:pointer;">Allow users to dismiss</label>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-bullhorn"></i> Create Announcement
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SEO TAB ── -->
+        <div class="cms-tab-panel" id="panel-seo">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="animate-fade-up delay-2">
+
+            <!-- SEO Overview -->
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:14px;">
+                Content SEO Scores
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;" id="seoList">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <!-- Site-wide SEO Settings -->
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:14px;">
+                Site-wide SEO Settings
+              </div>
+              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;">
+                <div class="form-group">
+                  <label class="form-label">Site Title</label>
+                  <input type="text" class="form-input" value="SESMine — AI-Powered Mining Cost Estimation" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Meta Description</label>
+                  <textarea class="form-textarea" style="min-height:70px;">The world's most advanced AI-powered mining cost estimation and project management platform. Trusted by 1,200+ mining professionals globally.</textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Keywords</label>
+                  <input type="text" class="form-input" value="mining cost estimation, CAPEX calculator, AI mining, mine planning software" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Canonical URL</label>
+                  <input type="text" class="form-input" value="https://sesmine.com" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">OG Image URL</label>
+                  <input type="text" class="form-input" placeholder="https://sesmine.com/assets/og-image.jpg" />
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <input type="checkbox" id="seoIndexing" checked style="accent-color:var(--color-accent);cursor:pointer;" />
+                    <label for="seoIndexing" style="font-size:0.85rem;color:var(--text-secondary);cursor:pointer;">Allow indexing</label>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <input type="checkbox" id="seoSitemap" checked style="accent-color:var(--color-accent);cursor:pointer;" />
+                    <label for="seoSitemap" style="font-size:0.85rem;color:var(--text-secondary);cursor:pointer;">Auto sitemap</label>
+                  </div>
+                </div>
+                <button class="btn btn-primary btn-full" style="margin-top:16px;" onclick="saveSEOSettings()">
+                  <i class="fas fa-save"></i> Save SEO Settings
+                </button>
+              </div>
+
+              <!-- Sitemap & Robots -->
+              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;margin-top:16px;">
+                <div style="font-weight:700;font-size:0.875rem;margin-bottom:14px;">
+                  <i class="fas fa-sitemap" style="color:var(--color-blue);margin-right:6px;"></i>Technical SEO
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius-sm);">
+                    <div>
+                      <div style="font-size:0.875rem;font-weight:600;">sitemap.xml</div>
+                      <div style="font-size:0.72rem;color:var(--text-muted);">Last generated: Jun 27, 2026</div>
+                    </div>
+                    <button class="btn btn-ghost" style="padding:5px 12px;font-size:0.78rem;" onclick="window.SESMine.showToast('Sitemap regenerated','success')">
+                      <i class="fas fa-sync-alt"></i> Regenerate
+                    </button>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:var(--radius-sm);">
+                    <div>
+                      <div style="font-size:0.875rem;font-weight:600;">robots.txt</div>
+                      <div style="font-size:0.72rem;color:var(--text-muted);">Allow all — custom rules active</div>
+                    </div>
+                    <button class="btn btn-ghost" style="padding:5px 12px;font-size:0.78rem;" onclick="window.SESMine.showToast('robots.txt editor — coming soon','info')">
+                      <i class="fas fa-edit"></i> Edit
+                    </button>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.15);border-radius:var(--radius-sm);">
+                    <div>
+                      <div style="font-size:0.875rem;font-weight:600;">Core Web Vitals</div>
+                      <div style="font-size:0.72rem;color:var(--text-muted);">LCP: 1.2s · FID: 18ms · CLS: 0.04</div>
+                    </div>
+                    <span class="status-badge status-active">All Good</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Tag chip style -->
+  <style>
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      background: rgba(245,166,35,0.1);
+      border: 1px solid rgba(245,166,35,0.25);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      cursor: pointer;
+    }
+    .tag-chip::after {
+      content: '×';
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    .tag-chip:hover::after { opacity: 1; }
+    .editor-area:empty::before {
+      content: attr(data-placeholder);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+  </style>
+
+  <script src="../js/main.js"></script>
+  <script>
+    'use strict';
+
+    // ── Data ──────────────────────────────────────────────────────────────────
+    const allPosts = [
+      { id:1,  title:'How AI is Revolutionising CAPEX Estimation in Open-Pit Mining', category:'Blog',       status:'Published', author:'John Smith',   date:'Jun 24, 2026', views:2840, seo:92 },
+      { id:2,  title:'Case Study: Lithium Star Mine — 94% Cost Prediction Accuracy',  category:'Case Study', status:'Published', author:'Sarah Johnson', date:'Jun 18, 2026', views:1920, seo:88 },
+      { id:3,  title:'Complete Guide to Mining CAPEX Budgeting in 2026',               category:'Guide',      status:'Published', author:'Michael Chen',  date:'Jun 12, 2026', views:4210, seo:95 },
+      { id:4,  title:'SESMine Platform Update — June 2026 Release Notes',              category:'News',       status:'Published', author:'Admin',         date:'Jun 10, 2026', views:980,  seo:74 },
+      { id:5,  title:'Underground Mining Cost Drivers: A Deep Dive',                   category:'Blog',       status:'Published', author:'John Smith',   date:'Jun 5, 2026',  views:1640, seo:86 },
+      { id:6,  title:'ESG Reporting Best Practices for Mining Companies in 2026',      category:'Guide',      status:'Draft',     author:'Sarah Johnson', date:'Jun 28, 2026', views:0,    seo:61 },
+      { id:7,  title:'Copper Ridge Project — Engineering Hub Case Study',              category:'Case Study', status:'Draft',     author:'Michael Chen',  date:'Jun 27, 2026', views:0,    seo:54 },
+      { id:8,  title:'Q3 2026 Commodity Price Outlook for Mining Projects',            category:'News',       status:'Scheduled', author:'Admin',         date:'Jul 1, 2026',  views:0,    seo:79 }
+    ];
+
+    const allMedia = [
+      { id:1,  name:'hero-dashboard.png',    type:'image',       size:'2.4 MB',  icon:'🖼️',  date:'Jun 24' },
+      { id:2,  name:'ai-predictor-demo.mp4', type:'video',       size:'18.2 MB', icon:'🎬',  date:'Jun 20' },
+      { id:3,  name:'sesmine-logo.svg',       type:'image',       size:'24 KB',   icon:'🖼️',  date:'Jun 18' },
+      { id:4,  name:'Q2-2026-ESG-Report.pdf',type:'document',    size:'4.8 MB',  icon:'📄',  date:'Jun 15' },
+      { id:5,  name:'AlphaGold-PitDesign.dwg',type:'cad',        size:'24.8 MB', icon:'📐',  date:'Jun 12' },
+      { id:6,  name:'cost-calculator-demo.png',type:'image',     size:'1.8 MB',  icon:'🖼️',  date:'Jun 10' },
+      { id:7,  name:'equipment-specs.xlsx',   type:'spreadsheet', size:'840 KB',  icon:'📊',  date:'Jun 8'  },
+      { id:8,  name:'mining-bg-dark.jpg',     type:'image',       size:'3.2 MB',  icon:'🖼️',  date:'Jun 5'  },
+      { id:9,  name:'CopperRidge-Ventilation.dwg',type:'cad',    size:'18.2 MB', icon:'📐',  date:'Jun 3'  },
+      { id:10, name:'pricing-comparison.png', type:'image',       size:'920 KB',  icon:'🖼️',  date:'Jun 1'  },
+      { id:11, name:'safety-training-manual.pdf',type:'document', size:'6.1 MB',  icon:'📄',  date:'May 28' },
+      { id:12, name:'team-photo.jpg',          type:'image',      size:'1.4 MB',  icon:'🖼️',  date:'May 24' }
+    ];
+
+    let filteredPosts  = [...allPosts];
+    let filteredMedia  = [...allMedia];
+    let selectedMedia  = new Set();
+    let isPreviewMode  = false;
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      window.SESMine.initSidebar();
+      renderPosts();
+      renderMedia();
+      renderSEOList();
+      initEditor();
+      initTagChips();
+
+      // Post status change → show/hide schedule
+      document.getElementById('postStatus')?.addEventListener('change', function () {
+        const sg = document.getElementById('scheduleGroup');
+        if (sg) sg.style.display = this.value === 'scheduled' ? 'block' : 'none';
+      });
+    });
+
+    // ── Tab Switching ─────────────────────────────────────────────────────────
+    function switchCMSTab(tab) {
+      document.querySelectorAll('.cms-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.cms-tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
+      document.getElementById(`panel-${tab}`)?.classList.add('active');
+    }
+
+    // ── Posts ─────────────────────────────────────────────────────────────────
+    function renderPosts() {
+      const container = document.getElementById('postsList');
+      if (!container) return;
+
+      if (!filteredPosts.length) {
+        container.innerHTML = `<div style="text-align:center;padding:48px;color:var(--text-muted);">
+          <i class="fas fa-search" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3;"></i>
+          No posts match your filters.
+        </div>`;
+        return;
+      }
+
+      container.innerHTML = filteredPosts.map(p => `
+        <div class="content-item">
+          <div class="content-thumb" style="background:${getCatColor(p.category)}20;color:${getCatColor(p.category)};font-size:1.1rem;">
+            ${getCatIcon(p.category)}
+          </div>
+          <div class="content-meta">
+            <div class="content-title">${p.title}</div>
+            <div class="content-sub">
+              ${p.category} · ${p.author} · ${p.date}
+              ${p.views > 0 ? ` · <i class="fas fa-eye"></i> ${p.views.toLocaleString()} views` : ''}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <div class="seo-score ${p.seo >= 80 ? 'seo-good' : p.seo >= 60 ? 'seo-medium' : 'seo-poor'}" title="SEO Score">${p.seo}</div>
+            <span class="status-badge ${p.status === 'Published' ? 'status-active' : p.status === 'Draft' ? 'status-warning' : 'status-info'}">${p.status}</span>
+          </div>
+          <div style="display:flex;gap:4px;flex-shrink:0;">
+            <button class="topbar-btn" title="Edit" onclick="editPost(${p.id})"><i class="fas fa-edit"></i></button>
+            <button class="topbar-btn" title="Duplicate" onclick="duplicatePost(${p.id})"><i class="fas fa-copy"></i></button>
+            <button class="topbar-btn" title="Delete" style="color:var(--color-red);" onclick="deletePost(${p.id},this)"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterPosts() {
+      const search = document.getElementById('postSearch')?.value.toLowerCase() || '';
+      const status = document.getElementById('postStatusFilter')?.value || '';
+      const cat    = document.getElementById('postCatFilter')?.value || '';
+
+      filteredPosts = allPosts.filter(p => {
+        const matchSearch = !search || p.title.toLowerCase().includes(search) || p.author.toLowerCase().includes(search);
+        const matchStatus = !status || p.status === status;
+        const matchCat    = !cat    || p.category === cat;
+        return matchSearch && matchStatus && matchCat;
+      });
+      renderPosts();
+    }
+
+    function editPost(id) {
+      const post = allPosts.find(p => p.id === id);
+      if (!post) return;
+      switchCMSTab('editor');
+      document.getElementById('postTitle').value = post.title;
+      document.getElementById('editorArea').innerHTML = `<p>Editing: <strong>${post.title}</strong></p><p>Content loaded from database...</p>`;
+      document.getElementById('postCategory').value = post.category;
+      document.getElementById('postStatus').value   = post.status.toLowerCase();
+      updateWordCount();
+      window.SESMine.showToast(`Editing: "${post.title.substring(0,40)}..."`, 'info');
+    }
+
+    function duplicatePost(id) {
+      const post = allPosts.find(p => p.id === id);
+      if (!post) return;
+      const copy = { ...post, id: allPosts.length + 1, title: 'Copy of ' + post.title, status: 'Draft', views: 0, date: 'Jun 28, 2026' };
+      allPosts.unshift(copy);
+      filteredPosts = [...allPosts];
+      renderPosts();
+      window.SESMine.showToast('Post duplicated as draft', 'success');
+    }
+
+    function deletePost(id, btn) {
+      const row = btn.closest('.content-item');
+      row.style.opacity    = '0';
+      row.style.transform  = 'translateX(20px)';
+      row.style.transition = 'all 0.3s ease';
+      setTimeout(() => {
+        const idx = allPosts.findIndex(p => p.id === id);
+        if (idx > -1) allPosts.splice(idx, 1);
+        filteredPosts = [...allPosts];
+        renderPosts();
+        window.SESMine.showToast('Post deleted', 'error');
+      }, 300);
+    }
+
+    function newPost() {
+      document.getElementById('postTitle').value = '';
+      document.getElementById('editorArea').innerHTML = '';
+      document.getElementById('postStatus').value = 'draft';
+      updateWordCount();
+    }
+
+    // ── Editor ────────────────────────────────────────────────────────────────
+    function initEditor() {
+      const area = document.getElementById('editorArea');
+      if (!area) return;
+      area.addEventListener('input', updateWordCount);
+      area.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') { e.preventDefault(); document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;'); }
+      });
+    }
+
+    function execCmd(cmd, val = null) {
+      document.getElementById('editorArea')?.focus();
+      document.execCommand(cmd, false, val);
+    }
+
+    function updateWordCount() {
+      const area  = document.getElementById('editorArea');
+      const wc    = document.getElementById('wordCount');
+      const rt    = document.getElementById('readTime');
+      if (!area || !wc || !rt) return;
+      const text  = area.innerText.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      wc.textContent = `${words.toLocaleString()} words`;
+      rt.textContent = `${Math.max(1, Math.ceil(words / 200))} min read`;
+    }
+
+    function togglePreview() {
+      const editor  = document.getElementById('editorArea');
+      const preview = document.getElementById('previewArea');
+      const btn     = document.getElementById('previewBtn');
+      if (!editor || !preview || !btn) return;
+      isPreviewMode = !isPreviewMode;
+      editor.style.display  = isPreviewMode ? 'none' : 'block';
+      preview.style.display = isPreviewMode ? 'block' : 'none';
+      btn.classList.toggle('active', isPreviewMode);
+      if (isPreviewMode) {
+        preview.innerHTML = `
+          <h1 style="font-size:1.6rem;font-weight:800;margin-bottom:16px;">${document.getElementById('postTitle')?.value || 'Untitled Post'}</h1>
+          ${editor.innerHTML || '<p style="color:var(--text-muted);">No content yet.</p>'}
+        `;
+      }
+    }
+
+    function insertLink() {
+      const url = prompt('Enter URL:');
+      if (url) execCmd('createLink', url);
+    }
+
+    function updateSEOPreview() {
+      const title   = document.getElementById('postTitle')?.value || 'Post Title Preview';
+      const desc    = document.getElementById('metaDesc')?.value || 'Your meta description will appear here.';
+      const charCnt = document.getElementById('metaCharCount');
+      document.getElementById('seoTitle').textContent = title;
+      document.getElementById('seoDesc').textContent  = desc;
+      if (charCnt) {
+        charCnt.textContent = `${desc.length} / 160 characters`;
+        charCnt.style.color = desc.length > 160 ? 'var(--color-red)' : desc.length > 120 ? 'var(--color-green)' : 'var(--text-muted)';
+      }
+    }
+
+    function saveDraft() {
+      const title = document.getElementById('postTitle')?.value.trim();
+      if (!title) { window.SESMine.showToast('Please add a title before saving', 'error'); return; }
+      window.SESMine.showToast(`Draft "${title.substring(0,30)}..." saved`, 'success');
+    }
+
+    function publishContent() {
+      const title = document.getElementById('postTitle')?.value.trim();
+      if (!title) { window.SESMine.showToast('Please add a title before publishing', 'error'); return; }
+      window.SESMine.showToast(`"${title.substring(0,30)}..." published successfully`, 'success');
+    }
+
+    // ── Tags ──────────────────────────────────────────────────────────────────
+    function initTagChips() {
+      document.getElementById('tagContainer')?.addEventListener('click', (e) => {
+        if (e.target.classList.contains('tag-chip')) e.target.remove();
+      });
+    }
+
+    function addTag(e) {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      const input = document.getElementById('tagInput');
+      const val   = input?.value.trim().toLowerCase();
+      if (!val) return;
+      const chip = document.createElement('span');
+      chip.className   = 'tag-chip';
+      chip.textContent = val;
+      chip.onclick     = () => chip.remove();
+      document.getElementById('tagContainer')?.appendChild(chip);
+      if (input) input.value = '';
+    }
+
+    // ── Media ─────────────────────────────────────────────────────────────────
+    function renderMedia() {
+      const grid = document.getElementById('mediaGrid');
+      if (!grid) return;
+      grid.innerHTML = filteredMedia.map(f => `
+        <div class="media-item ${selectedMedia.has(f.id) ? 'selected' : ''}" id="media-${f.id}" onclick="toggleMediaSelect(${f.id})">
+          <div class="media-preview">${f.icon}</div>
+          <div class="media-info">
+            <div class="media-name" title="${f.name}">${f.name}</div>
+            <div class="media-size">${f.size} · ${f.date}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterMedia() {
+      const search = document.getElementById('mediaSearch')?.value.toLowerCase() || '';
+      const type   = document.getElementById('mediaTypeFilter')?.value || '';
+      filteredMedia = allMedia.filter(f => {
+        const matchSearch = !search || f.name.toLowerCase().includes(search);
+        const matchType   = !type   || f.type === type;
+        return matchSearch && matchType;
+      });
+      renderMedia();
+    }
+
+    function toggleMediaSelect(id) {
+      if (selectedMedia.has(id)) selectedMedia.delete(id);
+      else selectedMedia.add(id);
+      const item = document.getElementById(`media-${id}`);
+      if (item) item.classList.toggle('selected', selectedMedia.has(id));
+      const delBtn = document.getElementById('deleteSelectedBtn');
+      if (delBtn) delBtn.style.display = selectedMedia.size > 0 ? 'inline-flex' : 'none';
+    }
+
+    function deleteSelected() {
+      if (!selectedMedia.size) return;
+      selectedMedia.forEach(id => {
+        const idx = allMedia.findIndex(f => f.id === id);
+        if (idx > -1) allMedia.splice(idx, 1);
+      });
+      filteredMedia = [...allMedia];
+      selectedMedia.clear();
+      renderMedia();
+      const delBtn = document.getElementById('deleteSelectedBtn');
+      if (delBtn) delBtn.style.display = 'none';
+      window.SESMine.showToast('Selected files deleted', 'error');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('dropZone')?.classList.remove('dragover');
+      const files = e.dataTransfer?.files;
+      if (files) handleFileSelect(files);
+    }
+
+    function handleFileSelect(files) {
+      if (!files?.length) return;
+      Array.from(files).forEach(file => {
+        const ext  = file.name.split('.').pop().toLowerCase();
+        const type = ['jpg','jpeg','png','gif','svg','webp'].includes(ext) ? 'image'
+                   : ['pdf','doc','docx'].includes(ext)                    ? 'document'
+                   : ['dwg','dxf'].includes(ext)                           ? 'cad'
+                   : ['xlsx','xls','csv'].includes(ext)                    ? 'spreadsheet'
+                   : 'document';
+        const icons = { image:'🖼️', document:'📄', cad:'📐', spreadsheet:'📊', video:'🎬' };
+        const newFile = {
+          id:   allMedia.length + 1,
+          name: file.name,
+          type,
+          size: file.size > 1e6 ? (file.size/1e6).toFixed(1)+' MB' : Math.round(file.size/1024)+' KB',
+          icon: icons[type] || '📁',
+          date: 'Just now'
+        };
+        allMedia.unshift(newFile);
+      });
+      filteredMedia = [...allMedia];
+      renderMedia();
+      window.SESMine.showToast(`${files.length} file${files.length > 1 ? 's' : ''} uploaded successfully`, 'success');
+    }
+
+    // ── Announcements ─────────────────────────────────────────────────────────
+    function toggleScheduleField() {
+      const status = document.getElementById('annStatus')?.value;
+      const group  = document.getElementById('annScheduleGroup');
+      if (group) group.style.display = status === 'scheduled' ? 'block' : 'none';
+    }
+
+    document.getElementById('announcementForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('annTitle')?.value.trim();
+      if (!title) { window.SESMine.showToast('Please enter a title', 'error'); return; }
+      const typeVal    = document.getElementById('annType')?.value;
+      const statusVal  = document.getElementById('annStatus')?.value;
+      const audience   = document.getElementById('annAudience')?.value;
+      const icons      = { info:'ℹ️', success:'✅', warning:'⚠️', maintenance:'🔧', feature:'🎉' };
+      const colors     = { info:'var(--color-blue)', success:'var(--color-green)', warning:'var(--color-accent)', maintenance:'var(--color-orange)', feature:'var(--color-purple)' };
+      const statusMap  = { published:'Published', scheduled:'Scheduled', draft:'Draft' };
+      const badgeMap   = { published:'status-active', scheduled:'status-warning', draft:'status-info' };
+
+      const item = document.createElement('div');
+      item.className = 'content-item';
+      item.innerHTML = `
+        <div class="content-thumb" style="background:${colors[typeVal]}20;color:${colors[typeVal]};font-size:1.1rem;">${icons[typeVal]}</div>
+        <div class="content-meta">
+          <div class="content-title">${title}</div>
+          <div class="content-sub">${statusMap[statusVal]} · ${audience} · Jun 28, 2026</div>
+        </div>
+        <span class="status-badge ${badgeMap[statusVal]}">${statusMap[statusVal]}</span>
+        <div style="display:flex;gap:4px;flex-shrink:0;">
+          <button class="topbar-btn" title="Edit" onclick="editAnnouncement(this)"><i class="fas fa-edit"></i></button>
+          <button class="topbar-btn" title="Delete" style="color:var(--color-red);" onclick="deleteAnnouncement(this)"><i class="fas fa-trash"></i></button>
+        </div>
+      `;
+      document.getElementById('announcementsList')?.prepend(item);
+      e.target.reset();
+      window.SESMine.showToast(`Announcement "${title.substring(0,30)}..." created`, 'success');
+    });
+
+    function editAnnouncement(btn) {
+      const item  = btn.closest('.content-item');
+      const title = item?.querySelector('.content-title')?.textContent;
+      switchCMSTab('announcements');
+      if (document.getElementById('annTitle')) document.getElementById('annTitle').value = title || '';
+      window.SESMine.showToast('Announcement loaded for editing', 'info');
+    }
+
+    function deleteAnnouncement(btn) {
+      const item = btn.closest('.content-item');
+      item.style.opacity    = '0';
+      item.style.transform  = 'translateX(20px)';
+      item.style.transition = 'all 0.3s ease';
+      setTimeout(() => { item.remove(); window.SESMine.showToast('Announcement deleted', 'error'); }, 300);
+    }
+
+    // ── SEO ───────────────────────────────────────────────────────────────────
+    function renderSEOList() {
+      const list = document.getElementById('seoList');
+      if (!list) return;
+      const sorted = [...allPosts].filter(p => p.status === 'Published').sort((a,b) => b.seo - a.seo);
+      list.innerHTML = sorted.map(p => `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--border-color);border-radius:var(--radius-md);transition:all var(--transition-fast);"
+          onmouseover="this.style.borderColor='var(--border-color-hover)'"
+          onmouseout="this.style.borderColor='var(--border-color)'">
+          <div class="seo-score ${p.seo >= 80 ? 'seo-good' : p.seo >= 60 ? 'seo-medium' : 'seo-poor'}">${p.seo}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:0.875rem;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.title}</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">${p.category} · ${p.views.toLocaleString()} views</div>
+          </div>
+          <div style="width:80px;flex-shrink:0;">
+            <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">
+              <div style="width:${p.seo}%;height:100%;background:${p.seo>=80?'var(--color-green)':p.seo>=60?'var(--color-accent)':'var(--color-red)'};border-radius:3px;transition:width 1s ease;"></div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="padding:4px 10px;font-size:0.75rem;flex-shrink:0;" onclick="editPost(${p.id});switchCMSTab('editor')">
+            <i class="fas fa-edit"></i> Improve
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function saveSEOSettings() {
+      window.SESMine.showToast('SEO settings saved successfully', 'success');
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function getCatColor(cat) {
+      const map = { Blog:'#3B82F6', 'Case Study':'#22C55E', Guide:'#A855F7', News:'#F5A623', Announcement:'#F97316' };
+      return map[cat] || '#64748B';
+    }
+
+    function getCatIcon(cat) {
+      const map = { Blog:'✍️', 'Case Study':'📊', Guide:'📖', News:'📰', Announcement:'📢' };
+      return map[cat] || '📄';
+    }
+  </script>
+</body>
+</html>
+
