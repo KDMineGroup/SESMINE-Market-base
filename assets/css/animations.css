@@ -1,0 +1,173 @@
+/* ─── SESMine Animations ─────────────────────────────────────────────────── */
+
+/* ── Fade Up ── */
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.animate-fade-up.in-view,
+.animate-fade-up.delay-1.in-view,
+.animate-fade-up.delay-2.in-view,
+.animate-fade-up.delay-3.in-view,
+.animate-fade-up.delay-4.in-view,
+.animate-fade-up.delay-5.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delay classes */
+.delay-1 { transition-delay: 0.10s !important; }
+.delay-2 { transition-delay: 0.20s !important; }
+.delay-3 { transition-delay: 0.30s !important; }
+.delay-4 { transition-delay: 0.40s !important; }
+.delay-5 { transition-delay: 0.50s !important; }
+.delay-6 { transition-delay: 0.60s !important; }
+
+/* ── Fade In ── */
+.animate-fade-in {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.animate-fade-in.in-view { opacity: 1; }
+
+/* ── Slide Left ── */
+.animate-slide-left {
+  opacity: 0;
+  transform: translateX(-32px);
+  transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.animate-slide-left.in-view { opacity: 1; transform: translateX(0); }
+
+/* ── Slide Right ── */
+.animate-slide-right {
+  opacity: 0;
+  transform: translateX(32px);
+  transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.animate-slide-right.in-view { opacity: 1; transform: translateX(0); }
+
+/* ── Scale In ── */
+.animate-scale-in {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.animate-scale-in.in-view { opacity: 1; transform: scale(1); }
+
+/* ── Keyframe: Pulse ── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.15); }
+}
+
+/* ── Keyframe: Spin ── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Keyframe: Rotate Slow ── */
+@keyframes rotateSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Keyframe: Float ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* ── Keyframe: Shimmer ── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* ── Keyframe: Fill Bar ── */
+@keyframes fillBar {
+  from { width: 0%; }
+}
+
+/* ── Keyframe: Glow Pulse ── */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.4); }
+  50%       { box-shadow: 0 0 0 12px rgba(245, 166, 35, 0); }
+}
+
+/* ── Keyframe: Bounce ── */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+  50%       { transform: translateY(-8px); animation-timing-function: cubic-bezier(0,0,0.2,1); }
+}
+
+/* ── Keyframe: Slide Down ── */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Keyframe: Fade In Up (for hero elements) ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Hero Animations ── */
+.hero-animate-1 { animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both; }
+.hero-animate-2 { animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.25s both; }
+.hero-animate-3 { animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both; }
+.hero-animate-4 { animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.55s both; }
+
+/* ── Utility Animation Classes ── */
+.anim-float    { animation: float 4s ease-in-out infinite; }
+.anim-pulse    { animation: pulse 2s ease-in-out infinite; }
+.anim-spin     { animation: spin 1s linear infinite; }
+.anim-bounce   { animation: bounce 1.2s infinite; }
+.anim-glow     { animation: glowPulse 2.5s ease-in-out infinite; }
+
+/* ── Skeleton Loading ── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+.skeleton-text  { height: 14px; margin-bottom: 8px; }
+.skeleton-title { height: 24px; width: 60%; margin-bottom: 12px; }
+.skeleton-card  { height: 120px; border-radius: var(--radius-lg, 12px); }
+
+/* ── Page Transition ── */
+.page-enter {
+  animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-slide-left,
+  .animate-slide-right,
+  .animate-scale-in {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .anim-float,
+  .anim-pulse,
+  .anim-spin,
+  .anim-bounce,
+  .anim-glow,
+  .skeleton {
+    animation: none !important;
+  }
+}
