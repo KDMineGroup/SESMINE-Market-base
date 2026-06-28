@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics — SESMine</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .analytics-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      width: fit-content;
+      margin-bottom: 28px;
+    }
+    .analytics-tab {
+      padding: 8px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: none;
+      background: none;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+    .analytics-tab.active {
+      background: var(--color-primary-mid);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .analytics-tab-panel { display: none; }
+    .analytics-tab-panel.active { display: block; }
+    .metric-card {
+      padding: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-normal);
+    }
+    .metric-card:hover {
+      border-color: var(--border-color-hover);
+      transform: translateY(-2px);
+    }
+    .metric-card-label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .metric-card-value { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+    .metric-card-sub   { font-size: 0.78rem; color: var(--text-muted); }
+    .heatmap-cell {
+      width: 100%;
+      padding-top: 100%;
+      border-radius: 3px;
+      position: relative;
+      cursor: pointer;
+      transition: transform var(--transition-fast);
+    }
+    .heatmap-cell:hover { transform: scale(1.15); z-index: 1; }
+    .filter-chip {
+      padding: 5px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: transparent;
+      transition: all var(--transition-fast);
+    }
+    .filter-chip.active {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      background: rgba(245,166,35,0.1);
+    }
+    .insight-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      transition: all var(--transition-fast);
+    }
+    .insight-card:hover { border-color: var(--border-color-hover); background: rgba(255,255,255,0.04); }
+    .insight-icon {
+      width: 38px; height: 38px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+  </style>
+</head>
+<body class="bg-primary">
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-logo">
+          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Overview</div>
+          <a href="main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
+          <a href="analytics.html" class="sidebar-link active"><i class="fas fa-chart-bar"></i> Analytics</a>
+          <a href="esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Products</div>
+          <a href="../products/ai-predictor.html" class="sidebar-link"><i class="fas fa-brain"></i> AI Predictor</a>
+          <a href="../products/cost-calculator.html" class="sidebar-link"><i class="fas fa-calculator"></i> Cost Calculator</a>
+          <a href="../products/equipment-database.html" class="sidebar-link"><i class="fas fa-database"></i> Equipment DB</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Hubs</div>
+          <a href="../hubs/engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
+          <a href="../hubs/safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
+          <a href="../hubs/sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
+          <a href="../hubs/procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
+          <a href="../hubs/innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
+          <a href="../hubs/economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Admin</div>
+          <a href="../admin/admin-dashboard.html" class="sidebar-link"><i class="fas fa-cog"></i> Admin Panel</a>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">JS</div>
+          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+          <div class="topbar-title">Analytics</div>
+        </div>
+        <div class="topbar-right">
+          <select class="form-select" id="dateRangeSelect" style="width:auto;padding:6px 28px 6px 10px;font-size:0.8rem;" onchange="updateDateRange(this.value)">
+            <option value="30">Last 30 Days</option>
+            <option value="90" selected>Last 90 Days</option>
+            <option value="180">Last 6 Months</option>
+            <option value="365">Last 12 Months</option>
+          </select>
+          <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="window.SESMine.exportToCSV(analyticsExport,'analytics.csv')">
+            <i class="fas fa-download"></i> Export
+          </button>
+          <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="window.print()">
+            <i class="fas fa-file-pdf"></i> Report
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+
+        <div style="margin-bottom:24px;">
+          <h1 style="font-size:1.6rem;margin-bottom:6px;">Analytics</h1>
+          <p style="color:var(--text-muted);font-size:0.9rem;">Deep-dive performance metrics, cost trends, and AI-generated insights across all projects and sites.</p>
+        </div>
+
+        <!-- Summary KPIs -->
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:28px;" class="animate-fade-up">
+          <div class="metric-card">
+            <div class="metric-card-label">Total CAPEX Tracked</div>
+            <div class="metric-card-value" style="color:var(--color-accent);">$281M</div>
+            <div class="metric-card-sub"><i class="fas fa-arrow-up" style="color:var(--color-green);"></i> +12.4% YoY</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label">Avg. Cost Accuracy</div>
+            <div class="metric-card-value" style="color:var(--color-green);">94.2%</div>
+            <div class="metric-card-sub">AI model v3.2</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label">Projects On Budget</div>
+            <div class="metric-card-value" style="color:var(--color-blue);">79%</div>
+            <div class="metric-card-sub">19 of 24 active</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label">Avg. Schedule Variance</div>
+            <div class="metric-card-value" style="color:var(--color-orange);">+8.2%</div>
+            <div class="metric-card-sub">Days behind schedule</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label">Cost Savings YTD</div>
+            <div class="metric-card-value" style="color:var(--color-green);">$4.8M</div>
+            <div class="metric-card-sub">vs initial estimates</div>
+          </div>
+        </div>
+
+        <!-- Analytics Tabs -->
+        <div class="analytics-tabs animate-fade-up delay-1">
+          <button class="analytics-tab active" data-tab="cost" onclick="switchAnalyticsTab('cost')">
+            <i class="fas fa-dollar-sign" style="color:var(--color-accent);"></i> Cost Analysis
+          </button>
+          <button class="analytics-tab" data-tab="performance" onclick="switchAnalyticsTab('performance')">
+            <i class="fas fa-tachometer-alt" style="color:var(--color-blue);"></i> Performance
+          </button>
+          <button class="analytics-tab" data-tab="equipment" onclick="switchAnalyticsTab('equipment')">
+            <i class="fas fa-truck" style="color:var(--color-orange);"></i> Equipment
+          </button>
+          <button class="analytics-tab" data-tab="insights" onclick="switchAnalyticsTab('insights')">
+            <i class="fas fa-brain" style="color:var(--color-purple);"></i> AI Insights
+          </button>
+        </div>
+
+        <!-- ── COST ANALYSIS TAB ── -->
+        <div class="analytics-tab-panel active" id="panel-cost">
+
+          <!-- Filter Chips -->
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" class="animate-fade-up delay-2">
+            <button class="filter-chip active" onclick="toggleChip(this)">All Projects</button>
+            <button class="filter-chip" onclick="toggleChip(this)">Open-pit</button>
+            <button class="filter-chip" onclick="toggleChip(this)">Underground</button>
+            <button class="filter-chip" onclick="toggleChip(this)">Australia</button>
+            <button class="filter-chip" onclick="toggleChip(this)">Africa</button>
+            <button class="filter-chip" onclick="toggleChip(this)">Americas</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:20px;">
+
+            <!-- CAPEX Trend -->
+            <div class="chart-card animate-fade-up delay-2">
+              <div class="chart-card-header" style="margin-bottom:16px;">
+                <div>
+                  <div class="chart-card-title"><i class="fas fa-chart-area" style="color:var(--color-accent);margin-right:6px;"></i>CAPEX vs Budget Trend</div>
+                  <div class="chart-card-subtitle">Cumulative spend — all active projects (USD millions)</div>
+                </div>
+                <div style="display:flex;gap:12px;font-size:0.78rem;">
+                  <span style="display:flex;align-items:center;gap:5px;"><span style="width:12px;height:2px;background:var(--color-accent);display:inline-block;border-radius:1px;"></span>Actual</span>
+                  <span style="display:flex;align-items:center;gap:5px;"><span style="width:12px;height:2px;background:rgba(255,255,255,0.25);display:inline-block;border-radius:1px;border-top:2px dashed rgba(255,255,255,0.25);"></span>Budget</span>
+                </div>
+              </div>
+              <canvas id="capexTrendChart" width="600" height="220"></canvas>
+            </div>
+
+            <!-- Cost by Category Donut -->
+            <div class="chart-card animate-fade-up delay-2">
+              <div class="chart-card-header" style="margin-bottom:16px;">
+                <div class="chart-card-title"><i class="fas fa-chart-pie" style="color:var(--color-blue);margin-right:6px;"></i>Cost by Category</div>
+              </div>
+              <canvas id="costCategoryDonut" width="180" height="180" style="display:block;margin:0 auto 16px;"></canvas>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.82rem;">
+                  <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--color-accent);"></span>Equipment</span>
+                  <strong style="color:var(--color-accent);">$126M (45%)</strong>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.82rem;">
+                  <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--color-blue);"></span>Labor</span>
+                  <strong style="color:var(--color-blue);">$78M (28%)</strong>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.82rem;">
+                  <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--color-green);"></span>Infrastructure</span>
+                  <strong style="color:var(--color-green);">$50M (18%)</strong>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.82rem;">
+                  <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--color-purple);"></span>Contingency</span>
+                  <strong style="color:var(--color-purple);">$25M (9%)</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monthly Spend Bar -->
+          <div class="chart-card animate-fade-up delay-3" style="margin-bottom:20px;">
+            <div class="chart-card-header" style="margin-bottom:16px;">
+              <div>
+                <div class="chart-card-title"><i class="fas fa-chart-bar" style="color:var(--color-blue);margin-right:6px;"></i>Monthly Spend Breakdown</div>
+                <div class="chart-card-subtitle">CAPEX + OPEX — last 12 months (USD millions)</div>
+              </div>
+            </div>
+            <canvas id="monthlySpendChart" width="800" height="200"></canvas>
+          </div>
+
+          <!-- Cost per Tonne Table -->
+          <div class="data-table-card animate-fade-up delay-4">
+            <div class="data-table-header">
+              <div>
+                <div class="chart-card-title">Cost per Tonne — By Project</div>
+                <div class="chart-card-subtitle">Benchmarked against industry averages</div>
+              </div>
+              <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="window.SESMine.exportToCSV(costPerTonneData,'cost-per-tonne.csv')">
+                <i class="fas fa-download"></i> Export
+              </button>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="data-table" id="costTable">
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Mine Type</th>
+                    <th>Commodity</th>
+                    <th>CAPEX/t</th>
+                    <th>OPEX/t</th>
+                    <th>Total/t</th>
+                    <th>Industry Avg</th>
+                    <th>vs Benchmark</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong style="color:var(--text-primary);">Alpha Gold Mine</strong></td>
+                    <td>Open-pit</td>
+                    <td>Gold</td>
+                    <td>$8.42</td>
+                    <td>$3.18</td>
+                    <td style="font-weight:700;">$11.60</td>
+                    <td style="color:var(--text-muted);">$13.20</td>
+                    <td><span class="status-badge status-active"><i class="fas fa-arrow-down"></i> -12.1%</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color:var(--text-primary);">Copper Ridge</strong></td>
+                    <td>Underground</td>
+                    <td>Copper</td>
+                    <td>$18.74</td>
+                    <td>$7.22</td>
+                    <td style="font-weight:700;">$25.96</td>
+                    <td style="color:var(--text-muted);">$24.80</td>
+                    <td><span class="status-badge status-warning"><i class="fas fa-arrow-up"></i> +4.7%</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color:var(--text-primary);">Iron Valley</strong></td>
+                    <td>Open-pit</td>
+                    <td>Iron Ore</td>
+                    <td>$4.12</td>
+                    <td>$1.84</td>
+                    <td style="font-weight:700;">$5.96</td>
+                    <td style="color:var(--text-muted);">$6.40</td>
+                    <td><span class="status-badge status-active"><i class="fas fa-arrow-down"></i> -6.9%</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color:var(--text-primary);">Lithium Star</strong></td>
+                    <td>Open-pit</td>
+                    <td>Lithium</td>
+                    <td>$22.18</td>
+                    <td>$9.44</td>
+                    <td style="font-weight:700;">$31.62</td>
+                    <td style="color:var(--text-muted);">$34.10</td>
+                    <td><span class="status-badge status-active"><i class="fas fa-arrow-down"></i> -7.3%</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color:var(--text-primary);">Northern Nickel</strong></td>
+                    <td>Underground</td>
+                    <td>Nickel</td>
+                    <td>$21.40</td>
+                    <td>$8.80</td>
+                    <td style="font-weight:700;">$30.20</td>
+                    <td style="color:var(--text-muted);">$28.50</td>
+                    <td><span class="status-badge status-critical"><i class="fas fa-arrow-up"></i> +5.9%</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── PERFORMANCE TAB ── -->
+        <div class="analytics-tab-panel" id="panel-performance">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;" class="animate-fade-up delay-2">
+
+            <!-- Schedule Performance -->
+            <div class="chart-card">
+              <div class="chart-card-header" style="margin-bottom:16px;">
+                <div>
+                  <div class="chart-card-title"><i class="fas fa-calendar-check" style="color:var(--color-blue);margin-right:6px;"></i>Schedule Performance Index</div>
+                  <div class="chart-card-subtitle">SPI by project — 1.0 = on schedule</div>
+                </div>
+              </div>
+              <canvas id="spiChart" width="400" height="220"></canvas>
+              <div style="display:flex;gap:16px;margin-top:12px;font-size:0.78rem;flex-wrap:wrap;">
+                <span style="display:flex;align-items:center;gap:5px;color:var(--color-green);"><i class="fas fa-circle" style="font-size:6px;"></i>Ahead (SPI &gt; 1.0)</span>
+                <span style="display:flex;align-items:center;gap:5px;color:var(--color-accent);"><i class="fas fa-circle" style="font-size:6px;"></i>On Track (0.9–1.0)</span>
+                <span style="display:flex;align-items:center;gap:5px;color:var(--color-red);"><i class="fas fa-circle" style="font-size:6px;"></i>Behind (&lt; 0.9)</span>
+              </div>
+            </div>
+
+            <!-- Cost Performance -->
+            <div class="chart-card">
+              <div class="chart-card-header" style="margin-bottom:16px;">
+                <div>
+                  <div class="chart-card-title"><i class="fas fa-balance-scale" style="color:var(--color-green);margin-right:6px;"></i>Cost Performance Index</div>
+                  <div class="chart-card-subtitle">CPI by project — 1.0 = on budget</div>
+                </div>
+              </div>
+              <canvas id="cpiChart" width="400" height="220"></canvas>
+            </div>
+          </div>
+
+          <!-- Project Progress Overview -->
+          <div class="chart-card animate-fade-up delay-3">
+            <div class="chart-card-header" style="margin-bottom:20px;">
+              <div class="chart-card-title"><i class="fas fa-tasks" style="color:var(--color-accent);margin-right:6px;"></i>Project Progress Overview</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <strong style="font-size:0.875rem;">Alpha Gold Mine</strong>
+                    <span class="status-badge status-active">On Track</span>
+                  </div>
+                  <span style="font-size:0.82rem;color:var(--color-green);font-weight:700;">68%</span>
+                </div>
+                <div style="height:10px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden;">
+                  <div style="width:68%;height:100%;background:linear-gradient(90deg,var(--color-green),var(--color-teal));border-radius:5px;transition:width 1s ease;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);margin-top:4px;">
+                  <span>Started: Jan 2025</span><span>Due: Dec 2026</span>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <strong style="font-size:0.875rem;">Copper Ridge</strong>
+                    <span class="status-badge status-warning">Slight Delay</span>
+                  </div>
+                  <span style="font-size:0.82rem;color:var(--color-blue);font-weight:700;">45%</span>
+                </div>
+                <div style="height:10px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden;">
+                  <div style="width:45%;height:100%;background:linear-gradient(90deg,var(--color-blue),var(--color-purple));border-radius:5px;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);margin-top:4px;">
+                  <span>Started: Jun 2025</span><span>Due: Mar 2027</span>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <strong style="font-size:0.875rem;">Iron Valley Expansion</strong>
+                    <span class="status-badge status-warning">Review</span>
+                  </div>
+                  <span style="font-size:0.82rem;color:var(--color-orange);font-weight:700;">22%</span>
+                </div>
+                <div style="height:10px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden;">
+                  <div style="width:22%;height:100%;background:linear-gradient(90deg,var(--color-orange),var(--color-accent));border-radius:5px;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);margin-top:4px;">
+                  <span>Started: Mar 2026</span><span>Due: Jun 2028</span>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <strong style="font-size:0.875rem;">Lithium Star Mine</strong>
+                    <span class="status-badge status-info">Closing</span>
+                  </div>
+                  <span style="font-size:0.82rem;color:var(--color-teal);font-weight:700;">91%</span>
+                </div>
+                <div style="height:10px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden;">
+                  <div style="width:91%;height:100%;background:linear-gradient(90deg,var(--color-teal),var(--color-green));border-radius:5px;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);margin-top:4px;">
+                  <span>Started: Aug 2024</span><span>Due: Aug 2026</span>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <strong style="font-size:0.875rem;">Northern Nickel Belt</strong>
+                    <span class="status-badge status-critical">Planning</span>
+                  </div>
+                  <span style="font-size:0.82rem;color:var(--color-red);font-weight:700;">5%</span>
+                </div>
+                <div style="height:10px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden;">
+                  <div style="width:5%;height:100%;background:var(--color-red);border-radius:5px;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);margin-top:4px;">
+                  <span>Started: May 2026</span><span>Due: Dec 2029</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── EQUIPMENT TAB ── -->
+        <div class="analytics-tab-panel" id="panel-equipment">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;" class="animate-fade-up delay-2">
+
+            <div class="chart-card">
+              <div class="chart-card-header" style="margin-bottom:16px;">
+                <div class="chart-card-title"><i class="fas fa-chart-bar" style="color:var(--color-orange);margin-right:6px;"></i>Equipment Utilization by Type</div>
+              </div>
+              <canvas id="equipUtilChart" width="400" height="220"></canvas>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header" style="margin-bottom:16px;">
+                <div class="chart-card-title"><i class="fas fa-tools" style="color:var(--color-blue);margin-right:6px;"></i>Maintenance Cost Trend</div>
+                <div class="chart-card-subtitle">Monthly maintenance spend — USD thousands</div>
+              </div>
+              <canvas id="maintCostChart" width="400" height="220"></canvas>
+            </div>
+          </div>
+
+          <!-- Equipment Availability Heatmap -->
+          <div class="chart-card animate-fade-up delay-3">
+            <div class="chart-card-header" style="margin-bottom:20px;">
+              <div>
+                <div class="chart-card-title"><i class="fas fa-th" style="color:var(--color-purple);margin-right:6px;"></i>Fleet Availability Heatmap</div>
+                <div class="chart-card-subtitle">Daily availability % — last 8 weeks — Green = available, Red = downtime</div>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <div id="heatmapGrid" style="display:grid;grid-template-columns:120px repeat(56,1fr);gap:2px;min-width:700px;"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;margin-top:14px;font-size:0.78rem;color:var(--text-muted);">
+              <span>Low availability</span>
+              <div style="display:flex;gap:2px;">
+                <div style="width:14px;height:14px;border-radius:2px;background:rgba(239,68,68,0.8);"></div>
+                <div style="width:14px;height:14px;border-radius:2px;background:rgba(245,166,35,0.8);"></div>
+                <div style="width:14px;height:14px;border-radius:2px;background:rgba(34,197,94,0.5);"></div>
+                <div style="width:14px;height:14px;border-radius:2px;background:rgba(34,197,94,0.8);"></div>
+              </div>
+              <span>High availability</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── AI INSIGHTS TAB ── -->
+        <div class="analytics-tab-panel" id="panel-insights">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="animate-fade-up delay-2">
+
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:14px;">
+                <i class="fas fa-brain" style="color:var(--color-accent);margin-right:6px;"></i>AI-Generated Insights
+              </div>
+
+              <div class="insight-card">
+                <div class="insight-icon icon-green"><i class="fas fa-arrow-trend-down"></i></div>
+                <div>
+                  <strong style="font-size:0.875rem;color:var(--color-green);">Cost Reduction Opportunity</strong>
+                  <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;line-height:1.6;">
+                    Copper Ridge fuel costs are 18% above similar underground operations. Switching to a hybrid ventilation-on-demand system could save <strong style="color:var(--color-green);">$340K/year</strong>.
+                  </p>
+                  <div style="margin-top:8px;font-size:0.75rem;color:var(--text-muted);">Confidence: <strong style="color:var(--color-green);">91%</strong></div>
+                </div>
+              </div>
+
+              <div class="insight-card">
+                <div class="insight-icon icon-orange"><i class="fas fa-exclamation-triangle"></i></div>
+                <div>
+                  <strong style="font-size:0.875rem;color:var(--color-orange);">Schedule Risk Detected</strong>
+                  <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;line-height:1.6;">
+                    Iron Valley's current progress rate suggests a <strong style="color:var(--color-orange);">4.2 month delay</strong> against the Dec 2028 deadline. Recommend increasing drilling crew by 20% in Q3 2026.
+                  </p>
+                  <div style="margin-top:8px;font-size:0.75rem;color:var(--text-muted);">Confidence: <strong style="color:var(--color-orange);">87%</strong></div>
+                </div>
+              </div>
+
+              <div class="insight-card">
+                <div class="insight-icon icon-blue"><i class="fas fa-lightbulb"></i></div>
+                <div>
+                  <strong style="font-size:0.875rem;color:var(--color-blue);">Equipment Optimisation</strong>
+                  <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;line-height:1.6;">
+                    Alpha Gold Mine has 3 haul trucks averaging only 52% utilization. Redeploying 1 truck to Iron Valley could improve fleet ROI by <strong style="color:var(--color-blue);">$1.2M/year</strong>.
+                  </p>
+                  <div style="margin-top:8px;font-size:0.75rem;color:var(--text-muted);">Confidence: <strong style="color:var(--color-blue);">84%</strong></div>
+                </div>
+              </div>
+
+              <div class="insight-card">
+                <div class="insight-icon icon-purple"><i class="fas fa-chart-line"></i></div>
+                <div>
+                  <strong style="font-size:0.875rem;color:var(--color-purple);">Market Timing Alert</strong>
+                  <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;line-height:1.6;">
+                    Lithium prices are forecast to rise 14% in Q4 2026. Accelerating Lithium Star commissioning by 6 weeks could capture an additional <strong style="color:var(--color-purple);">$8.4M</strong> in revenue.
+                  </p>
+                  <div style="margin-top:8px;font-size:0.75rem;color:var(--text-muted);">Confidence: <strong style="color:var(--color-purple);">78%</strong></div>
+                </div>
+              </div>
+
+              <div class="insight-card">
+                <div class="insight-icon icon-teal"><i class="fas fa-leaf"></i></div>
+                <div>
+                  <strong style="font-size:0.875rem;color:var(--color-teal);">ESG Improvement Path</strong>
+                  <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;line-height:1.6;">
+                    Completing the Alpha Gold solar farm (Phase 2) will reduce Scope 2 emissions by <strong style="color:var(--color-teal);">2,100 tCO₂e/year</strong> and improve ESG score by an estimated 4.8 points.
+                  </p>
+                  <div style="margin-top:8px;font-size:0.75rem;color:var(--text-muted);">Confidence: <strong style="color:var(--color-teal);">96%</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:14px;">
+                <i class="fas fa-chart-bar" style="color:var(--color-blue);margin-right:6px;"></i>Prediction Accuracy History
+              </div>
+              <div class="chart-card" style="margin-bottom:20px;">
+                <canvas id="accuracyChart" width="400" height="200"></canvas>
+                <div style="display:flex;justify-content:space-between;margin-top:12px;">
+                  <div style="text-align:center;">
+                    <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--color-green);">94.2%</div>
+                    <div style="font-size:0.72rem;color:var(--text-muted);">Current Accuracy</div>
+                  </div>
+                  <div style="text-align:center;">
+                    <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--color-blue);">847</div>
+                    <div style="font-size:0.72rem;color:var(--text-muted);">Predictions This Month</div>
+                  </div>
+                  <div style="text-align:center;">
+                    <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--color-accent);">±5.8%</div>
+                    <div style="font-size:0.72rem;color:var(--text-muted);">Avg Error Margin</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:14px;">
+                <i class="fas fa-flag" style="color:var(--color-orange);margin-right:6px;"></i>Anomalies Detected
+              </div>
+              <div class="chart-card">
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-sm);">
+                    <i class="fas fa-exclamation-circle" style="color:var(--color-red);flex-shrink:0;"></i>
+                    <div style="flex:1;font-size:0.82rem;">
+                      <strong>Copper Ridge</strong> — Fuel consumption 31% above model prediction for June
+                    </div>
+                    <button class="btn btn-ghost" style="padding:3px 8px;font-size:0.72rem;">Investigate</button>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:var(--radius-sm);">
+                    <i class="fas fa-exclamation-triangle" style="color:var(--color-accent);flex-shrink:0;"></i>
+                    <div style="flex:1;font-size:0.82rem;">
+                      <strong>Iron Valley</strong> — Labor hours 22% below forecast — possible under-reporting
+                    </div>
+                    <button class="btn btn-ghost" style="padding:3px 8px;font-size:0.72rem;">Review</button>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius-sm);">
+                    <i class="fas fa-check-circle" style="color:var(--color-green);flex-shrink:0;"></i>
+                    <div style="flex:1;font-size:0.82rem;">
+                      <strong>Lithium Star</strong> — All metrics within ±3% of AI forecast — excellent data quality
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    'use strict';
+
+    const analyticsExport = [
+      {project:'Alpha Gold',capex_t:'$11.60',industry_avg:'$13.20',variance:'-12.1%'},
+      {project:'Copper Ridge',capex_t:'$25.96',industry_avg:'$24.80',variance:'+4.7%'},
+      {project:'Iron Valley',capex_t:'$5.96',industry_avg:'$6.40',variance:'-6.9%'},
+      {project:'Lithium Star',capex_t:'$31.62',industry_avg:'$34.10',variance:'-7.3%'},
+      {project:'Northern Nickel',capex_t:'$30.20',industry_avg:'$28.50',variance:'+5.9%'}
+    ];
+
+    const costPerTonneData = analyticsExport;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.SESMine.initSidebar();
+      renderAllCharts();
+      buildHeatmap();
+    });
+
+    function switchAnalyticsTab(tab) {
+      document.querySelectorAll('.analytics-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.analytics-tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+      document.getElementById(`panel-${tab}`).classList.add('active');
+    }
+
+    function toggleChip(btn) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      window.SESMine.showToast(`Filter: ${btn.textContent}`, 'info', 1500);
+    }
+
+    function updateDateRange(days) {
+      window.SESMine.showToast(`Showing last ${days} days`, 'info', 1500);
+    }
+
+    function renderAllCharts() {
+      // CAPEX trend
+      window.SESMine.renderLineChart('capexTrendChart',
+        [
+          { data:[18,24,32,38,45,52,60,68,75,82,90,98], color:'#F5A623' },
+          { data:[20,26,34,42,50,58,66,74,82,90,98,106], color:'rgba(255,255,255,0.2)' }
+        ],
+        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+      );
+
+      // Cost category donut
+      window.SESMine.renderDonutChart('costCategoryDonut',
+        [45,28,18,9],
+        ['#F5A623','#3B82F6','#22C55E','#A855F7']
+      );
+
+      // Monthly spend
+      window.SESMine.renderBarChart('monthlySpendChart',
+        [18.2,21.4,19.8,24.6,22.8,26.4,24.2,28.8,26.4,30.2,28.6,32.4],
+        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        '#3B82F6'
+      );
+
+      // SPI chart
+      window.SESMine.renderBarChart('spiChart',
+        [1.04, 0.92, 0.88, 1.12, 0.78],
+        ['Alpha Gold','Copper Ridge','Iron Valley','Lithium Star','N. Nickel'],
+        '#22C55E'
+      );
+
+      // CPI chart
+      window.SESMine.renderBarChart('cpiChart',
+        [1.08, 0.96, 0.94, 1.14, 0.91],
+        ['Alpha Gold','Copper Ridge','Iron Valley','Lithium Star','N. Nickel'],
+        '#F5A623'
+      );
+
+      // Equipment utilization
+      window.SESMine.renderBarChart('equipUtilChart',
+        [78, 65, 82, 71, 88, 59],
+        ['Haul Trucks','Excavators','Drill Rigs','Loaders','Conveyors','Pumps'],
+        '#F97316'
+      );
+
+      // Maintenance cost
+      window.SESMine.renderLineChart('maintCostChart',
+        [{ data:[280,310,295,340,320,380,355,410,390,420,405,440], color:'#3B82F6' }],
+        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+      );
+
+      // AI accuracy
+      window.SESMine.renderLineChart('accuracyChart',
+        [{ data:[88.4,89.2,90.1,91.4,91.8,92.4,92.8,93.2,93.6,93.9,94.1,94.2], color:'#22C55E' }],
+        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+      );
+    }
+
+    function buildHeatmap() {
+      const grid    = document.getElementById('heatmapGrid');
+      if (!grid) return;
+      const fleets  = ['CAT 793F','CAT 797F','Komatsu PC5500','Sandvik DD422i','Atlas Copco','Liebherr T284'];
+      const days    = 56;
+
+      // Header row — day numbers
+      const emptyCell = document.createElement('div');
+      emptyCell.style.cssText = 'font-size:0.65rem;color:var(--text-muted);display:flex;align-items:flex-end;padding-bottom:4px;';
+      grid.appendChild(emptyCell);
+
+      for (let d = 0; d < days; d++) {
+        const cell = document.createElement('div');
+        cell.style.cssText = 'font-size:0.6rem;color:var(--text-muted);text-align:center;padding-bottom:4px;';
+        if (d % 7 === 0) cell.textContent = `W${Math.floor(d/7)+1}`;
+        grid.appendChild(cell);
+      }
+
+      // Data rows
+      fleets.forEach(name => {
+        const label = document.createElement('div');
+        label.style.cssText = 'font-size:0.72rem;color:var(--text-secondary);display:flex;align-items:center;padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+        label.textContent = name;
+        grid.appendChild(label);
+
+        for (let d = 0; d < days; d++) {
+          const val  = Math.random();
+          const cell = document.createElement('div');
+          let bg;
+          if (val < 0.1)      bg = 'rgba(239,68,68,0.85)';
+          else if (val < 0.3) bg = 'rgba(245,166,35,0.75)';
+          else if (val < 0.6) bg = 'rgba(34,197,94,0.45)';
+          else                bg = 'rgba(34,197,94,0.85)';
+
+          cell.style.cssText = `background:${bg};border-radius:2px;height:16px;cursor:pointer;transition:transform 0.15s;`;
+          cell.title = `${name} — Day ${d+1}: ${Math.round(val*100)}% availability`;
+          cell.addEventListener('mouseenter', () => cell.style.transform = 'scale(1.3)');
+          cell.addEventListener('mouseleave', () => cell.style.transform = 'scale(1)');
+          grid.appendChild(cell);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
