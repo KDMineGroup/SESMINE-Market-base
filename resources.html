@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resources — SESMine Intelligence Platform</title>
+  <meta name="description" content="Mining industry guides, whitepapers, webinars, and tools from the SESMine team." />
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+  <style>
+    .resources-hero {
+      padding: 140px 0 80px;
+      background: linear-gradient(160deg, #020810 0%, #071224 60%, #040c1a 100%);
+      position: relative; overflow: hidden;
+    }
+    .resources-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 56px 56px;
+    }
+    .resource-card {
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 16px; overflow: hidden;
+      transition: all 0.25s ease;
+      display: flex; flex-direction: column;
+    }
+    .resource-card:hover {
+      border-color: rgba(0,212,255,0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+    }
+    .resource-card-img {
+      width: 100%; height: 160px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .resource-card:hover .resource-card-img { transform: scale(1.05); }
+    .resource-card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+    .resource-type-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 99px;
+      font-size: 0.62rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .resource-card-title {
+      font-size: 0.92rem; font-weight: 700;
+      line-height: 1.45; color: var(--text-100);
+      margin-bottom: 8px; flex: 1;
+    }
+    .resource-card-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .resource-tab-btn {
+      padding: 8px 20px; border-radius: 99px;
+      font-size: 0.8rem; font-weight: 700;
+      border: 1px solid var(--border-default);
+      background: var(--surface-1); color: var(--text-400);
+      cursor: pointer; transition: all 0.2s ease;
+      font-family: var(--font-body);
+    }
+    .resource-tab-btn:hover { background: var(--surface-3); color: var(--text-100); }
+    .resource-tab-btn.active {
+      background: rgba(0,212,255,0.1);
+      border-color: rgba(0,212,255,0.25);
+      color: var(--cyan-500);
+    }
+    .guide-row {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px;
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      text-decoration: none; color: inherit;
+    }
+    .guide-row:hover {
+      border-color: rgba(0,212,255,0.15);
+      background: rgba(0,212,255,0.03);
+      transform: translateX(4px);
+    }
+    .guide-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .webinar-card {
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 16px; padding: 20px;
+      transition: all 0.2s ease;
+    }
+    .webinar-card:hover {
+      border-color: rgba(0,212,255,0.15);
+      transform: translateY(-3px);
+    }
+    .webinar-date-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 99px;
+      font-size: 0.7rem; font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .tool-card {
+      background: var(--bg-700);
+      border: 1px solid var(--border-default);
+      border-radius: 16px; padding: 24px;
+      text-align: center;
+      transition: all 0.25s ease;
+      text-decoration: none; color: inherit;
+      display: block;
+    }
+    .tool-card:hover {
+      border-color: rgba(0,212,255,0.2);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+    }
+    .tool-icon {
+      width: 56px; height: 56px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin: 0 auto 14px;
+    }
+    /* Tab panels */
+    .resource-panel { display: none; }
+    .resource-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png"
+           class="nav-logo-img" alt="SESMine" />
+      <span class="nav-logo-name">SES<em>MINE</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"     class="nav-link">Home</a>
+      <a href="pricing.html"   class="nav-link">Pricing</a>
+      <a href="resources.html" class="nav-link active">Resources</a>
+      <a href="news.html"      class="nav-link">News</a>
+      <a href="contact.html"   class="nav-link">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="auth/login.html"  class="btn btn-ghost btn-sm">Sign In</a>
+      <a href="auth/signup.html" class="btn btn-cyan btn-sm">
+        <i class="fas fa-rocket"></i> Get Started
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="resources-hero">
+  <div class="container" style="position:relative;z-index:1;text-align:center;">
+    <div class="section-label" style="margin:0 auto 20px;display:inline-flex;" class="hero-anim-1">
+      <span class="section-label-dot"></span>
+      Knowledge Centre
+    </div>
+    <h1 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:800;letter-spacing:-0.025em;margin-bottom:16px;" class="hero-anim-2">
+      Mining Intelligence Resources
+    </h1>
+    <p style="font-size:1rem;color:#8BA4BC;max-width:520px;margin:0 auto 32px;line-height:1.75;" class="hero-anim-3">
+      Guides, whitepapers, webinars, and tools to help you make smarter decisions
+      across every mining discipline.
+    </p>
+
+    <!-- Stats row -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap;" class="hero-anim-4">
+      <div style="text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;color:#00D4FF;">48+</div>
+        <div style="font-size:0.72rem;color:#6688A0;">Guides & Reports</div>
+      </div>
+      <div style="width:1px;height:36px;background:rgba(255,255,255,0.1);"></div>
+      <div style="text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;color:#22C55E;">12</div>
+        <div style="font-size:0.72rem;color:#6688A0;">Free Tools</div>
+      </div>
+      <div style="width:1px;height:36px;background:rgba(255,255,255,0.1);"></div>
+      <div style="text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;color:#D4AF37;">24</div>
+        <div style="font-size:0.72rem;color:#6688A0;">Webinars</div>
+      </div>
+      <div style="width:1px;height:36px;background:rgba(255,255,255,0.1);"></div>
+      <div style="text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;color:#A855F7;">8.4k</div>
+        <div style="font-size:0.72rem;color:#6688A0;">Downloads</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Featured Resource -->
+<section style="padding:48px 0;background:var(--bg-800);">
+  <div class="container">
+    <div style="
+      display:grid;grid-template-columns:1fr 1fr;gap:40px;
+      background:linear-gradient(135deg,rgba(0,212,255,0.05),rgba(37,99,235,0.04));
+      border:1px solid rgba(0,212,255,0.1);
+      border-radius:24px;padding:40px;align-items:center;
+    " class="animate-fade-up">
+      <div>
+        <div style="
+          display:inline-flex;align-items:center;gap:6px;
+          padding:4px 12px;border-radius:99px;
+          background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);
+          font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
+          color:#D4AF37;margin-bottom:16px;
+        ">
+          <i class="fas fa-star"></i> Featured Report
+        </div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;line-height:1.25;">
+          State of Mining Intelligence 2026:<br/>AI, Automation & the Net Zero Transition
+        </h2>
+        <p style="font-size:0.88rem;color:#8BA4BC;line-height:1.75;margin-bottom:20px;">
+          Our flagship annual report covering AI adoption rates, autonomous equipment deployment,
+          ESG compliance trends, and CAPEX forecasts across 340 mining operations globally.
+          48 pages of exclusive data and analysis.
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:5px;font-size:0.78rem;color:#8BA4BC;">
+            <i class="fas fa-file-pdf" style="color:#EF4444;"></i> 48 pages
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:0.78rem;color:#8BA4BC;">
+            <i class="fas fa-download" style="color:#00D4FF;"></i> 2,340 downloads
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:0.78rem;color:#8BA4BC;">
+            <i class="fas fa-calendar" style="color:#A855F7;"></i> June 2026
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="downloadResource('state-of-mining-2026')" class="btn btn-cyan">
+            <i class="fas fa-download"></i> Download Free
+          </button>
+          <button class="btn btn-ghost">
+            <i class="fas fa-eye"></i> Preview
+          </button>
+        </div>
+      </div>
+      <div style="position:relative;">
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=85&auto=format&fit=crop"
+             style="width:100%;border-radius:16px;border:1px solid rgba(0,212,255,0.1);box-shadow:0 16px 48px rgba(0,0,0,0.5);" />
+        <div style="
+          position:absolute;bottom:-16px;right:-16px;
+          background:rgba(13,24,48,0.97);
+          border:1px solid rgba(212,175,55,0.2);
+          border-radius:12px;padding:12px 16px;
+          box-shadow:0 8px 24px rgba(0,0,0,0.4);
+        ">
+          <div style="font-size:0.65rem;color:#6688A0;margin-bottom:3px;">Report Rating</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="color:#D4AF37;font-size:0.85rem;">★★★★★</span>
+            <span style="font-size:0.8rem;font-weight:700;color:#F0F6FF;">4.9/5</span>
+            <span style="font-size:0.68rem;color:#6688A0;">(312 reviews)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Resource Tabs -->
+<section class="section">
+  <div class="container">
+    <!-- Tab bar -->
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:32px;" class="animate-fade-up">
+      <button class="resource-tab-btn active" onclick="switchTab('guides',this)">
+        <i class="fas fa-book" style="margin-right:5px;"></i> Guides & Reports
+      </button>
+      <button class="resource-tab-btn" onclick="switchTab('whitepapers',this)">
+        <i class="fas fa-file-alt" style="margin-right:5px;"></i> Whitepapers
+      </button>
+      <button class="resource-tab-btn" onclick="switchTab('webinars',this)">
+        <i class="fas fa-video" style="margin-right:5px;"></i> Webinars
+      </button>
+      <button class="resource-tab-btn" onclick="switchTab('tools',this)">
+        <i class="fas fa-tools" style="margin-right:5px;"></i> Free Tools
+      </button>
+      <div class="search-wrap" style="margin-left:auto;">
+        <i class="fas fa-search"></i>
+        <input type="text" class="search-input" placeholder="Search resources..."
+               oninput="searchResources(this.value)" />
+      </div>
+    </div>
+
+    <!-- ── Guides Panel ── -->
+    <div class="resource-panel active" id="panel-guides">
+      <div class="grid-3" id="guidesGrid"></div>
+    </div>
+
+    <!-- ── Whitepapers Panel ── -->
+    <div class="resource-panel" id="panel-whitepapers">
+      <div style="display:flex;flex-direction:column;gap:10px;" id="whitepapersList"></div>
+    </div>
+
+    <!-- ── Webinars Panel ── -->
+    <div class="resource-panel" id="panel-webinars">
+      <div class="grid-3" id="webinarsGrid"></div>
+    </div>
+
+    <!-- ── Tools Panel ── -->
+    <div class="resource-panel" id="panel-tools">
+      <div class="grid-3" id="toolsGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter CTA -->
+<section class="section" style="background:var(--bg-800);">
+  <div class="container container-md">
+    <div style="
+      background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(37,99,235,0.04));
+      border:1px solid rgba(0,212,255,0.1);
+      border-radius:20px;padding:40px;text-align:center;
+    " class="animate-fade-up">
+      <i class="fas fa-envelope-open-text" style="font-size:2rem;color:#00D4FF;margin-bottom:16px;display:block;"></i>
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:10px;">
+        Get New Resources First
+      </h2>
+      <p style="font-size:0.88rem;color:#8BA4BC;max-width:420px;margin:0 auto 24px;line-height:1.75;">
+        Subscribe to receive new guides, whitepapers, and webinar invitations
+        directly in your inbox every fortnight.
+      </p>
+      <form onsubmit="subscribeResources(event)" style="display:flex;gap:10px;max-width:400px;margin:0 auto;">
+        <input type="email" class="form-input" id="resourceEmail"
+               placeholder="your@email.com" required
+               style="flex:1;" />
+        <button type="submit" class="btn btn-cyan">
+          <i class="fas fa-paper-plane"></i> Subscribe
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-bottom:24px;border-bottom:1px solid var(--border-default);margin-bottom:24px;">
+      <div class="footer-brand-logo">
+        <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" style="height:32px;" />
+        <span class="footer-brand-name">SES<em>MINE</em></span>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <a href="index.html"   class="footer-link">Home</a>
+        <a href="pricing.html" class="footer-link">Pricing</a>
+        <a href="news.html"    class="footer-link">News</a>
+        <a href="contact.html" class="footer-link">Contact</a>
+      </div>
+    </div>
+    <div class="footer-copyright">© 2026 SESMine Intelligence Pty Ltd · All rights reserved.</div>
+  </div>
+</footer>
+
+<div id="toastContainer"></div>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+'use strict';
+
+/* ── Data ── */
+const guides = [
+  { title:'Ultimate Guide to Mining CAPEX Estimation', type:'Guide', typeColor:'#00D4FF', typeBg:'rgba(0,212,255,0.1)', typeBorder:'rgba(0,212,255,0.2)', image:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80', pages:24, downloads:1840, date:'May 2026', free:true, id:'capex-guide' },
+  { title:'ESG Reporting Framework for Mining Companies', type:'Guide', typeColor:'#22C55E', typeBg:'rgba(34,197,94,0.1)', typeBorder:'rgba(34,197,94,0.2)', image:'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=80', pages:18, downloads:1220, date:'Apr 2026', free:true, id:'esg-guide' },
+  { title:'Autonomous Mining Equipment: ROI Calculator Guide', type:'Guide', typeColor:'#F97316', typeBg:'rgba(249,115,22,0.1)', typeBorder:'rgba(249,115,22,0.2)', image:'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80', pages:14, downloads:980, date:'Mar 2026', free:true, id:'autonomous-guide' },
+  { title:'Underground vs Open Cut: Decision Framework', type:'Guide', typeColor:'#A855F7', typeBg:'rgba(168,85,247,0.1)', typeBorder:'rgba(168,85,247,0.2)', image:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80', pages:20, downloads:760, date:'Feb 2026', free:false, id:'mining-method-guide' },
+  { title:'Critical Minerals Supply Chain Risk Assessment', type:'Guide', typeColor:'#D4AF37', typeBg:'rgba(212,175,55,0.1)', typeBorder:'rgba(212,175,55,0.2)', image:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80', pages:32, downloads:1100, date:'Jun 2026', free:true, id:'critical-minerals-guide' },
+  { title:'Mine Safety Management Systems: Best Practice', type:'Guide', typeColor:'#EF4444', typeBg:'rgba(239,68,68,0.1)', typeBorder:'rgba(239,68,68,0.2)', image:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=80', pages:28, downloads:890, date:'Jan 2026', free:true, id:'safety-guide' }
+];
+
+const whitepapers = [
+  { title:'The Economics of Battery Storage Integration in Remote Mining Operations', type:'Whitepaper', typeColor:'#00D4FF', pages:42, downloads:640, date:'Jun 2026', free:false, id:'battery-storage-wp', icon:'fa-battery-full', iconColor:'#00D4FF', iconBg:'rgba(0,212,255,0.1)' },
+  { title:'Predictive Maintenance AI: A Five-Year ROI Analysis Across 28 Operations', type:'Whitepaper', typeColor:'#A855F7', pages:36, downloads:880, date:'May 2026', free:false, id:'predictive-maintenance-wp', icon:'fa-brain', iconColor:'#A855F7', iconBg:'rgba(168,85,247,0.1)' },
+  { title:'Carbon Pricing Impact on Global Iron Ore Competitiveness 2026–2035', type:'Whitepaper', typeColor:'#22C55E', pages:28, downloads:1020, date:'Apr 2026', free:true, id:'carbon-pricing-wp', icon:'fa-leaf', iconColor:'#22C55E', iconBg:'rgba(34,197,94,0.1)' },
+  { title:'Digital Twin Technology in Mineral Processing: Current State & Future Outlook', type:'Whitepaper', typeColor:'#F97316', pages:24, downloads:560, date:'Mar 2026', free:false, id:'digital-twin-wp', icon:'fa-cube', iconColor:'#F97316', iconBg:'rgba(249,115,22,0.1)' },
+  { title:'Workforce Transition in the Age of Mining Automation: Social License Implications', type:'Whitepaper', typeColor:'#D4AF37', pages:30, downloads:720, date:'Feb 2026', free:true, id:'workforce-wp', icon:'fa-users', iconColor:'#D4AF37', iconBg:'rgba(212,175,55,0.1)' },
+  { title:'Water Management in Arid Zone Mining: Regulatory & Technical Frameworks', type:'Whitepaper', typeColor:'#60A5FA', pages:22, downloads:490, date:'Jan 2026', free:false, id:'water-management-wp', icon:'fa-tint', iconColor:'#60A5FA', iconBg:'rgba(96,165,250,0.1)' }
+];
+
+const webinars = [
+  { title:'AI-Powered CAPEX Forecasting: Live Demo & Q&A', date:'15 Jul 2026', time:'2:00 PM AWST', speaker:'Dr. Sarah Chen', role:'Head of AI, SESMine', upcoming:true, attendees:340, image:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80', id:'webinar-ai-capex' },
+  { title:'ESG Reporting Under New Australian Mandatory Climate Disclosure Rules', date:'22 Jul 2026', time:'11:00 AM AWST', speaker:'James Whitfield', role:'Chief Engineer, Rio Tinto', upcoming:true, attendees:280, image:'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=80', id:'webinar-esg-disclosure' },
+  { title:'Copper Supply Deficit 2027: Implications for Project Financing', date:'29 Jul 2026', time:'3:00 PM AWST', speaker:'Maria Santos', role:'Commodity Analyst, S&P Global', upcoming:true, attendees:195, image:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80', id:'webinar-copper-supply' },
+  { title:'Underground Automation: Lessons from 5 Years at Newcrest Cadia', date:'10 Jun 2026', time:'2:00 PM AWST', speaker:'Tom Nguyen', role:'Operations Director, Newcrest', upcoming:false, attendees:412, image:'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80', id:'webinar-underground-auto' },
+  { title:'Critical Minerals Strategy: Government Policy & Investment Outlook', date:'28 May 2026', time:'10:00 AM AWST', speaker:'Dr. Lisa Park', role:'Policy Director, CSIRO', upcoming:false, attendees:520, image:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80', id:'webinar-critical-minerals' },
+  { title:'Safety Culture Transformation: Zero Harm in Practice', date:'15 May 2026', time:'1:00 PM AWST', speaker:'Mark Thompson', role:'Safety Director, BHP', upcoming:false, attendees:380, image:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=80', id:'webinar-safety-culture' }
+];
+
+const tools = [
+  { title:'CAPEX Quick Estimator', desc:'Rapid order-of-magnitude CAPEX estimates using commodity type, throughput, and location inputs.', icon:'fa-calculator', color:'#00D4FF', bg:'rgba(0,212,255,0.1)', border:'rgba(0,212,255,0.2)', href:'products/cost-calculator.html', free:true },
+  { title:'TRIFR Benchmarking Tool', desc:'Compare your TRIFR against industry peers by commodity, region, and mine type.', icon:'fa-hard-hat', color:'#EF4444', bg:'rgba(239,68,68,0.1)', border:'rgba(239,68,68,0.2)', href:'hubs/safety-hub.html', free:true },
+  { title:'ESG Score Calculator', desc:'Self-assess your ESG performance across Environmental, Social, and Governance dimensions.', icon:'fa-leaf', color:'#22C55E', bg:'rgba(34,197,94,0.1)', border:'rgba(34,197,94,0.2)', href:'hubs/sustainability-hub.html', free:true },
+  { title:'AI Commodity Predictor', desc:'12-month price forecasts for iron ore, copper, gold, lithium, and nickel using ML models.', icon:'fa-brain', color:'#A855F7', bg:'rgba(168,85,247,0.1)', border:'rgba(168,85,247,0.2)', href:'products/ai-predictor.html', free:false },
+  { title:'Equipment Cost Database', desc:'Access 50,000+ equipment records with pricing benchmarks from global OEMs.', icon:'fa-database', color:'#F97316', bg:'rgba(249,115,22,0.1)', border:'rgba(249,115,22,0.2)', href:'products/equipment-database.html', free:false },
+  { title:'Carbon Footprint Calculator', desc:'Estimate Scope 1, 2, and 3 emissions for your mining operation using activity data.', icon:'fa-cloud', color:'#60A5FA', bg:'rgba(96,165,250,0.1)', border:'rgba(96,165,250,0.2)', href:'hubs/sustainability-hub.html', free:true },
+  { title:'Mine Valuation Model', desc:'DCF-based mine valuation with sensitivity analysis across commodity price and grade scenarios.', icon:'fa-chart-line', color:'#D4AF37', bg:'rgba(212,175,55,0.1)', border:'rgba(212,175,55,0.2)', href:'hubs/economics-hub.html', free:false },
+  { title:'Procurement Spend Analyser', desc:'Upload spend data and instantly benchmark against industry averages by category.', icon:'fa-boxes', color:'#A855F7', bg:'rgba(168,85,247,0.1)', border:'rgba(168,85,247,0.2)', href:'hubs/procurement-hub.html', free:false },
+  { title:'Royalty & Tax Calculator', desc:'Calculate effective royalty and tax rates across 32 mining jurisdictions globally.', icon:'fa-landmark', color:'#00D4FF', bg:'rgba(0,212,255,0.1)', border:'rgba(0,212,255,0.2)', href:'hubs/economics-hub.html', free:true }
+];
+
+/* ── Render functions ── */
+function renderGuides(data) {
+  const el = document.getElementById('guidesGrid');
+  if (!el) return;
+  el.innerHTML = data.map(g => `
+    <div class="resource-card animate-fade-up">
+      <div style="overflow:hidden;position:relative;">
+        <img src="${g.image}" class="resource-card-img" alt="${g.title}"
+             onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80'" />
+        ${!g.free ? `
+          <div style="position:absolute;top:10px;right:10px;
+            background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.3);
+            border-radius:99px;padding:3px 10px;font-size:0.62rem;font-weight:800;
+            color:#D4AF37;text-transform:uppercase;letter-spacing:0.08em;">
+            <i class="fas fa-lock" style="margin-right:3px;"></i>Pro
+          </div>
+        ` : ''}
+      </div>
+      <div class="resource-card-body">
+        <span class="resource-type-badge" style="background:${g.typeBg};border:1px solid ${g.typeBorder};color:${g.typeColor};">
+          <i class="fas fa-book"></i> ${g.type}
+        </span>
+        <div class="resource-card-title">${g.title}</div>
+        <div class="resource-card-meta">
+          <div style="display:flex;gap:10px;">
+            <span style="font-size:0.7rem;color:#6688A0;"><i class="fas fa-file-pdf" style="color:#EF4444;margin-right:3px;"></i>${g.pages}pp</span>
+            <span style="font-size:0.7rem;color:#6688A0;"><i class="fas fa-download" style="color:#00D4FF;margin-right:3px;"></i>${g.downloads.toLocaleString()}</span>
+          </div>
+          <button onclick="downloadResource('${g.id}')"
+                  class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:0.72rem;"
+                  ${!g.free ? 'title="Requires Pro plan"' : ''}>
+            ${g.free ? '<i class="fas fa-download"></i> Free' : '<i class="fas fa-lock"></i> Pro'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderWhitepapers(data) {
+  const el = document.getElementById('whitepapersList');
+  if (!el) return;
+  el.innerHTML = data.map(w => `
+    <a href="#" onclick="downloadResource('${w.id}');return false;" class="guide-row animate-fade-up">
+      <div class="guide-icon" style="background:${w.iconBg};border:1px solid rgba(255,255,255,0.08);color:${w.iconColor};">
+        <i class="fas ${w.icon}"></i>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.88rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;
+                    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+          ${w.title}
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <span style="font-size:0.7rem;color:#6688A0;"><i class="fas fa-file-pdf" style="color:#EF4444;margin-right:3px;"></i>${w.pages}pp</span>
+          <span style="font-size:0.7rem;color:#6688A0;"><i class="fas fa-download" style="color:#00D4FF;margin-right:3px;"></i>${w.downloads.toLocaleString()} downloads</span>
+          <span style="font-size:0.7rem;color:#6688A0;"><i class="fas fa-calendar" style="margin-right:3px;"></i>${w.date}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        ${!w.free ? `<span style="font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:99px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);color:#D4AF37;"><i class="fas fa-lock" style="margin-right:3px;"></i>Pro</span>` : ''}
+        <span style="font-size:0.72rem;color:#00D4FF;font-weight:600;">
+          Download <i class="fas fa-arrow-right" style="font-size:0.6rem;"></i>
+        </span>
+      </div>
+    </a>
+  `).join('');
+}
+
+function renderWebinars(data) {
+  const el = document.getElementById('webinarsGrid');
+  if (!el) return;
+  el.innerHTML = data.map(w => `
+    <div class="webinar-card animate-fade-up">
+      <div style="overflow:hidden;border-radius:10px;margin-bottom:14px;position:relative;">
+        <img src="${w.image}" alt="${w.title}"
+             style="width:100%;height:140px;object-fit:cover;"
+             onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80'" />
+        ${w.upcoming ? `
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+            <div style="width:44px;height:44px;border-radius:50%;background:rgba(0,212,255,0.2);border:2px solid rgba(0,212,255,0.4);display:flex;align-items:center;justify-content:center;color:#00D4FF;font-size:1rem;">
+              <i class="fas fa-play" style="margin-left:2px;"></i>
+            </div>
+          </div>
+        ` : `
+          <div style="position:absolute;top:8px;right:8px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:99px;padding:3px 9px;font-size:0.62rem;font-weight:800;color:#4ADE80;">
+            <i class="fas fa-circle" style="font-size:0.4rem;margin-right:3px;"></i>Recording Available
+          </div>
+        `}
+      </div>
+      <div class="webinar-date-badge" style="
+        background:${w.upcoming ? 'rgba(0,212,255,0.08)' : 'rgba(148,163,184,0        .08)'};
+        border:1px solid ${w.upcoming ? 'rgba(0,212,255,0.2)' : 'rgba(148,163,184,0.15)'};
+        color:${w.upcoming ? '#00D4FF' : '#94A3B8'};
+      ">
+        <i class="fas ${w.upcoming ? 'fa-calendar' : 'fa-video'}"></i>
+        ${w.upcoming ? `${w.date} · ${w.time}` : `Recorded · ${w.date}`}
+      </div>
+      <div style="font-size:0.88rem;font-weight:700;line-height:1.4;color:#F0F6FF;margin-bottom:10px;">
+        ${w.title}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#2563EB,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:#fff;flex-shrink:0;">
+          ${w.speaker.split(' ').map(n=>n[0]).join('')}
+        </div>
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:#D4E0F0;">${w.speaker}</div>
+          <div style="font-size:0.65rem;color:#6688A0;">${w.role}</div>
+        </div>
+        <div style="margin-left:auto;font-size:0.68rem;color:#6688A0;">
+          <i class="fas fa-users" style="margin-right:3px;"></i>${w.attendees}
+        </div>
+      </div>
+      <button onclick="registerWebinar('${w.id}','${w.upcoming}')"
+              class="btn ${w.upcoming ? 'btn-cyan' : 'btn-ghost'} btn-full btn-sm">
+        <i class="fas ${w.upcoming ? 'fa-calendar-check' : 'fa-play-circle'}"></i>
+        ${w.upcoming ? 'Register Free' : 'Watch Recording'}
+      </button>
+    </div>
+  `).join('');
+}
+
+function renderTools(data) {
+  const el = document.getElementById('toolsGrid');
+  if (!el) return;
+  el.innerHTML = data.map(t => `
+    <a href="${t.href}" class="tool-card animate-fade-up">
+      <div class="tool-icon" style="background:${t.bg};border:1px solid ${t.border};color:${t.color};">
+        <i class="fas ${t.icon}"></i>
+      </div>
+      <div style="font-size:0.92rem;font-weight:700;margin-bottom:8px;color:#F0F6FF;">
+        ${t.title}
+      </div>
+      <div style="font-size:0.8rem;color:#8BA4BC;line-height:1.65;margin-bottom:14px;">
+        ${t.desc}
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+        ${t.free
+          ? `<span style="font-size:0.68rem;font-weight:800;padding:3px 10px;border-radius:99px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#4ADE80;"><i class="fas fa-check-circle" style="margin-right:3px;"></i>Free</span>`
+          : `<span style="font-size:0.68rem;font-weight:800;padding:3px 10px;border-radius:99px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);color:#D4AF37;"><i class="fas fa-lock" style="margin-right:3px;"></i>Pro</span>`
+        }
+        <span style="font-size:0.75rem;color:${t.color};font-weight:600;">
+          Open Tool <i class="fas fa-arrow-right" style="font-size:0.6rem;"></i>
+        </span>
+      </div>
+    </a>
+  `).join('');
+}
+
+/* ── Tab switching ── */
+function switchTab(tab, btn) {
+  document.querySelectorAll('.resource-tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.resource-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`panel-${tab}`)?.classList.add('active');
+}
+
+/* ── Search ── */
+function searchResources(q) {
+  const query = q.toLowerCase();
+  const filteredGuides = guides.filter(g =>
+    g.title.toLowerCase().includes(query) || g.type.toLowerCase().includes(query)
+  );
+  const filteredWPs = whitepapers.filter(w => w.title.toLowerCase().includes(query));
+  renderGuides(filteredGuides.length ? filteredGuides : guides);
+  renderWhitepapers(filteredWPs.length ? filteredWPs : whitepapers);
+}
+
+/* ── Download handler ── */
+function downloadResource(id) {
+  const user = SESAuth.Store.get(SESAuth.KEYS.CURRENT_USER);
+  const resource = [...guides, ...whitepapers].find(r => r.id === id);
+  if (resource && !resource.free && !user) {
+    SES.Toast.warning('Create a free account to access this resource.');
+    setTimeout(() => { window.location.href = 'auth/signup.html'; }, 1500);
+    return;
+  }
+  SES.Toast.success('Download starting...');
+  SESAuth.auditLog('resource_download', { resourceId: id, userId: user?.id });
+}
+
+/* ── Webinar handler ── */
+function registerWebinar(id, upcoming) {
+  const user = SESAuth.Store.get(SESAuth.KEYS.CURRENT_USER);
+  if (upcoming === 'true') {
+    SES.Toast.success('Registered! A calendar invite will be sent to your email.');
+  } else {
+    SES.Toast.info('Opening recording...');
+  }
+}
+
+/* ── Newsletter ── */
+function subscribeResources(e) {
+  e.preventDefault();
+  const email = document.getElementById('resourceEmail').value;
+  SES.Toast.success(`Subscribed! Resources will be sent to ${email}`);
+  document.getElementById('resourceEmail').value = '';
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  renderGuides(guides);
+  renderWhitepapers(whitepapers);
+  renderWebinars(webinars);
+  renderTools(tools);
+});
+</script>
+</body>
+</html>
+
