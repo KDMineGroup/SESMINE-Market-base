@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Start Free Trial — SESMine</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .auth-card { max-width: 540px; }
+    .signup-benefits {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px;
+      background: rgba(245,166,35,0.06);
+      border: 1px solid rgba(245,166,35,0.15);
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+    }
+    .signup-benefit {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+    .signup-benefit i { color: var(--color-green); font-size: 0.75rem; }
+    .strength-bar {
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .strength-fill {
+      height: 100%;
+      border-radius: 2px;
+      width: 0%;
+    }
+    .strength-label {
+      font-size: 0.72rem;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-primary" data-page="signup">
+
+  <div class="auth-page">
+    <div class="auth-card animate-fade-up">
+
+      <div style="text-align:center; margin-bottom:28px;">
+        <a href="../index.html" class="nav-logo" style="justify-content:center; display:inline-flex;">
+          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
+        </a>
+      </div>
+
+      <div class="auth-header">
+        <h1>Start your free trial</h1>
+        <p>14 days free · No credit card required · Cancel anytime</p>
+      </div>
+
+      <div class="signup-benefits">
+        <div class="signup-benefit"><i class="fas fa-check"></i> Full access to all features for 14 days</div>
+        <div class="signup-benefit"><i class="fas fa-check"></i> AI Cost Predictor with 94.2% accuracy</div>
+        <div class="signup-benefit"><i class="fas fa-check"></i> 10,247 equipment specifications</div>
+        <div class="signup-benefit"><i class="fas fa-check"></i> All 6 professional hubs included</div>
+      </div>
+
+      <form id="signupForm" novalidate>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" class="form-input"
+              placeholder="John" required autocomplete="given-name" />
+            <span class="form-error"></span>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" class="form-input"
+              placeholder="Smith" required autocomplete="family-name" />
+            <span class="form-error"></span>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:16px;">
+          <label class="form-label" for="signupEmail">Work Email</label>
+          <input type="email" id="signupEmail" name="email" class="form-input"
+            placeholder="you@company.com" required autocomplete="email" />
+          <span class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="company">Company Name</label>
+          <input type="text" id="company" name="company" class="form-input"
+            placeholder="GlobalMine Corp" required />
+          <span class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="role">Your Role</label>
+          <select id="role" name="role" class="form-select" required>
+            <option value="">Select your role...</option>
+            <option value="ceo">CEO / Managing Director</option>
+            <option value="cfo">CFO / Finance Director</option>
+            <option value="engineer">Mining Engineer</option>
+            <option value="operations">Operations Manager</option>
+            <option value="procurement">Procurement Manager</option>
+            <option value="sustainability">Sustainability Manager</option>
+            <option value="safety">Safety Manager</option>
+            <option value="it">IT / Digital</option>
+            <option value="other">Other</option>
+          </select>
+          <span class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="signupPassword">Password</label>
+          <div style="position:relative;">
+            <input type="password" id="signupPassword" name="password" class="form-input"
+              placeholder="Create a strong password" required
+              style="padding-right:44px;" />
+            <button type="button" id="togglePassword"
+              style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); background:none; border:none; cursor:pointer;">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div id="passwordStrength">
+            <div class="strength-bar"><div class="strength-fill"></div></div>
+            <span class="strength-label"></span>
+          </div>
+          <span class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" class="form-input"
+            placeholder="Repeat your password" required />
+          <span class="form-error"></span>
+        </div>
+
+        <div style="display:flex; align-items:flex-start; gap:8px; margin-bottom:24px;">
+          <input type="checkbox" id="agreeTerms" name="agreeTerms" required
+            style="width:16px; height:16px; margin-top:2px; accent-color:var(--color-accent); cursor:pointer; flex-shrink:0;" />
+          <label for="agreeTerms" style="font-size:0.82rem; color:var(--text-secondary); cursor:pointer; line-height:1.5;">
+            I agree to the
+            <a href="../legal/terms-of-service.html" style="color:var(--color-accent);">Terms of Service</a>
+            and
+            <a href="../legal/privacy-policy.html" style="color:var(--color-accent);">Privacy Policy</a>
+          </label>
+        </div>
+
+        <button type="submit" id="signupSubmit" class="btn btn-primary btn-full btn-lg">
+          Create Free Account <i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/auth.js"></script>
+</body>
+</html>

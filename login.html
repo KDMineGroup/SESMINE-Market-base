@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — SESMine</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/animations.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body class="bg-primary" data-page="login">
+
+  <div class="auth-page">
+    <div class="auth-card animate-fade-up">
+
+      <!-- Logo -->
+      <div style="text-align:center; margin-bottom:32px;">
+        <a href="../index.html" class="nav-logo" style="justify-content:center; display:inline-flex;">
+          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
+        </a>
+      </div>
+
+      <div class="auth-header">
+        <h1>Welcome back</h1>
+        <p>Sign in to your SESMine workspace</p>
+      </div>
+
+      <!-- Social Login -->
+      <div style="display:flex; gap:10px; margin-bottom:4px;">
+        <button class="btn btn-ghost btn-full" style="flex:1; font-size:0.85rem;">
+          <i class="fab fa-google"></i> Google
+        </button>
+        <button class="btn btn-ghost btn-full" style="flex:1; font-size:0.85rem;">
+          <i class="fab fa-microsoft"></i> Microsoft
+        </button>
+      </div>
+
+      <div class="auth-divider"><span>or continue with email</span></div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Work Email</label>
+          <input
+            type="email"
+            id="loginEmail"
+            name="email"
+            class="form-input"
+            placeholder="you@company.com"
+            autocomplete="email"
+            required
+          />
+          <span class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-label" for="loginPassword">Password</label>
+            <a href="forgot-password.html" style="font-size:0.8rem; color:var(--color-accent);">Forgot password?</a>
+          </div>
+          <div style="position:relative;">
+            <input
+              type="password"
+              id="loginPassword"
+              name="password"
+              class="form-input"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+              style="padding-right:44px;"
+            />
+            <button
+              type="button"
+              id="togglePassword"
+              style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); background:none; border:none; cursor:pointer;"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <span class="form-error"></span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px;">
+          <input type="checkbox" id="rememberMe" name="rememberMe"
+            style="width:16px; height:16px; accent-color:var(--color-accent); cursor:pointer;" />
+          <label for="rememberMe" style="font-size:0.85rem; color:var(--text-secondary); cursor:pointer;">
+            Remember me for 30 days
+          </label>
+        </div>
+
+        <button type="submit" id="loginSubmit" class="btn btn-primary btn-full btn-lg">
+          Sign In <i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="signup.html">Start free trial</a>
+      </div>
+
+      <p style="text-align:center; font-size:0.72rem; color:var(--text-muted); margin-top:20px;">
+        By signing in, you agree to our
+        <a href="../legal/terms-of-service.html" style="color:var(--text-muted); text-decoration:underline;">Terms</a>
+        and
+        <a href="../legal/privacy-policy.html" style="color:var(--text-muted); text-decoration:underline;">Privacy Policy</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/auth.js"></script>
+</body>
+</html>
