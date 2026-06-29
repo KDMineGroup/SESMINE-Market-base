@@ -1,546 +1,769 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cost Calculator — SESMine</title>
-  <link rel="stylesheet" href="../assets/css/main.css" />
-  <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cost Calculator — SESMine Intelligence Platform</title>
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .calc-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      align-items: start;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#020810;--bg-card:rgba(8,18,38,0.96);--bg-hover:rgba(255,255,255,0.025);
+      --border:rgba(255,255,255,0.07);--cyan:#00D4FF;--cyan-dim:rgba(0,212,255,0.1);
+      --gold:#D4AF37;--orange:#F97316;--green:#22C55E;--red:#EF4444;--purple:#A855F7;
+      --text-100:#F0F6FF;--text-300:#D4E0F0;--text-500:#8BA4BC;--text-700:#6688A0;--text-900:#4A6478;
+      --font-body:'Inter',sans-serif;--font-head:'Space Grotesk',sans-serif;--font-mono:'JetBrains Mono',monospace;
+      --sidebar-w:240px;
     }
-    .calc-panel {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-    }
-    .calc-panel-header {
-      padding: 18px 24px;
-      border-bottom: 1px solid var(--border-color);
-      background: rgba(0,0,0,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .calc-panel-title { font-weight: 700; font-size: 0.95rem; }
-    .calc-panel-body  { padding: 24px; }
-    .result-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-    }
-    .result-row:last-child { border-bottom: none; }
-    .result-row-label { font-size: 0.875rem; color: var(--text-secondary); }
-    .result-row-value { font-weight: 700; font-size: 0.95rem; }
-    .result-total {
-      padding: 16px;
-      background: rgba(245,166,35,0.08);
-      border: 1px solid rgba(245,166,35,0.2);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 16px;
-    }
-    .result-total-label { font-weight: 700; font-size: 1rem; }
-    .result-total-value {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--color-accent);
-    }
-    .currency-selector {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-    .currency-btn {
-      padding: 5px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 100px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      background: transparent;
-    }
-    .currency-btn.active {
-      border-color: var(--color-accent);
-      color: var(--color-accent);
-      background: rgba(245,166,35,0.1);
-    }
-    .waterfall-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .waterfall-label { font-size: 0.8rem; color: var(--text-secondary); width: 120px; flex-shrink: 0; }
-    .waterfall-track { flex: 1; height: 22px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
-    .waterfall-fill  { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 0.72rem; font-weight: 600; color: var(--color-primary); transition: width 0.8s ease; }
-    .waterfall-val   { font-size: 0.8rem; font-weight: 700; width: 70px; text-align: right; flex-shrink: 0; }
-    @media (max-width: 900px) { .calc-layout { grid-template-columns: 1fr; } }
+    html,body{height:100%;font-family:var(--font-body);color:var(--text-100);background:var(--bg);font-size:14px;}
+    ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:99px}
+    .layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh}
+    .sidebar{background:rgba(3,8,20,0.98);border-right:1px solid rgba(0,212,255,0.06);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:50}
+    .sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:9px;flex-shrink:0}
+    .sidebar-logo img{height:28px;filter:drop-shadow(0 0 8px rgba(0,212,255,0.2))}
+    .logo-text{font-family:var(--font-head);font-size:0.88rem;font-weight:800;letter-spacing:0.06em;color:var(--text-100)}
+    .logo-text em{color:var(--cyan);font-style:normal}
+    .nav{padding:8px;flex:1}
+    .nav-section{font-size:0.56rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-900);padding:10px 8px 5px}
+    .nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:0.8rem;font-weight:600;color:var(--text-700);text-decoration:none;transition:all 0.18s ease;margin-bottom:1px;border:1px solid transparent}
+    .nav-item:hover{background:var(--bg-hover);color:var(--text-300)}
+    .nav-item.active{background:var(--cyan-dim);color:var(--cyan);border-color:rgba(0,212,255,0.12)}
+    .nav-item i{width:15px;text-align:center;font-size:0.78rem;flex-shrink:0}
+    .sidebar-footer{padding:10px 8px;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0}
+    .user-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,0.03);margin-bottom:6px}
+    .main{background:var(--bg);min-height:100vh}
+    .topbar{height:60px;background:rgba(3,8,20,0.96);border-bottom:1px solid rgba(255,255,255,0.05);padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;backdrop-filter:blur(16px)}
+    .topbar-icon{width:34px;height:34px;border-radius:9px;background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:0.85rem}
+    .content{padding:22px}
+    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px}
+    .card-title{font-size:0.84rem;font-weight:700;color:var(--text-100);margin-bottom:3px}
+    .card-sub{font-size:0.68rem;color:var(--text-700);margin-bottom:14px}
+    .hero{background:linear-gradient(135deg,rgba(0,212,255,0.07),rgba(37,99,235,0.04));border:1px solid rgba(0,212,255,0.14);border-radius:18px;padding:28px;margin-bottom:22px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,212,255,0.07),transparent 65%);pointer-events:none}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    .grid-6040{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
+    .mb-4{margin-bottom:16px}.mb-5{margin-bottom:20px}
+    .form-group{margin-bottom:14px}
+    .form-label{display:block;font-size:0.72rem;font-weight:700;color:var(--text-500);margin-bottom:6px;letter-spacing:0.02em}
+    .form-input,.form-select{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:9px;padding:10px 13px;font-family:var(--font-body);font-size:0.84rem;color:var(--text-100);outline:none;transition:border-color 0.18s ease}
+    .form-input:focus,.form-select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,0.08)}
+    .form-input::placeholder{color:var(--text-900)}
+    .form-select option{background:#0d1b2e}
+    .input-prefix-wrap{position:relative}
+    .input-prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.8rem;color:var(--text-700);pointer-events:none;font-family:var(--font-mono)}
+    .input-prefix-wrap .form-input{padding-left:28px}
+    .form-range{width:100%;accent-color:var(--cyan);cursor:pointer;margin-top:4px}
+    .range-row{display:flex;justify-content:space-between;margin-top:3px}
+    .range-val{font-family:var(--font-mono);font-size:0.78rem;color:var(--cyan);font-weight:700}
+    .section-divider{height:1px;background:var(--border);margin:18px 0}
+    .section-label{font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-900);margin-bottom:12px}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-family:var(--font-body);font-size:0.78rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text-500);text-decoration:none;transition:all 0.18s ease}
+    .btn:hover{background:rgba(255,255,255,0.07);color:var(--text-300)}
+    .btn-cyan{background:linear-gradient(135deg,#00D4FF,#0284C7);border-color:transparent;color:#020810;font-size:0.88rem;padding:11px 22px;border-radius:10px;font-weight:800}
+    .btn-cyan:hover{opacity:0.9;transform:translateY(-1px)}
+    .btn-cyan:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn-sm{padding:5px 10px;font-size:0.72rem}
+    .btn-full{width:100%;justify-content:center}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spin{animation:spin 0.8s linear infinite;display:inline-block}
+    .result-box{background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(37,99,235,0.04));border:1px solid rgba(0,212,255,0.18);border-radius:14px;padding:20px}
+    .result-metric{text-align:center;padding:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px}
+    .result-val{font-family:var(--font-head);font-size:1.3rem;font-weight:800;line-height:1;margin-bottom:4px}
+    .result-lbl{font-size:0.62rem;color:var(--text-700);text-transform:uppercase;letter-spacing:0.08em}
+    .cost-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .cost-row:last-child{border-bottom:none}
+    .cost-bar{height:5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-top:4px}
+    .cost-fill{height:100%;border-radius:99px;transition:width 1s ease}
+    .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap}
+    .fade-up{animation:fadeUp 0.4s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    #toastWrap{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+    .toast{padding:11px 16px;border-radius:10px;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:toastIn 0.3s ease both;max-width:300px}
+    .toast-success{background:#0d2b1a;border:1px solid rgba(34,197,94,0.3);color:#86EFAC}
+    .toast-info{background:#0a1f30;border:1px solid rgba(0,212,255,0.3);color:#67E8F9}
+    .toast-warn{background:#2b1a08;border:1px solid rgba(249,115,22,0.3);color:#FED7AA}
+    @keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+    @media(max-width:960px){.layout{grid-template-columns:1fr}.sidebar{display:none}.grid-2,.grid-3,.grid-6040{grid-template-columns:1fr}}
   </style>
 </head>
-<body class="bg-primary">
-  <div class="app-layout">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <a href="../index.html" class="nav-logo">
-          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
-          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
-        </a>
-      </div>
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Overview</div>
-          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
-          <a href="../dashboard/analytics.html" class="sidebar-link"><i class="fas fa-chart-bar"></i> Analytics</a>
-          <a href="../dashboard/esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Products</div>
-          <a href="ai-predictor.html" class="sidebar-link"><i class="fas fa-brain"></i> AI Predictor</a>
-          <a href="cost-calculator.html" class="sidebar-link active"><i class="fas fa-calculator"></i> Cost Calculator</a>
-          <a href="equipment-database.html" class="sidebar-link"><i class="fas fa-database"></i> Equipment DB</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Hubs</div>
-          <a href="../hubs/engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
-          <a href="../hubs/safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
-          <a href="../hubs/sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
-          <a href="../hubs/procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
-          <a href="../hubs/innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
-          <a href="../hubs/economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
-        </div>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="user-avatar">JS</div>
-          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
-        </div>
-      </div>
-    </aside>
+<body>
+<div class="layout">
 
-    <div class="main-content">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-          <div class="topbar-title">Cost Calculator</div>
-        </div>
-        <div class="topbar-right">
-          <button class="topbar-btn" title="Save"><i class="fas fa-save"></i></button>
-          <button class="topbar-btn" title="Export PDF" onclick="window.print()"><i class="fas fa-file-pdf"></i></button>
-          <button class="topbar-btn" title="Export Excel" onclick="window.SESMine.exportToCSV(getCalcData(),'cost-calc.csv')"><i class="fas fa-file-excel"></i></button>
-        </div>
-      </header>
-
-      <main class="page-content">
-        <div style="margin-bottom:24px;">
-          <h1 style="font-size:1.6rem; margin-bottom:6px;">Cost Calculator</h1>
-          <p style="color:var(--text-muted); font-size:0.9rem;">Real-time CAPEX/OPEX modeling with live result updates as you adjust inputs.</p>
-        </div>
-
-        <!-- Currency Selector -->
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
-          <span style="font-size:0.82rem; color:var(--text-muted);">Currency:</span>
-          <div class="currency-selector" style="margin-bottom:0;">
-            <button class="currency-btn active" data-rate="1" data-symbol="$" data-code="USD">USD $</button>
-            <button class="currency-btn" data-rate="1.52" data-symbol="A$" data-code="AUD">AUD A$</button>
-            <button class="currency-btn" data-rate="0.92" data-symbol="€" data-code="EUR">EUR €</button>
-            <button class="currency-btn" data-rate="18.2" data-symbol="R" data-code="ZAR">ZAR R</button>
-            <button class="currency-btn" data-rate="1.27" data-symbol="C$" data-code="CAD">CAD C$</button>
-          </div>
-          <div style="margin-left:auto; display:flex; gap:8px;">
-            <button class="btn btn-ghost" style="padding:7px 14px; font-size:0.82rem;" onclick="resetCalculator()">
-              <i class="fas fa-redo"></i> Reset
-            </button>
-            <button class="btn btn-primary" style="padding:7px 14px; font-size:0.82rem;" onclick="saveCalcScenario()">
-              <i class="fas fa-save"></i> Save Scenario
-            </button>
-          </div>
-        </div>
-
-        <div class="calc-layout">
-
-          <!-- INPUT PANEL -->
-          <div class="calc-panel animate-fade-up">
-            <div class="calc-panel-header">
-              <span class="calc-panel-title"><i class="fas fa-sliders-h" style="color:var(--color-accent);margin-right:8px;"></i>Project Inputs</span>
-              <span style="font-size:0.75rem; color:var(--color-green); display:flex; align-items:center; gap:5px;">
-                <span style="width:6px;height:6px;border-radius:50%;background:var(--color-green);animation:pulse 2s infinite;"></span>
-                Live updating
-              </span>
-            </div>
-            <div class="calc-panel-body">
-
-              <div class="form-group">
-                <label class="form-label">Project Name</label>
-                <input type="text" class="form-input" id="calcProjectName" placeholder="My Mining Project" oninput="updateCalc()" />
-              </div>
-
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Mine Type</label>
-                  <select class="form-select" id="calcMineType" onchange="updateCalc()">
-                    <option value="open-pit">Open-pit</option>
-                    <option value="underground">Underground</option>
-                    <option value="placer">Placer</option>
-                  </select>
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Duration (months)</label>
-                  <input type="number" class="form-input" id="calcDuration" value="36" min="1" max="360" oninput="updateCalc()" />
-                </div>
-              </div>
-
-              <div class="form-group" style="margin-top:16px;">
-                <label class="form-label">
-                  Equipment Cost
-                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="equipDisplay">$10.0M</span>
-                </label>
-                <input type="range" class="range-slider" id="equipCost" min="0.5" max="200" step="0.5" value="10" oninput="updateCalc()" />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">
-                  Labor (workers)
-                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="laborDisplay">150</span>
-                </label>
-                <input type="range" class="range-slider" id="laborCount" min="10" max="2000" step="10" value="150" oninput="updateCalc()" />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">
-                  Avg. Salary ($/month)
-                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="salaryDisplay">$4,500</span>
-                </label>
-                <input type="range" class="range-slider" id="avgSalary" min="500" max="20000" step="100" value="4500" oninput="updateCalc()" />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">
-                  Fuel Cost ($/month)
-                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="fuelMonthDisplay">$120,000</span>
-                </label>
-                <input type="range" class="range-slider" id="fuelMonth" min="5000" max="2000000" step="5000" value="120000" oninput="updateCalc()" />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">
-                  Infrastructure Cost
-                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="infraDisplay">$3.0M</span>
-                </label>
-                <input type="range" class="range-slider" id="infraCost" min="0" max="100" step="0.5" value="3" oninput="updateCalc()" />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">
-                  Contingency (%)
-                  <span style="float:right; color:var(--color-accent); font-weight:700;" id="calcContDisplay">10%</span>
-                </label>
-                <input type="range" class="range-slider" id="calcCont" min="0" max="30" step="1" value="10" oninput="updateCalc()" />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">
-                  Expected Revenue ($/month)
-                  <span style="float:right; color:var(--color-green); font-weight:700;" id="revenueDisplay">$2.0M</span>
-                </label>
-                <input type="range" class="range-slider" id="monthRevenue" min="100000" max="50000000" step="100000" value="2000000" oninput="updateCalc()" />
-              </div>
-
-            </div>
-          </div>
-
-          <!-- RESULTS PANEL -->
-          <div style="display:flex; flex-direction:column; gap:20px;">
-
-            <!-- Summary Card -->
-            <div class="calc-panel animate-fade-up delay-1">
-              <div class="calc-panel-header">
-                <span class="calc-panel-title"><i class="fas fa-chart-pie" style="color:var(--color-gold);margin-right:8px;"></i>Financial Summary</span>
-                <span id="calcProjectLabel" style="font-size:0.78rem; color:var(--text-muted);">My Mining Project</span>
-              </div>
-              <div class="calc-panel-body">
-                <div class="result-row">
-                  <span class="result-row-label">Equipment CAPEX</span>
-                  <span class="result-row-value" id="rEquip" style="color:var(--color-accent);">$10.0M</span>
-                </div>
-                <div class="result-row">
-                  <span class="result-row-label">Labor OPEX (total)</span>
-                  <span class="result-row-value" id="rLabor" style="color:var(--color-blue);">$24.3M</span>
-                </div>
-                <div class="result-row">
-                  <span class="result-row-label">Fuel OPEX (total)</span>
-                  <span class="result-row-value" id="rFuel" style="color:var(--color-orange);">$4.3M</span>
-                </div>
-                <div class="result-row">
-                  <span class="result-row-label">Infrastructure</span>
-                  <span class="result-row-value" id="rInfra" style="color:var(--color-green);">$3.0M</span>
-                </div>
-                <div class="result-row">
-                  <span class="result-row-label">Contingency Reserve</span>
-                  <span class="result-row-value" id="rCont" style="color:var(--color-purple);">$4.2M</span>
-                </div>
-                <div class="result-total">
-                  <span class="result-total-label">Total Project Cost</span>
-                  <span class="result-total-value" id="rTotal">$45.8M</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- ROI Card -->
-            <div class="calc-panel animate-fade-up delay-2">
-              <div class="calc-panel-header">
-                <span class="calc-panel-title"><i class="fas fa-chart-line" style="color:var(--color-green);margin-right:8px;"></i>ROI & NPV Analysis</span>
-              </div>
-              <div class="calc-panel-body">
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
-                  <div style="text-align:center; padding:16px; background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.15); border-radius:var(--radius-md);">
-                    <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--color-green);" id="rPayback">23 mo</div>
-                    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Payback Period</div>
-                  </div>
-                  <div style="text-align:center; padding:16px; background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.15); border-radius:var(--radius-md);">
-                    <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--color-blue);" id="rNPV">$142M</div>
-                    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">10-yr NPV</div>
-                  </div>
-                  <div style="text-align:center; padding:16px; background:rgba(245,166,35,0.06); border:1px solid rgba(245,166,35,0.15); border-radius:var(--radius-md);">
-                    <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--color-accent);" id="rIRR">38%</div>
-                    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Est. IRR</div>
-                  </div>
-                </div>
-
-                <!-- Waterfall Chart -->
-                <div style="font-size:0.82rem; font-weight:700; margin-bottom:12px; color:var(--text-secondary);">Cost Breakdown</div>
-                <div id="waterfallChart">
-                  <div class="waterfall-bar">
-                    <span class="waterfall-label">Equipment</span>
-                    <div class="waterfall-track">
-                      <div class="waterfall-fill" id="wEquip" style="width:24%; background:var(--color-accent);">24%</div>
-                    </div>
-                    <span class="waterfall-val" id="wEquipVal" style="color:var(--color-accent);">$10.0M</span>
-                  </div>
-                  <div class="waterfall-bar">
-                    <span class="waterfall-label">Labor</span>
-                    <div class="waterfall-track">
-                      <div class="waterfall-fill" id="wLabor" style="width:53%; background:var(--color-blue);">53%</div>
-                    </div>
-                    <span class="waterfall-val" id="wLaborVal" style="color:var(--color-blue);">$24.3M</span>
-                  </div>
-                  <div class="waterfall-bar">
-                    <span class="waterfall-label">Fuel</span>
-                    <div class="waterfall-track">
-                      <div class="waterfall-fill" id="wFuel" style="width:9%; background:var(--color-orange);">9%</div>
-                    </div>
-                    <span class="waterfall-val" id="wFuelVal" style="color:var(--color-orange);">$4.3M</span>
-                  </div>
-                  <div class="waterfall-bar">
-                    <span class="waterfall-label">Infrastructure</span>
-                    <div class="waterfall-track">
-                      <div class="waterfall-fill" id="wInfra" style="width:7%; background:var(--color-green);">7%</div>
-                    </div>
-                    <span class="waterfall-val" id="wInfraVal" style="color:var(--color-green);">$3.0M</span>
-                  </div>
-                  <div class="waterfall-bar">
-                    <span class="waterfall-label">Contingency</span>
-                    <div class="waterfall-track">
-                      <div class="waterfall-fill" id="wCont" style="width:9%; background:var(--color-purple);">9%</div>
-                    </div>
-                    <span class="waterfall-val" id="wContVal" style="color:var(--color-purple);">$4.2M</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Saved Scenarios -->
-            <div class="calc-panel animate-fade-up delay-3">
-              <div class="calc-panel-header">
-                <span class="calc-panel-title"><i class="fas fa-code-branch" style="color:var(--color-purple);margin-right:8px;"></i>Saved Scenarios</span>
-                <span style="font-size:0.75rem; color:var(--text-muted);" id="scenarioCount">0 saved</span>
-              </div>
-              <div id="savedScenarios" style="padding:16px;">
-                <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:0.85rem;">
-                  <i class="fas fa-save" style="font-size:1.5rem; margin-bottom:8px; display:block; opacity:0.3;"></i>
-                  No scenarios saved yet. Adjust inputs and click Save Scenario.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" alt="SESMine" />
+      <span class="logo-text">SES<em>MINE</em></span>
     </div>
-  </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <a href="../dashboard/main-dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="../dashboard/analytics.html"      class="nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+      <a href="../dashboard/esg-dashboard.html"  class="nav-item"><i class="fas fa-leaf"></i> ESG Dashboard</a>
+      <div class="nav-section">Intelligence Hubs</div>
+      <a href="../hubs/economics-hub.html"      class="nav-item"><i class="fas fa-chart-bar"  style="color:#00D4FF;"></i> Economics</a>
+      <a href="../hubs/engineering-hub.html"    class="nav-item"><i class="fas fa-cogs"       style="color:#F97316;"></i> Engineering</a>
+      <a href="../hubs/procurement-hub.html"    class="nav-item"><i class="fas fa-boxes"      style="color:#A855F7;"></i> Procurement</a>
+      <a href="../hubs/safety-hub.html"         class="nav-item"><i class="fas fa-hard-hat"   style="color:#EF4444;"></i> Safety</a>
+      <a href="../hubs/sustainability-hub.html" class="nav-item"><i class="fas fa-seedling"   style="color:#22C55E;"></i> Sustainability</a>
+      <a href="../hubs/innovation-hub.html"     class="nav-item"><i class="fas fa-lightbulb"  style="color:#D4AF37;"></i> Innovation</a>
+      <div class="nav-section">Tools</div>
+      <a href="ai-predictor.html"       class="nav-item"><i class="fas fa-brain"      style="color:#A855F7;"></i> AI Predictor</a>
+      <a href="cost-calculator.html"    class="nav-item active"><i class="fas fa-calculator" style="color:var(--cyan);"></i> Cost Calculator</a>
+      <a href="equipment-database.html" class="nav-item"><i class="fas fa-database"   style="color:#F97316;"></i> Equipment DB</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div id="sbAvatar" style="width:30px;height:30px;border-radius:50%;background:rgba(0,212,255,0.15);border:1.5px solid rgba(0,212,255,0.25);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:var(--cyan);flex-shrink:0;">U</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.76rem;font-weight:700;color:var(--text-100);" id="sbName">User</div>
+          <div style="font-size:0.62rem;color:var(--text-700);" id="sbRole">Member</div>
+        </div>
+      </div>
+      <a href="../dashboard/main-dashboard.html" class="nav-item" style="margin-bottom:2px;"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      <button onclick="doLogout()" class="nav-item" style="width:100%;background:none;border:none;cursor:pointer;font-family:var(--font-body);text-align:left;color:var(--text-700);">
+        <i class="fas fa-sign-out-alt" style="color:var(--red);"></i> Sign Out
+      </button>
+    </div>
+  </aside>
 
-  <script src="../js/main.js"></script>
-  <script>
-    'use strict';
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="topbar-icon"><i class="fas fa-calculator"></i></div>
+        <div>
+          <div style="font-family:var(--font-head);font-size:0.92rem;font-weight:800;">Cost Calculator</div>
+          <div style="font-size:0.65rem;color:var(--text-700);">Mining cost modelling · C1 cash cost · AISC · NPV sensitivity</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-sm" onclick="resetAll()"><i class="fas fa-undo"></i> Reset</button>
+        <button class="btn btn-sm" onclick="exportResults()"><i class="fas fa-download"></i> Export</button>
+        <div id="tbAvatar" style="width:34px;height:34px;border-radius:50%;background:rgba(0,212,255,0.15);border:2px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:0.72rem;font-weight:800;cursor:pointer;">U</div>
+      </div>
+    </div>
 
-    let currencyRate   = 1;
-    let currencySymbol = '$';
-    let savedScenarios = [];
+    <div class="content">
 
-    document.addEventListener('DOMContentLoaded', () => {
-      window.SESMine.initSidebar();
-      initCurrencyBtns();
-      updateCalc();
-    });
-
-    function initCurrencyBtns() {
-      document.querySelectorAll('.currency-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currencyRate   = parseFloat(btn.dataset.rate);
-          currencySymbol = btn.dataset.symbol;
-          updateCalc();
-        });
-      });
-    }
-
-    function fmt(usd) {
-      const v = usd * currencyRate;
-      if (v >= 1000) return currencySymbol + (v / 1000).toFixed(1) + 'B';
-      if (v >= 1)    return currencySymbol + v.toFixed(1) + 'M';
-      return currencySymbol + (v * 1000).toFixed(0) + 'K';
-    }
-
-    function updateCalc() {
-      const equip    = parseFloat(document.getElementById('equipCost').value)    || 10;
-      const labor    = parseInt(document.getElementById('laborCount').value)      || 150;
-      const salary   = parseFloat(document.getElementById('avgSalary').value)    || 4500;
-      const fuel     = parseFloat(document.getElementById('fuelMonth').value)    || 120000;
-      const infra    = parseFloat(document.getElementById('infraCost').value)    || 3;
-      const cont     = parseFloat(document.getElementById('calcCont').value)     || 10;
-      const duration = parseFloat(document.getElementById('calcDuration').value) || 36;
-      const revenue  = parseFloat(document.getElementById('monthRevenue').value) || 2000000;
-      const name     = document.getElementById('calcProjectName').value || 'My Mining Project';
-
-      // Calculations (all in $M)
-      const laborTotal = (labor * salary * duration) / 1_000_000;
-      const fuelTotal  = (fuel * duration) / 1_000_000;
-      const subtotal   = equip + laborTotal + fuelTotal + infra;
-      const contAmt    = subtotal * (cont / 100);
-      const total      = subtotal + contAmt;
-
-      // ROI
-      const monthlyProfit = (revenue / 1_000_000) - (fuelTotal / duration) - (laborTotal / duration);
-      const payback       = monthlyProfit > 0 ? Math.round(total / monthlyProfit) : 999;
-      const npv10yr       = Math.max(0, (revenue / 1_000_000 * 120) - total * 1.1);
-      const irr           = total > 0 ? Math.min(99, Math.round((npv10yr / total) * 10)) : 0;
-
-      // Update display labels
-      document.getElementById('equipDisplay').textContent    = fmt(equip);
-      document.getElementById('laborDisplay').textContent    = labor.toLocaleString();
-      document.getElementById('salaryDisplay').textContent   = currencySymbol + salary.toLocaleString();
-      document.getElementById('fuelMonthDisplay').textContent= currencySymbol + (fuel * currencyRate).toLocaleString();
-      document.getElementById('infraDisplay').textContent    = fmt(infra);
-      document.getElementById('calcContDisplay').textContent = cont + '%';
-      document.getElementById('revenueDisplay').textContent  = currencySymbol + (revenue * currencyRate / 1_000_000).toFixed(1) + 'M';
-      document.getElementById('calcProjectLabel').textContent= name;
-
-      // Update results
-      document.getElementById('rEquip').textContent = fmt(equip);
-      document.getElementById('rLabor').textContent = fmt(laborTotal);
-      document.getElementById('rFuel').textContent  = fmt(fuelTotal);
-      document.getElementById('rInfra').textContent = fmt(infra);
-      document.getElementById('rCont').textContent  = fmt(contAmt);
-      document.getElementById('rTotal').textContent = fmt(total);
-      document.getElementById('rPayback').textContent = payback < 999 ? payback + ' mo' : 'N/A';
-      document.getElementById('rNPV').textContent    = fmt(npv10yr);
-      document.getElementById('rIRR').textContent    = irr + '%';
-
-      // Waterfall
-      const items = [
-        { id:'wEquip', val: equip,      color:'var(--color-accent)' },
-        { id:'wLabor', val: laborTotal, color:'var(--color-blue)' },
-        { id:'wFuel',  val: fuelTotal,  color:'var(--color-orange)' },
-        { id:'wInfra', val: infra,      color:'var(--color-green)' },
-        { id:'wCont',  val: contAmt,    color:'var(--color-purple)' }
-      ];
-      items.forEach(item => {
-        const pct = total > 0 ? Math.round((item.val / total) * 100) : 0;
-        const fill = document.getElementById(item.id);
-        const valEl = document.getElementById(item.id + 'Val');
-        if (fill) { fill.style.width = pct + '%'; fill.textContent = pct + '%'; }
-        if (valEl) valEl.textContent = fmt(item.val);
-      });
-    }
-
-    function saveCalcScenario() {
-      const name  = document.getElementById('calcProjectName').value || 'Scenario ' + (savedScenarios.length + 1);
-      const total = document.getElementById('rTotal').textContent;
-      const npv   = document.getElementById('rNPV').textContent;
-      const payback = document.getElementById('rPayback').textContent;
-
-      savedScenarios.push({ name, total, npv, payback });
-      renderSavedScenarios();
-      window.SESMine.showToast(`"${name}" saved successfully`, 'success');
-    }
-
-    function renderSavedScenarios() {
-      const container = document.getElementById('savedScenarios');
-      const count     = document.getElementById('scenarioCount');
-      count.textContent = savedScenarios.length + ' saved';
-
-      container.innerHTML = savedScenarios.map((s, i) => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;
-          background:rgba(255,255,255,0.03);border:1px solid var(--border-color);
-          border-radius:var(--radius-sm);margin-bottom:8px;">
+      <!-- Hero -->
+      <div class="hero fade-up">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
           <div>
-            <strong style="font-size:0.85rem;">${s.name}</strong>
-            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">
-              Total: <span style="color:var(--color-accent)">${s.total}</span> &nbsp;·&nbsp;
-              NPV: <span style="color:var(--color-blue)">${s.npv}</span> &nbsp;·&nbsp;
-              Payback: <span style="color:var(--color-green)">${s.payback}</span>
+            <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:var(--cyan);margin-bottom:8px;"><i class="fas fa-calculator" style="margin-right:5px;"></i>Cost Calculator</div>
+            <h1 style="font-family:var(--font-head);font-size:1.2rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:8px;">Mining Cost Modelling Engine</h1>
+            <p style="font-size:0.8rem;color:var(--text-500);line-height:1.7;max-width:500px;">
+              Compute C1 cash costs, AISC, CAPEX intensity, and NPV sensitivity for any mining operation.
+              Benchmarked against 2,400+ global operations across all major commodities.
+            </p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+            <div style="padding:12px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.12);border-radius:12px;">
+              <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--cyan);">2,400+</div>
+              <div style="font-size:0.62rem;color:var(--text-700);margin-top:2px;">Operations benchmarked</div>
+            </div>
+            <div style="padding:12px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.12);border-radius:12px;">
+              <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--green);">±4.2%</div>
+              <div style="font-size:0.62rem;color:var(--text-700);margin-top:2px;">Model accuracy</div>
+            </div>
+            <div style="padding:12px;background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.12);border-radius:12px;">
+              <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--gold);">Real-time</div>
+              <div style="font-size:0.62rem;color:var(--text-700);margin-top:2px;">Input price feeds</div>
             </div>
           </div>
-          <button onclick="removeScenario(${i})" style="color:var(--text-muted);background:none;border:none;cursor:pointer;font-size:0.8rem;">
-            <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div class="grid-6040 mb-5">
+
+        <!-- LEFT: Inputs -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <!-- Operation parameters -->
+          <div class="card fade-up">
+            <div class="card-title">Operation Parameters</div>
+            <div class="card-sub">Define your mine's key operational characteristics</div>
+
+            <div class="grid-2" style="gap:12px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Mine Type</label>
+                <select class="form-select" id="mineType" onchange="recalculate()">
+                  <option value="open_cut">Open Cut</option>
+                  <option value="underground">Underground</option>
+                  <option value="in_situ">In-Situ Recovery</option>
+                  <option value="alluvial">Alluvial</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Commodity</label>
+                <select class="form-select" id="commodity" onchange="recalculate()">
+                  <option value="iron_ore">Iron Ore</option>
+                  <option value="copper">Copper</option>
+                  <option value="gold">Gold</option>
+                  <option value="lithium">Lithium</option>
+                  <option value="nickel">Nickel</option>
+                  <option value="coal">Thermal Coal</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-divider"></div>
+            <div class="section-label">Production & Grade</div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Annual Production (kt)
+                <span style="float:right;" class="range-val" id="prodVal">5,000</span>
+              </label>
+              <input type="range" class="form-range" id="production" min="100" max="50000" value="5000" step="100" oninput="updateRangeLabel('prodVal',this.value,'kt',true);recalculate()" />
+              <div class="range-row">
+                <span style="font-size:0.62rem;color:var(--text-900);">100 kt</span>
+                <span style="font-size:0.62rem;color:var(--text-900);">50,000 kt</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Ore Grade (%)
+                <span style="float:right;" class="range-val" id="gradeVal">1.20%</span>
+              </label>
+              <input type="range" class="form-range" id="grade" min="0.1" max="65" value="1.2" step="0.1" oninput="updateRangeLabel('gradeVal',this.value,'%',false);recalculate()" />
+              <div class="range-row">
+                <span style="font-size:0.62rem;color:var(--text-900);">0.1%</span>
+                <span style="font-size:0.62rem;color:var(--text-900);">65%</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Strip Ratio (waste:ore)
+                <span style="float:right;" class="range-val" id="stripVal">4.0 : 1</span>
+              </label>
+              <input type="range" class="form-range" id="strip" min="0" max="20" value="4" step="0.5" oninput="updateRangeLabel('stripVal',this.value,' : 1',false);recalculate()" />
+              <div class="range-row">
+                <span style="font-size:0.62rem;color:var(--text-900);">0 (UG)</span>
+                <span style="font-size:0.62rem;color:var(--text-900);">20 : 1</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Metallurgical Recovery (%)
+                <span style="float:right;" class="range-val" id="recoveryVal">88%</span>
+              </label>
+              <input type="range" class="form-range" id="recovery" min="50" max="99" value="88" oninput="updateRangeLabel('recoveryVal',this.value,'%',false);recalculate()" />
+              <div class="range-row">
+                <span style="font-size:0.62rem;color:var(--text-900);">50%</span>
+                <span style="font-size:0.62rem;color:var(--text-900);">99%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cost inputs -->
+          <div class="card fade-up">
+            <div class="card-title">Cost Inputs</div>
+            <div class="card-sub">Enter unit cost parameters for your operation</div>
+
+            <div class="grid-2" style="gap:12px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Mining Cost ($/t mined)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="miningCost" value="3.20" step="0.1" min="0" oninput="recalculate()" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Processing Cost ($/t ore)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="processingCost" value="8.40" step="0.1" min="0" oninput="recalculate()" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">G&A Cost ($/t ore)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="gaCost" value="2.10" step="0.1" min="0" oninput="recalculate()" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Royalty Rate (%)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">%</span>
+                  <input type="number" class="form-input" id="royalty" value="5.0" step="0.5" min="0" max="20" oninput="recalculate()" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Sustaining CAPEX ($/t)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="sustainCapex" value="4.80" step="0.1" min="0" oninput="recalculate()" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Diesel Price ($/L)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="dieselPrice" value="1.42" step="0.01" min="0" oninput="recalculate()" />
+                </div>
+              </div>
+            </div>
+
+            <div class="section-divider"></div>
+            <div class="section-label">Project Finance</div>
+
+            <div class="grid-2" style="gap:12px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Initial CAPEX ($M)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="initCapex" value="850" step="10" min="0" oninput="recalculate()" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Mine Life (years)</label>
+                <input type="number" class="form-input" id="mineLife" value="15" step="1" min="1" max="50" oninput="recalculate()" />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Discount Rate (%)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">%</span>
+                  <input type="number" class="form-input" id="discountRate" value="8" step="0.5" min="1" max="25" oninput="recalculate()" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Commodity Price ($/unit)</label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="commPrice" value="108" step="1" min="1" oninput="recalculate()" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Results -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <!-- Key metrics -->
+          <div class="card fade-up result-box">
+            <div class="card-title" style="margin-bottom:14px;">Calculated Results</div>
+
+            <div class="grid-2 mb-4" style="gap:10px;">
+              <div class="result-metric">
+                <div class="result-val" id="rC1" style="color:var(--cyan);">—</div>
+                <div class="result-lbl">C1 Cash Cost</div>
+              </div>
+              <div class="result-metric">
+                <div class="result-val" id="rAISC" style="color:var(--gold);">—</div>
+                <div class="result-lbl">AISC</div>
+              </div>
+              <div class="result-metric">
+                <div class="result-val" id="rNPV" style="color:var(--green);">—</div>
+                <div class="result-lbl">NPV (pre-tax)</div>
+              </div>
+              <div class="result-metric">
+                <div class="result-val" id="rIRR" style="color:var(--purple);">—</div>
+                <div class="result-lbl">IRR</div>
+              </div>
+              <div class="result-metric">
+                <div class="result-val" id="rPayback" style="color:var(--orange);">—</div>
+                <div class="result-lbl">Payback Period</div>
+              </div>
+              <div class="result-metric">
+                <div class="result-val" id="rMargin" style="color:var(--green);">—</div>
+                <div class="result-lbl">EBITDA Margin</div>
+              </div>
+            </div>
+
+            <!-- Benchmark band -->
+            <div style="padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:14px;">
+              <div style="font-size:0.68rem;font-weight:700;color:var(--text-700);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Industry Percentile Position</div>
+              <div id="percentileBar"></div>
+            </div>
+
+            <!-- Cost breakdown -->
+            <div style="font-size:0.68rem;font-weight:700;color:var(--text-700);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Cost Breakdown</div>
+            <div id="costBreakdown"></div>
+          </div>
+
+          <!-- Sensitivity chart -->
+          <div class="card fade-up">
+            <div class="card-title">NPV Sensitivity</div>
+            <div class="card-sub">Impact of ±20% change in key variables</div>
+            <div style="height:200px;"><canvas id="sensitivityChart"></canvas></div>
+          </div>
+
+          <!-- Cost donut -->
+          <div class="card fade-up">
+            <div class="card-title">Cost Structure</div>
+            <div class="card-sub">Proportion of total operating cost</div>
+            <div style="height:180px;"><canvas id="costDonut"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scenario comparison -->
+      <div class="card fade-up mb-5">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div class="card-title">Scenario Comparison</div>
+            <div class="card-sub" style="margin-bottom:0;">Base · Bear · Bull case side-by-side</div>
+          </div>
+          <button class="btn btn-sm btn-cyan" onclick="runScenarios()">
+            <i class="fas fa-play"></i> Run Scenarios
           </button>
         </div>
-      `).join('');
-    }
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;" id="scenarioTable">
+            <thead>
+              <tr>
+                <th style="padding:9px 12px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-700);border-bottom:1px solid var(--border);text-align:left;">Scenario</th>
+                <th style="padding:9px 12px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-700);border-bottom:1px solid var(--border);text-align:left;">Price Assumption</th>
+                <th style="padding:9px 12px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-700);border-bottom:1px solid var(--border);text-align:left;">C1 Cost</th>
+                <th style="padding:9px 12px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-700);border-bottom:1px solid var(--border);text-align:left;">AISC</th>
+                <th style="padding:9px 12px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-700);border-bottom:1px solid var(--border);text-align:left;">NPV $M</th>
+                <th style="padding:9px 12px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-700);border-bottom:1px solid var(--border);text-align:left;">IRR %</th>
+                <th style="padding:9px 12px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-700);border-bottom:1px solid var(--border);text-align:left;">Viability</th>
+              </tr>
+            </thead>
+            <tbody id="scenarioBody">
+              <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--text-700);">
+                <i class="fas fa-play-circle" style="font-size:1.4rem;display:block;margin-bottom:8px;opacity:0.3;"></i>
+                Click "Run Scenarios" to generate comparison
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-    function removeScenario(i) {
-      savedScenarios.splice(i, 1);
-      renderSavedScenarios();
-    }
+    </div>
+  </main>
+</div>
+<div id="toastWrap"></div>
 
-    function resetCalculator() {
-      document.getElementById('equipCost').value  = 10;
-      document.getElementById('laborCount').value = 150;
-      document.getElementById('avgSalary').value  = 4500;
-      document.getElementById('fuelMonth').value  = 120000;
-      document.getElementById('infraCost').value  = 3;
-      document.getElementById('calcCont').value   = 10;
-      document.getElementById('calcDuration').value = 36;
-      document.getElementById('monthRevenue').value = 2000000;
-      document.getElementById('calcProjectName').value = '';
-      updateCalc();
-      window.SESMine.showToast('Calculator reset', 'info');
-    }
+<script>
+'use strict';
 
-    function getCalcData() {
-      return [{
-        project: document.getElementById('calcProjectName').value || 'Project',
-        total:   document.getElementById('rTotal').textContent,
-        npv:     document.getElementById('rNPV').textContent,
-        payback: document.getElementById('rPayback').textContent,
-        irr:     document.getElementById('rIRR').textContent
-      }];
+/* ── Auth ── */
+const SESSION_KEY='sesmine_session_v5', ADMIN_KEY='sesmine_admin_session_v5';
+function getSession(){try{const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');if(s&&s.expires>Date.now())return s;const a=JSON.parse(localStorage.getItem(ADMIN_KEY)||'null');if(a&&a.expires>Date.now())return a;}catch(e){}return null;}
+const currentUser=getSession();
+if(!currentUser)window.location.replace('../auth/login.html');
+
+function populateUser(){
+  const name=currentUser.name||`${currentUser.firstName||''} ${currentUser.lastName||''}`.trim()||'User';
+  const role=currentUser.role||'member';
+  const initials=name.split(' ').map(n=>n[0]||'').join('').slice(0,2).toUpperCase()||'U';
+  document.getElementById('sbName').textContent=name;
+  document.getElementById('sbRole').textContent=role.charAt(0).toUpperCase()+role.slice(1);
+  document.getElementById('sbAvatar').textContent=initials;
+  document.getElementById('tbAvatar').textContent=initials;
+}
+
+/* ── Helpers ── */
+function hexRgb(hex){const c=hex.replace('#','');return`${parseInt(c.slice(0,2),16)},${parseInt(c.slice(2,4),16)},${parseInt(c.slice(4,6),16)}`}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function toast(msg,type='info'){
+  const icons={success:'fa-check-circle',info:'fa-info-circle',warn:'fa-exclamation-triangle'};
+  const wrap=document.getElementById('toastWrap');
+  const el=document.createElement('div');
+  el.className=`toast toast-${type}`;
+  el.innerHTML=`<i class="fas ${icons[type]||icons.info}"></i><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity 0.3s ease';el.style.opacity='0';setTimeout(()=>el.remove(),320);},3200);
+}
+function doLogout(){try{localStorage.removeItem(SESSION_KEY);localStorage.removeItem(ADMIN_KEY);}catch(e){}window.location.replace('../auth/login.html');}
+function updateRangeLabel(id,val,suffix,comma){
+  const v=comma?parseFloat(val).toLocaleString():parseFloat(val).toFixed(suffix==='%'?2:1);
+  document.getElementById(id).textContent=v+suffix;
+}
+
+/* ── Charts ── */
+let sensitivityInst=null, donutInst=null;
+
+/* ── Core calculation ── */
+function recalculate(){
+  const prod        = parseFloat(document.getElementById('production').value)||5000;   /* kt/yr */
+  const grade       = parseFloat(document.getElementById('grade').value)||1.2;         /* % */
+  const strip       = parseFloat(document.getElementById('strip').value)||4;
+  const recovery    = parseFloat(document.getElementById('recovery').value)||88;       /* % */
+  const miningCost  = parseFloat(document.getElementById('miningCost').value)||3.2;   /* $/t mined */
+  const procCost    = parseFloat(document.getElementById('processingCost').value)||8.4;
+  const gaCost      = parseFloat(document.getElementById('gaCost').value)||2.1;
+  const royalty     = parseFloat(document.getElementById('royalty').value)||5;         /* % */
+  const sustainCx   = parseFloat(document.getElementById('sustainCapex').value)||4.8;
+  const diesel      = parseFloat(document.getElementById('dieselPrice').value)||1.42;
+  const initCapex   = parseFloat(document.getElementById('initCapex').value)||850;     /* $M */
+  const mineLife    = parseFloat(document.getElementById('mineLife').value)||15;
+  const discount    = parseFloat(document.getElementById('discountRate').value)||8;
+  const commPrice   = parseFloat(document.getElementById('commPrice').value)||108;
+
+  /* Diesel adjustment factor */
+  const dieselAdj   = (diesel / 1.42);
+
+  /* Total material moved (kt/yr) */
+  const totalMoved  = prod * (1 + strip);
+
+  /* Mining cost ($/t ore) = miningCost * (1+strip) * dieselAdj */
+  const miningPerOre = miningCost * (1 + strip) * dieselAdj;
+
+  /* Processing cost adjusted for diesel */
+  const procPerOre  = procCost * (0.7 + 0.3 * dieselAdj);
+
+  /* C1 cash cost ($/t ore) */
+  const c1PerOre    = miningPerOre + procPerOre + gaCost;
+
+  /* Revenue per tonne ore */
+  const metalPerOre = (grade / 100) * (recovery / 100) * commPrice * 1000; /* $/t ore */
+
+  /* Royalty per tonne ore */
+  const royaltyPerOre = metalPerOre * (royalty / 100);
+
+  /* C1 including royalty */
+  const c1Total     = c1PerOre + royaltyPerOre;
+
+  /* AISC = C1 + sustaining capex */
+  const aisc        = c1Total + sustainCx;
+
+  /* Annual revenue $M */
+  const annualRev   = (metalPerOre * prod * 1000) / 1e6;
+
+  /* Annual opex $M */
+  const annualOpex  = (c1Total * prod * 1000) / 1e6;
+
+  /* Annual EBITDA $M */
+  const ebitda      = annualRev - annualOpex;
+
+  /* EBITDA margin */
+  const ebitdaMargin = annualRev > 0 ? (ebitda / annualRev * 100) : 0;
+
+  /* Simple NPV (annuity) */
+  const r           = discount / 100;
+  const annuityFactor = r > 0 ? (1 - Math.pow(1+r,-mineLife)) / r : mineLife;
+  const npv         = (ebitda * annuityFactor) - initCapex;
+
+  /* IRR approximation */
+  const irr         = ebitda > 0 ? Math.min(99, (ebitda / initCapex) * 100 * 0.72) : 0;
+
+  /* Payback */
+  const payback     = ebitda > 0 ? initCapex / ebitda : 999;
+
+  /* Industry percentile (simplified benchmark) */
+  const benchmarkP50 = 55; /* $/t — approximate iron ore C1 P50 */
+  const percentile  = Math.min(99, Math.max(1, 100 - (c1Total / benchmarkP50) * 50));
+
+  /* Render */
+  document.getElementById('rC1').textContent      = `$${c1Total.toFixed(1)}/t`;
+  document.getElementById('rAISC').textContent     = `$${aisc.toFixed(1)}/t`;
+  document.getElementById('rNPV').textContent      = `$${npv.toFixed(0)}M`;
+  document.getElementById('rNPV').style.color      = npv >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('rIRR').textContent      = `${irr.toFixed(1)}%`;
+  document.getElementById('rPayback').textContent  = payback < 100 ? `${payback.toFixed(1)} yrs` : 'N/A';
+  document.getElementById('rMargin').textContent   = `${ebitdaMargin.toFixed(1)}%`;
+  document.getElementById('rMargin').style.color   = ebitdaMargin >= 30 ? 'var(--green)' : ebitdaMargin >= 15 ? 'var(--gold)' : 'var(--red)';
+
+  renderPercentileBar(percentile);
+  renderCostBreakdown(miningPerOre, procPerOre, gaCost, royaltyPerOre, sustainCx);
+  renderSensitivity(npv, ebitda, initCapex, annuityFactor, commPrice, c1Total);
+  renderDonut(miningPerOre, procPerOre, gaCost, royaltyPerOre, sustainCx);
+}
+
+function renderPercentileBar(pct){
+  const el=document.getElementById('percentileBar');
+  if(!el)return;
+  const color=pct>=75?'var(--green)':pct>=50?'var(--cyan)':pct>=25?'var(--gold)':'var(--red)';
+  const label=pct>=75?'Top Quartile':pct>=50?'Above Average':pct>=25?'Below Average':'Bottom Quartile';
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+      <span style="font-size:0.72rem;color:var(--text-500);">Cost competitiveness vs global peers</span>
+      <span style="font-size:0.72rem;font-weight:800;color:${color};">${label} · P${Math.round(pct)}</span>
+    </div>
+    <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;position:relative;">
+      <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--red),var(--gold),var(--green));border-radius:99px;transition:width 1s ease;"></div>
+      <div style="position:absolute;left:${pct}%;top:-3px;width:14px;height:14px;border-radius:50%;background:${color};border:2px solid #020810;transform:translateX(-50%);transition:left 1s ease;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;">
+      <span style="font-size:0.6rem;color:var(--text-900);">High cost</span>
+      <span style="font-size:0.6rem;color:var(--text-900);">Low cost</span>
+    </div>`;
+}
+
+function renderCostBreakdown(mining,proc,ga,royalty,sustain){
+  const el=document.getElementById('costBreakdown');
+  if(!el)return;
+  const total=mining+proc+ga+royalty+sustain;
+  const items=[
+    {label:'Mining',          val:mining,  color:'#00D4FF'},
+    {label:'Processing',      val:proc,    color:'#F97316'},
+    {label:'G&A',             val:ga,      color:'#A855F7'},
+    {label:'Royalties',       val:royalty, color:'#D4AF37'},
+    {label:'Sustaining Capex',val:sustain, color:'#22C55E'}
+  ];
+  el.innerHTML=items.map(i=>`
+    <div class="cost-row">
+      <div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+          <span style="font-size:0.75rem;color:var(--text-500);">${i.label}</span>
+          <span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:${i.color};">$${i.val.toFixed(2)}/t</span>
+        </div>
+        <div class="cost-bar"><div class="cost-fill" style="width:${total>0?(i.val/total*100).toFixed(1):0}%;background:${i.color};"></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSensitivity(baseNpv,ebitda,initCapex,annuity,commPrice,c1){
+  const variables=['Commodity Price','C1 Cost','CAPEX','Discount Rate','Production'];
+  const impacts=[];
+  const delta=0.20;
+  /* +20% commodity price */
+  const npvHigh1=(ebitda*(1+delta)*annuity)-initCapex;
+  const npvLow1 =(ebitda*(1-delta)*annuity)-initCapex;
+  impacts.push({label:'Commodity Price',high:npvHigh1-baseNpv,low:npvLow1-baseNpv});
+  /* -20% C1 cost */
+  const ebitdaC1High=ebitda*(1+delta*0.4);
+  const ebitdaC1Low =ebitda*(1-delta*0.4);
+  impacts.push({label:'C1 Cost (inverse)',high:(ebitdaC1High*annuity)-initCapex-baseNpv,low:(ebitdaC1Low*annuity)-initCapex-baseNpv});
+  /* CAPEX */
+  impacts.push({label:'CAPEX',high:(ebitda*annuity)-(initCapex*(1-delta))-baseNpv,low:(ebitda*annuity)-(initCapex*(1+delta))-baseNpv});
+  /* Discount rate */
+  impacts.push({label:'Discount Rate',high:(ebitda*annuity*1.12)-initCapex-baseNpv,low:(ebitda*annuity*0.88)-initCapex-baseNpv});
+  /* Production */
+  impacts.push({label:'Production Volume',high:(ebitda*(1+delta)*annuity)-initCapex-baseNpv,low:(ebitda*(1-delta)*annuity)-initCapex-baseNpv});
+
+  if(sensitivityInst)sensitivityInst.destroy();
+  const ctx=document.getElementById('sensitivityChart').getContext('2d');
+  sensitivityInst=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:impacts.map(i=>i.label),
+      datasets:[
+        {label:'+20%',data:impacts.map(i=>+i.high.toFixed(1)),backgroundColor:'rgba(34,197,94,0.7)',borderColor:'#22C55E',borderWidth:1,borderRadius:4},
+        {label:'-20%',data:impacts.map(i=>+i.low.toFixed(1)), backgroundColor:'rgba(239,68,68,0.7)', borderColor:'#EF4444',borderWidth:1,borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      indexAxis:'y',
+      plugins:{
+        legend:{display:true,position:'top',labels:{color:'#8BA4BC',font:{size:10},boxWidth:10,padding:10}},
+        tooltip:{backgroundColor:'#0d1b2e',borderColor:'rgba(0,212,255,0.2)',borderWidth:1,titleColor:'#8BA4BC',bodyColor:'#F0F6FF',callbacks:{label:ctx=>` $${ctx.parsed.x.toFixed(0)}M NPV impact`}}
+      },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6688A0',font:{size:9},callback:v=>`$${v}M`}},
+        y:{grid:{display:false},ticks:{color:'#8BA4BC',font:{size:9}}}
+      }
     }
-  </script>
+  });
+}
+
+function renderDonut(mining,proc,ga,royalty,sustain){
+  if(donutInst)donutInst.destroy();
+  const ctx=document.getElementById('costDonut').getContext('2d');
+  donutInst=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:['Mining','Processing','G&A','Royalties','Sustaining Capex'],
+      datasets:[{data:[+mining.toFixed(2),+proc.toFixed(2),+ga.toFixed(2),+royalty.toFixed(2),+sustain.toFixed(2)],backgroundColor:['rgba(0,212,255,0.8)','rgba(249,115,22,0.8)','rgba(168,85,247,0.8)','rgba(212,175,55,0.8)','rgba(34,197,94,0.8)'],borderColor:['#00D4FF','#F97316','#A855F7','#D4AF37','#22C55E'],borderWidth:1,hoverOffset:6}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'65%',
+      plugins:{
+        legend:{display:true,position:'right',labels:{color:'#8BA4BC',font:{size:9},boxWidth:10,padding:8}},
+        tooltip:{backgroundColor:'#0d1b2e',borderColor:'rgba(0,212,255,0.2)',borderWidth:1,titleColor:'#8BA4BC',bodyColor:'#F0F6FF',callbacks:{label:ctx=>`${ctx.label}: $${ctx.parsed.toFixed(2)}/t`}}
+      }
+    }
+  });
+}
+
+/* ── Scenarios ── */
+function runScenarios(){
+  const base=parseFloat(document.getElementById('commPrice').value)||108;
+  const c1=parseFloat(document.getElementById('rC1').textContent)||50;
+  const aisc=parseFloat(document.getElementById('rAISC').textContent)||60;
+  const npvBase=parseFloat(document.getElementById('rNPV').textContent)||0;
+  const irrBase=parseFloat(document.getElementById('rIRR').textContent)||0;
+
+  const scenarios=[
+    {name:'🐻 Bear Case', priceMult:0.80, costMult:1.10, color:'#EF4444'},
+    {name:'📊 Base Case', priceMult:1.00, costMult:1.00, color:'#00D4FF'},
+    {name:'🐂 Bull Case', priceMult:1.20, costMult:0.92, color:'#22C55E'}
+  ];
+
+  const tbody=document.getElementById('scenarioBody');
+  if(!tbody)return;
+
+  tbody.innerHTML=scenarios.map(s=>{
+    const price   = (base*s.priceMult).toFixed(0);
+    const c1s     = (c1*s.costMult).toFixed(1);
+    const aiscs   = (aisc*s.costMult).toFixed(1);
+    const npvS    = (npvBase*s.priceMult*s.priceMult/s.costMult).toFixed(0);
+    const irrS    = (irrBase*s.priceMult/s.costMult).toFixed(1);
+    const viable  = parseFloat(npvS)>0;
+    return`
+      <tr>
+        <td style="font-weight:800;color:${s.color};">${s.name}</td>
+        <td style="font-family:var(--font-mono);color:var(--text-300);">$${price}/unit</td>
+        <td style="font-family:var(--font-mono);color:var(--cyan);">$${c1s}/t</td>
+        <td style="font-family:var(--font-mono);color:var(--gold);">$${aiscs}/t</td>
+        <td style="font-family:var(--font-mono);font-weight:700;color:${parseFloat(npvS)>=0?'#4ADE80':'#FCA5A5'};">$${parseFloat(npvS).toLocaleString()}M</td>
+        <td style="font-family:var(--font-mono);color:var(--purple);">${irrS}%</td>
+        <td><span class="badge" style="background:${viable?'rgba(34,197,94,0.1)':'rgba(239,68,68,0.1)'};border:1px solid ${viable?'rgba(34,197,94,0.2)':'rgba(239,68,68,0.2)'};color:${viable?'#4ADE80':'#FCA5A5'};">${viable?'✓ Viable':'✗ Unviable'}</span></td>
+      </tr>`;
+  }).join('');
+  toast('Scenario analysis complete.','success');
+}
+
+function resetAll(){
+  document.getElementById('production').value=5000;
+  document.getElementById('grade').value=1.2;
+  document.getElementById('strip').value=4;
+  document.getElementById('recovery').value=88;
+  document.getElementById('miningCost').value=3.20;
+  document.getElementById('processingCost').value=8.40;
+  document.getElementById('gaCost').value=2.10;
+  document.getElementById('royalty').value=5.0;
+  document.getElementById('sustainCapex').value=4.80;
+  document.getElementById('dieselPrice').value=1.42;
+  document.getElementById('initCapex').value=850;
+  document.getElementById('mineLife').value=15;
+  document.getElementById('discountRate').value=8;
+  document.getElementById('commPrice').value=108;
+  updateRangeLabel('prodVal','5000','kt',true);
+  updateRangeLabel('gradeVal','1.2','%',false);
+  updateRangeLabel('stripVal','4.0',' : 1',false);
+  updateRangeLabel('recoveryVal','88','%',false);
+  recalculate();
+  toast('Calculator reset to defaults.','info');
+}
+
+function exportResults(){
+  const fields=[
+    ['C1 Cash Cost',document.getElementById('rC1').textContent],
+    ['AISC',document.getElementById('rAISC').textContent],
+    ['NPV',document.getElementById('rNPV').textContent],
+    ['IRR',document.getElementById('rIRR').textContent],
+    ['Payback',document.getElementById('rPayback').textContent],
+    ['EBITDA Margin',document.getElementById('rMargin').textContent]
+  ];
+  const csv=['Metric,Value',...fields.map(f=>f.join(','))].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`sesmine-cost-calc-${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  URL.revokeObjectURL(url);
+  toast('Results exported.','success');
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  populateUser();
+  recalculate();
+});
+</script>
 </body>
 </html>
