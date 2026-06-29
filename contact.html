@@ -1,417 +1,606 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact — SESMine Intelligence Platform</title>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — SESMine Intelligence Platform</title>
   <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="assets/css/main.css" />
-  <link rel="stylesheet" href="assets/css/animations.css" />
   <style>
-    .contact-hero {
-      padding: 140px 0 80px;
-      background: linear-gradient(160deg, #020810 0%, #071224 60%, #040c1a 100%);
-      position: relative; overflow: hidden;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#020810;--bg-card:rgba(8,18,38,0.96);--bg-hover:rgba(255,255,255,0.025);
+      --border:rgba(255,255,255,0.07);--border-cyan:rgba(0,212,255,0.15);
+      --cyan:#00D4FF;--cyan-dim:rgba(0,212,255,0.08);--gold:#D4AF37;
+      --orange:#F97316;--green:#22C55E;--red:#EF4444;--purple:#A855F7;
+      --text-100:#F0F6FF;--text-300:#D4E0F0;--text-500:#8BA4BC;--text-700:#6688A0;--text-900:#4A6478;
+      --font-body:'Inter',sans-serif;--font-head:'Space Grotesk',sans-serif;--font-mono:'JetBrains Mono',monospace;
     }
-    .contact-hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-      background-size: 56px 56px;
-    }
-    .contact-card {
-      background: var(--bg-700);
-      border: 1px solid var(--border-default);
-      border-radius: 20px;
-      padding: 36px;
-    }
-    .contact-info-item {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 18px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border-default);
-      border-radius: 14px;
-      margin-bottom: 12px;
-      transition: all 0.2s ease;
-    }
-    .contact-info-item:hover {
-      border-color: rgba(0,212,255,0.15);
-      background: rgba(0,212,255,0.03);
-    }
-    .contact-info-icon {
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem; flex-shrink: 0;
-    }
-    .map-embed {
-      width: 100%; height: 320px;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid var(--border-default);
-      background: var(--bg-700);
-      position: relative;
-    }
-    .map-placeholder {
-      width: 100%; height: 100%;
-      background: linear-gradient(135deg, #071224, #0a1830);
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 12px;
-      position: relative; overflow: hidden;
-    }
-    .map-placeholder::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(0,212,255,0.06) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0,212,255,0.06) 1px, transparent 1px);
-      background-size: 32px 32px;
-    }
-    .map-pin {
-      width: 48px; height: 48px;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      background: linear-gradient(135deg, var(--cyan-500), var(--blue-400));
-      box-shadow: 0 0 20px rgba(0,212,255,0.4);
-      position: relative; z-index: 1;
-      animation: bounce 2s ease-in-out infinite;
-    }
-    .map-pin::after {
-      content: '';
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%,-50%) rotate(45deg);
-      width: 16px; height: 16px;
-      background: var(--bg-900);
-      border-radius: 50%;
+    html,body{min-height:100%;font-family:var(--font-body);color:var(--text-100);background:var(--bg);font-size:14px;line-height:1.5}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:99px}
+
+    /* Grid bg */
+    body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,212,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+
+    /* Glows */
+    .glow{position:fixed;border-radius:50%;pointer-events:none;filter:blur(120px);z-index:0}
+    .glow-1{width:600px;height:600px;top:-200px;left:-150px;background:radial-gradient(ellipse,rgba(0,212,255,0.05),transparent 60%)}
+    .glow-2{width:500px;height:500px;bottom:-150px;right:-100px;background:radial-gradient(ellipse,rgba(168,85,247,0.05),transparent 60%)}
+
+    /* Nav */
+    .nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;background:rgba(2,8,16,0.92);border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 40px}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-logo img{height:28px}
+    .nav-logo-text{font-family:var(--font-head);font-size:0.9rem;font-weight:800;color:var(--text-100)}
+    .nav-logo-text em{color:var(--cyan);font-style:normal}
+    .nav-links{display:flex;align-items:center;gap:6px}
+    .nav-link{padding:6px 12px;border-radius:7px;font-size:0.8rem;font-weight:600;color:var(--text-500);text-decoration:none;transition:all 0.18s ease}
+    .nav-link:hover{color:var(--text-300);background:rgba(255,255,255,0.04)}
+    .nav-link.active{color:var(--cyan)}
+    .btn-nav{padding:7px 16px;border-radius:8px;font-family:var(--font-body);font-size:0.8rem;font-weight:700;cursor:pointer;text-decoration:none;transition:all 0.18s ease;border:1px solid var(--border-cyan);background:var(--cyan-dim);color:var(--cyan)}
+    .btn-nav:hover{background:rgba(0,212,255,0.14)}
+
+    /* Page wrapper */
+    .page{position:relative;z-index:1;padding-top:64px;min-height:100vh}
+
+    /* Hero section */
+    .contact-hero{padding:70px 40px 50px;text-align:center;max-width:700px;margin:0 auto}
+    .hero-tag{font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.18em;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .hero-tag::before,.hero-tag::after{content:'';flex:1;max-width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.3))}
+    .hero-tag::after{background:linear-gradient(90deg,rgba(0,212,255,0.3),transparent)}
+    h1{font-family:var(--font-head);font-size:2.4rem;font-weight:800;letter-spacing:-0.03em;line-height:1.15;margin-bottom:16px}
+    h1 span{background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{font-size:0.92rem;color:var(--text-500);line-height:1.75;max-width:520px;margin:0 auto}
+
+    /* Main grid */
+    .contact-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:24px;max-width:1100px;margin:0 auto;padding:0 40px 80px}
+
+    /* Info panel */
+    .info-panel{display:flex;flex-direction:column;gap:16px}
+    .info-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:22px}
+    .info-card-title{font-family:var(--font-head);font-size:0.88rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .contact-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .contact-item:last-child{border-bottom:none;padding-bottom:0}
+    .contact-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.82rem;flex-shrink:0}
+    .contact-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-900);margin-bottom:3px}
+    .contact-val{font-size:0.82rem;font-weight:600;color:var(--text-300)}
+    .contact-val a{color:var(--cyan);text-decoration:none;transition:opacity 0.18s ease}
+    .contact-val a:hover{opacity:0.8}
+
+    /* Office cards */
+    .office-card{padding:14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;margin-bottom:10px;transition:all 0.18s ease}
+    .office-card:last-child{margin-bottom:0}
+    .office-card:hover{background:rgba(0,212,255,0.03);border-color:rgba(0,212,255,0.1)}
+    .office-name{font-size:0.82rem;font-weight:700;color:var(--text-100);margin-bottom:3px}
+    .office-addr{font-size:0.72rem;color:var(--text-700);line-height:1.6}
+
+    /* Social row */
+    .social-row{display:flex;gap:8px;margin-top:14px}
+    .social-btn{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,0.04);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-700);font-size:0.82rem;text-decoration:none;transition:all 0.18s ease}
+    .social-btn:hover{background:rgba(0,212,255,0.08);border-color:rgba(0,212,255,0.2);color:var(--cyan)}
+
+    /* Form panel */
+    .form-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;overflow:hidden}
+    .form-panel::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.4),transparent)}
+    .form-title{font-family:var(--font-head);font-size:1.1rem;font-weight:800;margin-bottom:4px}
+    .form-sub{font-size:0.78rem;color:var(--text-700);margin-bottom:24px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .form-group{margin-bottom:14px}
+    .form-label{display:block;font-size:0.72rem;font-weight:700;color:var(--text-500);margin-bottom:6px;letter-spacing:0.02em}
+    .form-label span{color:var(--red);margin-left:2px}
+    .form-input,.form-select,.form-textarea{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;font-family:var(--font-body);font-size:0.84rem;color:var(--text-100);outline:none;transition:border-color 0.18s ease,box-shadow 0.18s ease}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,0.08)}
+    .form-input::placeholder,.form-textarea::placeholder{color:var(--text-900)}
+    .form-select option{background:#0d1b2e}
+    .form-textarea{resize:vertical;min-height:130px;line-height:1.6}
+    .field-err{font-size:0.68rem;color:#FCA5A5;margin-top:4px;display:none;align-items:center;gap:4px}
+    .field-err.show{display:flex}
+    .char-count{font-size:0.65rem;color:var(--text-900);text-align:right;margin-top:3px}
+
+    /* Priority selector */
+    .priority-row{display:flex;gap:8px;margin-top:6px}
+    .priority-opt{flex:1;padding:8px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);text-align:center;cursor:pointer;transition:all 0.18s ease;font-size:0.72rem;font-weight:700;color:var(--text-700)}
+    .priority-opt:hover{border-color:rgba(255,255,255,0.2);color:var(--text-300)}
+    .priority-opt.selected-low{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);color:#22C55E}
+    .priority-opt.selected-medium{border-color:rgba(212,175,55,0.4);background:rgba(212,175,55,0.08);color:#D4AF37}
+    .priority-opt.selected-high{border-color:rgba(249,115,22,0.4);background:rgba(249,115,22,0.08);color:#F97316}
+    .priority-opt.selected-urgent{border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#EF4444}
+
+    /* Submit button */
+    .btn-submit{width:100%;background:linear-gradient(135deg,#00D4FF,#0284C7);border:none;border-radius:12px;padding:13px 22px;font-family:var(--font-body);font-size:0.92rem;font-weight:800;color:#020810;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s ease;margin-top:6px}
+    .btn-submit:hover:not(:disabled){opacity:0.92;transform:translateY(-1px)}
+    .btn-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn-submit .spinner{display:none}
+    .btn-submit.loading .label{display:none}
+    .btn-submit.loading .spinner{display:flex;align-items:center;gap:7px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spin{animation:spin 0.8s linear infinite;display:inline-block}
+
+    /* Success state */
+    .success-state{display:none;text-align:center;padding:40px 20px}
+    .success-state.show{display:block}
+    .success-icon{width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--green);margin:0 auto 20px;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both}
+    @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+
+    /* Alert */
+    .alert{display:none;align-items:center;gap:9px;padding:11px 14px;border-radius:10px;font-size:0.78rem;font-weight:600;margin-bottom:16px;line-height:1.5}
+    .alert.show{display:flex}
+    .alert-error{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#FCA5A5}
+
+    /* FAQ */
+    .faq-section{max-width:1100px;margin:0 auto;padding:0 40px 80px}
+    .faq-title{font-family:var(--font-head);font-size:1.2rem;font-weight:800;margin-bottom:20px;text-align:center}
+    .faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all 0.18s ease}
+    .faq-item:hover{border-color:rgba(0,212,255,0.15);background:rgba(0,212,255,0.03)}
+    .faq-q{font-size:0.84rem;font-weight:700;color:var(--text-100);margin-bottom:8px;display:flex;align-items:flex-start;gap:8px}
+    .faq-q i{color:var(--cyan);flex-shrink:0;margin-top:2px;font-size:0.75rem}
+    .faq-a{font-size:0.78rem;color:var(--text-500);line-height:1.7}
+
+    /* Footer */
+    .footer{border-top:1px solid rgba(255,255,255,0.05);padding:24px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .footer-copy{font-size:0.72rem;color:var(--text-900)}
+    .footer-links{display:flex;gap:16px}
+    .footer-links a{font-size:0.72rem;color:var(--text-700);text-decoration:none;transition:color 0.18s ease}
+    .footer-links a:hover{color:var(--text-300)}
+
+    /* Toast */
+    #toastWrap{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+    .toast{padding:11px 16px;border-radius:10px;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:toastIn 0.3s ease both;max-width:300px}
+    .toast-success{background:#0d2b1a;border:1px solid rgba(34,197,94,0.3);color:#86EFAC}
+    .toast-info{background:#0a1f30;border:1px solid rgba(0,212,255,0.3);color:#67E8F9}
+    @keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+    .fade-up{animation:fadeUp 0.45s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:900px){
+      .contact-grid{grid-template-columns:1fr;padding:0 20px 60px}
+      .faq-grid{grid-template-columns:1fr}
+      .form-row{grid-template-columns:1fr}
+      h1{font-size:1.8rem}
+      .nav{padding:0 20px}
+      .contact-hero{padding:50px 20px 36px}
+      .faq-section{padding:0 20px 60px}
+      .footer{padding:20px}
     }
   </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar" id="navbar">
-  <div class="navbar-inner">
-    <a href="index.html" class="nav-logo">
-      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" class="nav-logo-img" alt="SESMine" />
-      <span class="nav-logo-name">SES<em>MINE</em></span>
-    </a>
-    <div class="nav-links">
-      <a href="index.html"   class="nav-link">Home</a>
-      <a href="pricing.html" class="nav-link">Pricing</a>
-      <a href="news.html"    class="nav-link">News</a>
-      <a href="contact.html" class="nav-link active">Contact</a>
-    </div>
-    <div class="nav-actions">
-      <a href="auth/login.html"  class="btn btn-ghost btn-sm">Sign In</a>
-      <a href="auth/signup.html" class="btn btn-cyan btn-sm"><i class="fas fa-rocket"></i> Get Started</a>
-    </div>
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" alt="SESMine" />
+    <span class="nav-logo-text">SES<em>MINE</em></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html"           class="nav-link">Home</a>
+    <a href="news.html"            class="nav-link">News</a>
+    <a href="resources.html"       class="nav-link">Resources</a>
+    <a href="contact.html"         class="nav-link active">Contact</a>
+    <a href="auth/login.html"      class="btn-nav" style="margin-left:8px;">Sign In</a>
   </div>
 </nav>
 
-<!-- Hero -->
-<div class="contact-hero">
-  <div class="container" style="position:relative;z-index:1;text-align:center;">
-    <div class="section-label" style="margin:0 auto 20px;display:inline-flex;" class="hero-anim-1">
-      <span class="section-label-dot"></span> Get In Touch
-    </div>
-    <h1 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:800;letter-spacing:-0.025em;margin-bottom:16px;" class="hero-anim-2">
-      We'd Love to Hear From You
-    </h1>
-    <p style="font-size:1rem;color:#8BA4BC;max-width:480px;margin:0 auto;line-height:1.75;" class="hero-anim-3">
-      Whether you're exploring the platform, need a demo, or have a support question —
-      our team is ready to help.
+<div class="page">
+
+  <!-- Hero -->
+  <div class="contact-hero fade-up">
+    <div class="hero-tag"><i class="fas fa-envelope"></i> Get In Touch</div>
+    <h1>Talk to the <span>SESMine</span> Team</h1>
+    <p class="hero-sub">
+      Whether you're exploring a subscription, need technical support, or want to discuss
+      enterprise integration — our team responds within 24 hours.
     </p>
   </div>
-</div>
 
-<!-- Contact Content -->
-<section class="section">
-  <div class="container">
-    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:40px;align-items:start;">
+  <!-- Main grid -->
+  <div class="contact-grid">
 
-      <!-- Left: Info -->
-      <div>
-        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:8px;">
-          Contact Information
-        </h2>
-        <p style="font-size:0.88rem;color:#8BA4BC;line-height:1.7;margin-bottom:24px;">
-          Reach our team directly or visit our Perth headquarters.
-        </p>
+    <!-- LEFT: Info -->
+    <div class="info-panel fade-up">
 
-        <div class="contact-info-item">
-          <div class="contact-info-icon" style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);color:#00D4FF;">
+      <!-- Contact details -->
+      <div class="info-card">
+        <div class="info-card-title">
+          <div style="width:28px;height:28px;border-radius:7px;background:var(--cyan-dim);border:1px solid var(--border-cyan);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:0.72rem;">
+            <i class="fas fa-address-card"></i>
+          </div>
+          Contact Details
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon" style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);color:var(--cyan);">
             <i class="fas fa-envelope"></i>
           </div>
           <div>
-            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6688A0;margin-bottom:4px;">Email</div>
-            <a href="mailto:hello@sesmine.com" style="font-size:0.9rem;font-weight:600;color:#F0F6FF;">hello@sesmine.com</a>
-            <div style="font-size:0.75rem;color:#6688A0;margin-top:2px;">General enquiries & partnerships</div>
+            <div class="contact-label">General Enquiries</div>
+            <div class="contact-val"><a href="mailto:hello@sesmine.com">hello@sesmine.com</a></div>
           </div>
         </div>
 
-        <div class="contact-info-item">
-          <div class="contact-info-icon" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#22C55E;">
+        <div class="contact-item">
+          <div class="contact-icon" style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.15);color:var(--purple);">
             <i class="fas fa-headset"></i>
           </div>
           <div>
-            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6688A0;margin-bottom:4px;">Support</div>
-            <a href="mailto:support@sesmine.com" style="font-size:0.9rem;font-weight:600;color:#F0F6FF;">support@sesmine.com</a>
-            <div style="font-size:0.75rem;color:#6688A0;margin-top:2px;">Technical support · Mon–Fri 8am–6pm AWST</div>
+            <div class="contact-label">Technical Support</div>
+            <div class="contact-val"><a href="mailto:support@sesmine.com">support@sesmine.com</a></div>
           </div>
         </div>
 
-        <div class="contact-info-item">
-          <div class="contact-info-icon" style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);color:#D4AF37;">
+        <div class="contact-item">
+          <div class="contact-icon" style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.15);color:var(--gold);">
+            <i class="fas fa-briefcase"></i>
+          </div>
+          <div>
+            <div class="contact-label">Enterprise & Partnerships</div>
+            <div class="contact-val"><a href="mailto:enterprise@sesmine.com">enterprise@sesmine.com</a></div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon" style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.15);color:var(--green);">
             <i class="fas fa-phone"></i>
           </div>
           <div>
-            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6688A0;margin-bottom:4px;">Phone</div>
-            <a href="tel:+61890001234" style="font-size:0.9rem;font-weight:600;color:#F0F6FF;">+61 8 9000 1234</a>
-            <div style="font-size:0.75rem;color:#6688A0;margin-top:2px;">Sales & enterprise enquiries</div>
+            <div class="contact-label">Phone (AEST)</div>
+            <div class="contact-val"><a href="tel:+61892001234">+61 8 9200 1234</a></div>
           </div>
         </div>
 
-        <div class="contact-info-item">
-          <div class="contact-info-icon" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);color:#A855F7;">
-            <i class="fas fa-map-marker-alt"></i>
+        <!-- Social -->
+        <div class="social-row">
+          <a href="#" class="social-btn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-btn" title="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" class="social-btn" title="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+
+      <!-- Offices -->
+      <div class="info-card">
+        <div class="info-card-title">
+          <div style="width:28px;height:28px;border-radius:7px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:0.72rem;">
+            <i class="fas fa-building"></i>
           </div>
-          <div>
-            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6688A0;margin-bottom:4px;">Headquarters</div>
-            <div style="font-size:0.9rem;font-weight:600;color:#F0F6FF;">1 Mining Way, Level 12</div>
-            <div style="font-size:0.75rem;color:#6688A0;margin-top:2px;">Perth WA 6000, Australia</div>
-          </div>
+          Our Offices
         </div>
 
-        <!-- Map placeholder -->
-        <div class="map-embed" style="margin-top:20px;">
-          <div class="map-placeholder">
-            <div class="map-pin"></div>
-            <div style="position:relative;z-index:1;text-align:center;">
-              <div style="font-size:0.85rem;font-weight:700;color:#F0F6FF;margin-bottom:4px;">Perth, Western Australia</div>
-              <div style="font-size:0.72rem;color:#6688A0;">1 Mining Way, Level 12 · 6000</div>
-            </div>
+        <div class="office-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+            <span style="font-size:1rem;">🇦🇺</span>
+            <div class="office-name">Perth, Australia <span style="font-size:0.62rem;color:var(--cyan);font-weight:800;margin-left:4px;">HQ</span></div>
           </div>
+          <div class="office-addr">Level 12, 140 St Georges Terrace<br/>Perth WA 6000, Australia</div>
         </div>
 
-        <!-- Social links -->
-        <div style="margin-top:20px;">
-          <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6688A0;margin-bottom:12px;">Follow Us</div>
-          <div style="display:flex;gap:8px;">
-            <a href="https://linkedin.com/company/sesmine" target="_blank" class="footer-social"><i class="fab fa-linkedin-in"></i></a>
-            <a href="https://twitter.com/sesmine"          target="_blank" class="footer-social"><i class="fab fa-twitter"></i></a>
-            <a href="https://youtube.com/@sesmine"         target="_blank" class="footer-social"><i class="fab fa-youtube"></i></a>
-            <a href="https://github.com/sesmine"           target="_blank" class="footer-social"><i class="fab fa-github"></i></a>
+        <div class="office-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+            <span style="font-size:1rem;">🇬🇧</span>
+            <div class="office-name">London, United Kingdom</div>
+          </div>
+          <div class="office-addr">8 Finsbury Circus, Moorgate<br/>London EC2M 7EA, UK</div>
+        </div>
+
+        <div class="office-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+            <span style="font-size:1rem;">🇨🇦</span>
+            <div class="office-name">Vancouver, Canada</div>
+          </div>
+          <div class="office-addr">Suite 900, 1090 West Georgia St<br/>Vancouver BC V6E 3V7, Canada</div>
+        </div>
+      </div>
+
+      <!-- Response time -->
+      <div class="info-card" style="background:linear-gradient(135deg,rgba(0,212,255,0.05),rgba(168,85,247,0.04));border-color:rgba(0,212,255,0.12);">
+        <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--cyan);margin-bottom:12px;">Response Times</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.78rem;color:var(--text-500);">General enquiries</span>
+            <span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:var(--green);">≤ 24 hrs</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.78rem;color:var(--text-500);">Technical support</span>
+            <span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:var(--cyan);">≤ 4 hrs</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.78rem;color:var(--text-500);">Enterprise / sales</span>
+            <span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:var(--gold);">≤ 2 hrs</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.78rem;color:var(--text-500);">Critical platform issues</span>
+            <span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:var(--red);">≤ 1 hr</span>
           </div>
         </div>
       </div>
 
-      <!-- Right: Form -->
-      <div class="contact-card animate-fade-right">
-        <div style="margin-bottom:24px;">
-          <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:6px;">
-            Send Us a Message
-          </h2>
-          <p style="font-size:0.85rem;color:#8BA4BC;">We typically respond within 2 business hours.</p>
-        </div>
+    </div>
 
-        <!-- Success state -->
-        <div id="formSuccess" style="display:none;text-align:center;padding:40px 20px;">
-          <div style="width:64px;height:64px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.25);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:#22C55E;">
-            <i class="fas fa-check"></i>
-          </div>
-          <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:8px;">Message Sent!</h3>
-          <p style="font-size:0.85rem;color:#8BA4BC;line-height:1.7;">
-            Thanks for reaching out. A member of our team will get back to you within 2 business hours.
-          </p>
-          <button onclick="resetForm()" class="btn btn-ghost" style="margin-top:20px;">
-            <i class="fas fa-redo"></i> Send Another Message
-          </button>
-        </div>
+    <!-- RIGHT: Form -->
+    <div class="form-panel fade-up" style="animation-delay:0.1s;">
+
+      <!-- Alert -->
+      <div class="alert alert-error" id="formAlert">
+        <i class="fas fa-exclamation-circle" style="flex-shrink:0;"></i>
+        <span id="formAlertMsg">Please fill all required fields.</span>
+      </div>
+
+      <!-- Form -->
+      <div id="formWrap">
+        <div class="form-title">Send Us a Message</div>
+        <div class="form-sub">Fill in the form below and we'll get back to you promptly.</div>
 
         <form id="contactForm" novalidate>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+          <div class="form-row">
             <div class="form-group">
-              <label class="form-label">First Name <span class="form-label-required">*</span></label>
-              <div class="input-icon-wrap">
-                <i class="fas fa-user input-icon"></i>
-                <input type="text" class="form-input" id="contactFirstName"
-                       placeholder="James" data-validate="required" />
-              </div>
-              <div class="field-error" id="contactFirstNameErr"><i class="fas fa-exclamation-circle"></i> Required</div>
+              <label class="form-label" for="fName">First Name <span>*</span></label>
+              <input type="text" class="form-input" id="fName" placeholder="Jane" autocomplete="given-name" />
+              <div class="field-err" id="errFName"><i class="fas fa-exclamation-circle"></i> Required</div>
             </div>
             <div class="form-group">
-              <label class="form-label">Last Name <span class="form-label-required">*</span></label>
-              <div class="input-icon-wrap">
-                <i class="fas fa-user input-icon"></i>
-                <input type="text" class="form-input" id="contactLastName"
-                       placeholder="Whitfield" data-validate="required" />
-              </div>
-              <div class="field-error" id="contactLastNameErr"><i class="fas fa-exclamation-circle"></i> Required</div>
+              <label class="form-label" for="fLast">Last Name <span>*</span></label>
+              <input type="text" class="form-input" id="fLast" placeholder="Smith" autocomplete="family-name" />
+              <div class="field-err" id="errFLast"><i class="fas fa-exclamation-circle"></i> Required</div>
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Work Email <span class="form-label-required">*</span></label>
-            <div class="input-icon-wrap">
-              <i class="fas fa-envelope input-icon"></i>
-              <input type="email" class="form-input" id="contactEmail"
-                     placeholder="james@company.com" data-validate="required|email" />
-            </div>
-            <div class="field-error" id="contactEmailErr"><i class="fas fa-exclamation-circle"></i> Valid email required</div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Company</label>
-              <div class="input-icon-wrap">
-                <i class="fas fa-building input-icon"></i>
-                <input type="text" class="form-input" id="contactCompany" placeholder="Rio Tinto" />
-              </div>
+              <label class="form-label" for="fEmail">Email Address <span>*</span></label>
+              <input type="email" class="form-input" id="fEmail" placeholder="jane@company.com" autocomplete="email" />
+              <div class="field-err" id="errFEmail"><i class="fas fa-exclamation-circle"></i> Valid email required</div>
             </div>
             <div class="form-group">
-              <label class="form-label">Phone</label>
-              <div class="input-icon-wrap">
-                <i class="fas fa-phone input-icon"></i>
-                <input type="tel" class="form-input" id="contactPhone" placeholder="+61 8 9000 0000" />
-              </div>
+              <label class="form-label" for="fPhone">Phone Number</label>
+              <input type="tel" class="form-input" id="fPhone" placeholder="+61 4XX XXX XXX" autocomplete="tel" />
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Enquiry Type <span class="form-label-required">*</span></label>
-            <div class="input-icon-wrap">
-              <i class="fas fa-tag input-icon"></i>
-              <select class="form-select" id="contactType" data-validate="required" style="padding-left:38px;">
-                <option value="">Select enquiry type...</option>
-                <option value="demo">Book a Demo</option>
-                <option value="sales">Sales Enquiry</option>
-                <option value="enterprise">Enterprise / Custom Plan</option>
-                <option value="support">Technical Support</option>
-                <option value="partnership">Partnership</option>
-                <option value="press">Press & Media</option>
-                <option value="other">Other</option>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="fCompany">Company</label>
+              <input type="text" class="form-input" id="fCompany" placeholder="Mining Co. Ltd" autocomplete="organization" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fRole">Your Role</label>
+              <select class="form-select" id="fRole">
+                <option value="">Select role...</option>
+                <option>Mining Engineer</option>
+                <option>Geologist</option>
+                <option>Project Manager</option>
+                <option>Finance / Analyst</option>
+                <option>Executive / C-Suite</option>
+                <option>IT / Technology</option>
+                <option>Procurement</option>
+                <option>Other</option>
               </select>
             </div>
-            <div class="field-error" id="contactTypeErr"><i class="fas fa-exclamation-circle"></i> Please select a type</div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Message <span class="form-label-required">*</span></label>
-            <textarea class="form-textarea" id="contactMessage" rows="5"
-                      placeholder="Tell us about your project, team size, and what you're looking to achieve with SESMine..."
-                      data-validate="required|min:20"></textarea>
-            <div class="field-error" id="contactMessageErr"><i class="fas fa-exclamation-circle"></i> Please enter at least 20 characters</div>
+            <label class="form-label" for="fSubject">Subject <span>*</span></label>
+            <select class="form-select" id="fSubject">
+              <option value="">Select a topic...</option>
+              <option value="demo">Request a Demo</option>
+              <option value="pricing">Pricing & Subscription</option>
+              <option value="enterprise">Enterprise / API Integration</option>
+              <option value="support">Technical Support</option>
+              <option value="data">Data & Intelligence Query</option>
+              <option value="partnership">Partnership Opportunity</option>
+              <option value="media">Media & Press</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="field-err" id="errFSubject"><i class="fas fa-exclamation-circle"></i> Please select a topic</div>
           </div>
 
           <div class="form-group">
-            <label class="checkbox-wrap">
-              <input type="checkbox" id="contactConsent" />
-              <span class="checkbox-label">
-                I agree to the <a href="#">Privacy Policy</a> and consent to SESMine contacting me about my enquiry.
+            <label class="form-label">Priority</label>
+            <div class="priority-row" id="priorityRow">
+              <div class="priority-opt selected-low" data-val="low"    onclick="selectPriority('low')">🟢 Low</div>
+              <div class="priority-opt"              data-val="medium" onclick="selectPriority('medium')">🟡 Medium</div>
+              <div class="priority-opt"              data-val="high"   onclick="selectPriority('high')">🟠 High</div>
+              <div class="priority-opt"              data-val="urgent" onclick="selectPriority('urgent')">🔴 Urgent</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="fMessage">Message <span>*</span></label>
+            <textarea class="form-textarea" id="fMessage" placeholder="Tell us how we can help you..." maxlength="1000" oninput="updateCharCount()"></textarea>
+            <div class="char-count"><span id="charCount">0</span> / 1000 characters</div>
+            <div class="field-err" id="errFMessage"><i class="fas fa-exclamation-circle"></i> Message required (min 20 characters)</div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:18px;">
+            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+              <input type="checkbox" id="fConsent" style="accent-color:var(--cyan);margin-top:2px;width:14px;height:14px;flex-shrink:0;" />
+              <span style="font-size:0.74rem;color:var(--text-700);line-height:1.6;">
+                I agree to SESMine's <a href="#" style="color:var(--cyan);text-decoration:none;">Privacy Policy</a> and consent to being contacted regarding my enquiry.
               </span>
             </label>
-            <div class="field-error" id="contactConsentErr" style="margin-top:6px;"><i class="fas fa-exclamation-circle"></i> Please accept to continue</div>
+            <div class="field-err" id="errFConsent"><i class="fas fa-exclamation-circle"></i> Please accept to continue</div>
           </div>
 
-          <button type="submit" class="btn btn-cyan btn-full btn-lg" id="contactSubmitBtn">
-            <i class="fas fa-paper-plane"></i>
-            <span class="btn-label">Send Message</span>
-            <span class="btn-spinner"><i class="fas fa-spinner fa-spin"></i> Sending...</span>
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span class="label"><i class="fas fa-paper-plane"></i> Send Message</span>
+            <span class="spinner"><i class="fas fa-circle-notch spin"></i> Sending...</span>
           </button>
+
         </form>
       </div>
-    </div>
-  </div>
-</section>
 
-<!-- Office Locations -->
-<section class="section" style="background:var(--bg-800);">
-  <div class="container">
-    <div class="section-header center animate-fade-up">
-      <h2 class="section-title">Our Offices</h2>
-    </div>
-    <div class="grid-3">
-      ${[
-        { city:'Perth', country:'Australia', flag:'🇦🇺', address:'1 Mining Way, Level 12\nPerth WA 6000', phone:'+61 8 9000 1234', type:'Headquarters', color:'cyan' },
-        { city:'Brisbane', country:'Australia', flag:'🇦🇺', address:'333 Ann Street, Level 8\nBrisbane QLD 4000', phone:'+61 7 3000 5678', type:'Regional Office', color:'blue' },
-        { city:'London', country:'United Kingdom', flag:'🇬🇧', address:'30 St Mary Axe, Level 4\nLondon EC3A 8EP', phone:'+44 20 7000 9012', type:'EMEA Office', color:'purple' }
-      ].map(o => `
-        <div class="feature-card animate-fade-up">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-            <span style="font-size:1.8rem;">${o.flag}</span>
-            <div>
-              <div style="font-weight:800;font-size:1rem;">${o.city}</div>
-              <div style="font-size:0.72rem;color:#6688A0;">${o.country}</div>
-            </div>
-            <span style="margin-left:auto;" class="badge badge-${o.color}">${o.type}</span>
-          </div>
-          <div style="font-size:0.82rem;color:#8BA4BC;line-height:1.7;white-space:pre-line;margin-bottom:12px;">${o.address}</div>
-          <div style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:#6688A0;">
-            <i class="fas fa-phone" style="color:var(--cyan-500);font-size:0.72rem;"></i>
-            <a href="tel:${o.phone.replace(/\s/g,'')}" style="color:#8BA4BC;">${o.phone}</a>
-          </div>
+      <!-- Success state -->
+      <div class="success-state" id="successState">
+        <div class="success-icon"><i class="fas fa-check"></i></div>
+        <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:800;margin-bottom:8px;">Message Sent!</div>
+        <div style="font-size:0.84rem;color:var(--text-500);line-height:1.7;margin-bottom:24px;max-width:380px;margin-left:auto;margin-right:auto;">
+          Thank you for reaching out. Our team will respond to your enquiry within the timeframe shown on the left.
         </div>
-      `).join('')}
+        <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-700);margin-bottom:20px;" id="ticketRef">
+          Reference: —
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button onclick="resetForm()" style="padding:9px 18px;border-radius:9px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:var(--cyan);font-family:var(--font-body);font-size:0.8rem;font-weight:700;cursor:pointer;transition:all 0.18s ease;" onmouseover="this.style.background='rgba(0,212,255,0.14)'" onmouseout="this.style.background='rgba(0,212,255,0.08)'">
+            <i class="fas fa-plus" style="margin-right:5px;"></i>New Message
+          </button>
+          <a href="index.html" style="padding:9px 18px;border-radius:9px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-500);font-family:var(--font-body);font-size:0.8rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all 0.18s ease;" onmouseover="this.style.color='var(--text-300)'" onmouseout="this.style.color='var(--text-500)'">
+            <i class="fas fa-home"></i> Back to Home
+          </a>
+        </div>
+      </div>
+
     </div>
   </div>
-</section>
 
-<footer class="footer">
-  <div class="container">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-bottom:24px;border-bottom:1px solid var(--border-default);margin-bottom:24px;">
-      <div class="footer-brand-logo">
-        <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" style="height:32px;" />
-        <span class="footer-brand-name">SES<em>MINE</em></span>
+  <!-- FAQ -->
+  <div class="faq-section fade-up">
+    <div class="faq-title">Frequently Asked Questions</div>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <div class="faq-q"><i class="fas fa-circle-question"></i>What subscription plans are available?</div>
+        <div class="faq-a">SESMine offers Starter, Professional, and Enterprise tiers. All plans include core commodity intelligence. Professional and above unlock all hubs, AI tools, and export features. Enterprise includes API access and custom data feeds.</div>
       </div>
-      <div style="display:flex;gap:20px;flex-wrap:wrap;">
-        <a href="index.html"   class="footer-link">Home</a>
-        <a href="pricing.html" class="footer-link">Pricing</a>
-        <a href="news.html"    class="footer-link">News</a>
+      <div class="faq-item">
+        <div class="faq-q"><i class="fas fa-circle-question"></i>Can I request a personalised demo?</div>
+        <div class="faq-a">Absolutely. Select "Request a Demo" in the contact form above and one of our solutions specialists will arrange a tailored walkthrough of the platform within 24 hours.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><i class="fas fa-circle-question"></i>Is there an API for enterprise integration?</div>
+        <div class="faq-a">Yes. Our REST API provides programmatic access to commodity price feeds, project economics data, and AI prediction endpoints. Full documentation is available upon Enterprise subscription activation.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><i class="fas fa-circle-question"></i>How frequently is data updated?</div>
+        <div class="faq-a">Commodity spot prices update every 15 minutes during market hours. Project economics, equipment benchmarks, and ESG data are refreshed weekly. AI model weights are retrained monthly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><i class="fas fa-circle-question"></i>What data sources does SESMine use?</div>
+        <div class="faq-a">We aggregate data from LME, CME, SHFE, company disclosures, regulatory filings, OEM technical publications, and proprietary field surveys across 40+ countries.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><i class="fas fa-circle-question"></i>Is my data secure on the platform?</div>
+        <div class="faq-a">All data is encrypted in transit (TLS 1.3) and at rest (AES-256). We are SOC 2 Type II certified and comply with GDPR and Australian Privacy Act requirements. User activity is never sold to third parties.</div>
       </div>
     </div>
-    <div class="footer-copyright">© 2026 SESMine Intelligence Pty Ltd · All rights reserved.</div>
   </div>
-</footer>
 
-<div id="toastContainer"></div>
-<script src="js/config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/main.js"></script>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-copy">© 2026 SESMine Intelligence Platform. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Security</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </footer>
+
+</div>
+<div id="toastWrap"></div>
+
 <script>
 'use strict';
 
-document.getElementById('contactForm').addEventListener('submit', async function(e) {
+let selectedPriority='low';
+
+function selectPriority(val){
+  selectedPriority=val;
+  document.querySelectorAll('.priority-opt').forEach(el=>{
+    el.className='priority-opt';
+    if(el.dataset.val===val) el.classList.add(`selected-${val}`);
+  });
+}
+
+function updateCharCount(){
+  const len=document.getElementById('fMessage').value.length;
+  document.getElementById('charCount').textContent=len;
+}
+
+function setFieldErr(inputId,errId,show){
+  const inp=document.getElementById(inputId);
+  const err=document.getElementById(errId);
+  if(inp) inp.style.borderColor=show?'var(--red)':'';
+  if(err) err.classList.toggle('show',show);
+}
+
+function clearErrors(){
+  ['fName','fLast','fEmail','fSubject','fMessage','fConsent'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.borderColor='';
+  });
+  ['errFName','errFLast','errFEmail','errFSubject','errFMessage','errFConsent'].forEach(id=>{
+    document.getElementById(id)?.classList.remove('show');
+  });
+  document.getElementById('formAlert').classList.remove('show');
+}
+
+document.getElementById('contactForm').addEventListener('submit',async function(e){
   e.preventDefault();
-  const result = SES.Form.validate(this);
-  if (!document.getElementById('contactConsent').checked) {
-    document.getElementById('contactConsentErr').classList.add('show');
+  clearErrors();
+
+  const name    = document.getElementById('fName').value.trim();
+  const last    = document.getElementById('fLast').value.trim();
+  const email   = document.getElementById('fEmail').value.trim();
+  const subject = document.getElementById('fSubject').value;
+  const message = document.getElementById('fMessage').value.trim();
+  const consent = document.getElementById('fConsent').checked;
+
+  let valid=true;
+  if(!name)   { setFieldErr('fName','errFName',true);       valid=false; }
+  if(!last)   { setFieldErr('fLast','errFLast',true);       valid=false; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setFieldErr('fEmail','errFEmail',true); valid=false; }
+  if(!subject){ setFieldErr('fSubject','errFSubject',true); valid=false; }
+  if(message.length<20){ setFieldErr('fMessage','errFMessage',true); valid=false; }
+  if(!consent){ setFieldErr('fConsent','errFConsent',true); valid=false; }
+
+  if(!valid){
+    document.getElementById('formAlertMsg').textContent='Please fill all required fields correctly.';
+    document.getElementById('formAlert').classList.add('show');
     return;
-  } else {
-    document.getElementById('contactConsentErr').classList.remove('show');
   }
-  if (!result.valid) return;
 
-  const btn = document.getElementById('contactSubmitBtn');
+  /* Loading */
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;
   btn.classList.add('loading');
-  btn.disabled = true;
 
-  await new Promise(r => setTimeout(r, 1800));
+  await new Promise(r=>setTimeout(r,1600));
 
-  document.getElementById('contactForm').style.display = 'none';
-  document.getElementById('formSuccess').style.display = 'block';
-  SES.Toast.success('Message sent successfully!');
+  btn.disabled=false;
+  btn.classList.remove('loading');
+
+  /* Generate ticket ref */
+  const ref=`SES-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+  document.getElementById('ticketRef').textContent=`Reference: ${ref}`;
+
+  /* Show success */
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('successState').classList.add('show');
+
+  toast('Message sent successfully!','success');
 });
 
-function resetForm() {
+function resetForm(){
   document.getElementById('contactForm').reset();
-  document.getElementById('contactForm').style.display = 'block';
-  document.getElementById('formSuccess').style.display = 'none';
-  const btn = document.getElementById('contactSubmitBtn');
-  btn.classList.remove('loading');
-  btn.disabled = false;
-  SES.Form.clearErrors(document.getElementById('contactForm'));
+  document.getElementById('charCount').textContent='0';
+  selectPriority('low');
+  clearErrors();
+  document.getElementById('formWrap').style.display='block';
+  document.getElementById('successState').classList.remove('show');
+}
+
+function toast(msg,type='info'){
+  const icons={success:'fa-check-circle',info:'fa-info-circle'};
+  const wrap=document.getElementById('toastWrap');
+  const el=document.createElement('div');
+  el.className=`toast toast-${type}`;
+  el.innerHTML=`<i class="fas ${icons[type]||icons.info}"></i><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity 0.3s ease';el.style.opacity='0';setTimeout(()=>el.remove(),320);},3500);
 }
 </script>
 </body>
