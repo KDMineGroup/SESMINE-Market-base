@@ -3,967 +3,779 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Cost Predictor — SESMine</title>
-  <link rel="stylesheet" href="../assets/css/main.css" />
-  <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <title>AI Predictor — SESMine Intelligence Platform</title>
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .predictor-layout {
-      display: grid;
-      grid-template-columns: 420px 1fr;
-      gap: 24px;
-      align-items: start;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #020810;
+      --bg-card:   rgba(8,18,38,0.96);
+      --bg-hover:  rgba(255,255,255,0.025);
+      --border:    rgba(255,255,255,0.07);
+      --purple:    #A855F7;
+      --purple-dim:rgba(168,85,247,0.1);
+      --cyan:      #00D4FF;
+      --green:     #22C55E;
+      --gold:      #D4AF37;
+      --orange:    #F97316;
+      --red:       #EF4444;
+      --text-100:  #F0F6FF;
+      --text-300:  #D4E0F0;
+      --text-500:  #8BA4BC;
+      --text-700:  #6688A0;
+      --text-900:  #4A6478;
+      --font-body: 'Inter', sans-serif;
+      --font-head: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --sidebar-w: 240px;
     }
-    .input-panel {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      position: sticky;
-      top: 88px;
+    html, body { height:100%; font-family:var(--font-body); color:var(--text-100); background:var(--bg); font-size:14px; }
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:99px; }
+
+    /* Layout */
+    .layout { display:grid; grid-template-columns:var(--sidebar-w) 1fr; min-height:100vh; }
+
+    /* Sidebar */
+    .sidebar { background:rgba(3,8,20,0.98); border-right:1px solid rgba(168,85,247,0.06); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; z-index:50; }
+    .sidebar-logo { padding:18px 16px 14px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:9px; flex-shrink:0; }
+    .sidebar-logo img { height:28px; filter:drop-shadow(0 0 8px rgba(168,85,247,0.25)); }
+    .logo-text { font-family:var(--font-head); font-size:0.88rem; font-weight:800; letter-spacing:0.06em; color:var(--text-100); }
+    .logo-text em { color:var(--cyan); font-style:normal; }
+    .nav { padding:8px; flex:1; }
+    .nav-section { font-size:0.56rem; font-weight:800; text-transform:uppercase; letter-spacing:0.14em; color:var(--text-900); padding:10px 8px 5px; }
+    .nav-item { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; font-size:0.8rem; font-weight:600; color:var(--text-700); text-decoration:none; transition:all 0.18s ease; margin-bottom:1px; border:1px solid transparent; }
+    .nav-item:hover { background:var(--bg-hover); color:var(--text-300); }
+    .nav-item.active { background:var(--purple-dim); color:var(--purple); border-color:rgba(168,85,247,0.12); }
+    .nav-item i { width:15px; text-align:center; font-size:0.78rem; flex-shrink:0; }
+    .sidebar-footer { padding:10px 8px; border-top:1px solid rgba(255,255,255,0.05); flex-shrink:0; }
+    .user-chip { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:9px; background:rgba(255,255,255,0.03); margin-bottom:6px; }
+
+    /* Main */
+    .main { background:var(--bg); min-height:100vh; }
+    .topbar { height:60px; background:rgba(3,8,20,0.96); border-bottom:1px solid rgba(255,255,255,0.05); padding:0 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; backdrop-filter:blur(16px); }
+    .topbar-icon { width:34px; height:34px; border-radius:9px; background:var(--purple-dim); border:1px solid rgba(168,85,247,0.2); display:flex; align-items:center; justify-content:center; color:var(--purple); font-size:0.85rem; }
+    .content { padding:22px; }
+
+    /* Cards */
+    .card { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:20px; }
+    .card-title { font-size:0.84rem; font-weight:700; color:var(--text-100); margin-bottom:3px; }
+    .card-sub   { font-size:0.68rem; color:var(--text-700); margin-bottom:14px; }
+
+    /* Hero */
+    .hero { background:linear-gradient(135deg,rgba(168,85,247,0.08),rgba(37,99,235,0.04)); border:1px solid rgba(168,85,247,0.15); border-radius:18px; padding:28px; margin-bottom:22px; position:relative; overflow:hidden; }
+    .hero::before { content:''; position:absolute; right:-60px; top:-60px; width:280px; height:280px; border-radius:50%; background:radial-gradient(ellipse,rgba(168,85,247,0.08),transparent 65%); pointer-events:none; }
+    .hero::after  { content:''; position:absolute; left:-40px; bottom:-40px; width:200px; height:200px; border-radius:50%; background:radial-gradient(ellipse,rgba(0,212,255,0.05),transparent 65%); pointer-events:none; }
+
+    /* Grid */
+    .grid-2    { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .grid-3    { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+    .grid-6040 { display:grid; grid-template-columns:1.5fr 1fr; gap:16px; }
+    .mb-4 { margin-bottom:16px; }
+    .mb-5 { margin-bottom:20px; }
+
+    /* Form elements */
+    .form-group { margin-bottom:14px; }
+    .form-label { display:block; font-size:0.72rem; font-weight:700; color:var(--text-500); margin-bottom:6px; letter-spacing:0.02em; }
+    .form-input, .form-select {
+      width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1);
+      border-radius:9px; padding:10px 13px; font-family:var(--font-body); font-size:0.84rem;
+      color:var(--text-100); outline:none; transition:border-color 0.18s ease;
     }
-    .input-panel-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border-color);
-      background: rgba(0,0,0,0.15);
-    }
-    .input-panel-body { padding: 24px; }
-    .step-indicator {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      margin-bottom: 28px;
-    }
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-    }
-    .step-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-      flex-shrink: 0;
-      transition: all var(--transition-fast);
-    }
-    .step.active .step-num {
-      background: var(--gradient-gold);
-      color: var(--color-primary);
-      border-color: transparent;
-    }
-    .step.done .step-num {
-      background: var(--color-green);
-      color: white;
-      border-color: transparent;
-    }
-    .step-label { font-size: 0.75rem; color: var(--text-muted); }
-    .step.active .step-label { color: var(--color-accent); font-weight: 600; }
-    .step-line {
-      flex: 1;
-      height: 1px;
-      background: var(--border-color);
-      margin: 0 8px;
-    }
-    .results-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .result-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-    }
-    .result-card.highlight {
-      background: linear-gradient(135deg, rgba(245,166,35,0.08), rgba(59,130,246,0.05));
-      border-color: rgba(245,166,35,0.25);
-    }
-    .result-main-value {
-      font-family: var(--font-display);
-      font-size: 3.5rem;
-      font-weight: 900;
-      color: var(--color-accent);
-      line-height: 1;
-      margin: 12px 0 8px;
-    }
-    .result-range {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-    .confidence-gauge {
-      margin-bottom: 20px;
-    }
-    .confidence-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .confidence-label { font-size: 0.85rem; color: var(--text-secondary); }
-    .confidence-value {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--color-green);
-    }
-    .confidence-bar {
-      height: 10px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .confidence-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--color-green), var(--color-teal));
-      border-radius: 5px;
-      animation: fillBar 1.5s ease-out forwards;
-    }
-    .breakdown-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .breakdown-card {
-      padding: 16px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-    }
-    .breakdown-card-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
-    }
-    .breakdown-card-value {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-weight: 800;
-    }
-    .breakdown-card-pct {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-    .risk-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: var(--radius-sm);
-      margin-bottom: 8px;
-    }
-    .risk-high   { background:rgba(239,68,68,0.08);  border:1px solid rgba(239,68,68,0.2); }
-    .risk-medium { background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.2); }
-    .risk-low    { background:rgba(34,197,94,0.08);  border:1px solid rgba(34,197,94,0.2); }
-    .ai-processing {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 24px;
-      text-align: center;
-      gap: 20px;
-    }
-    .ai-processing.active { display: flex; }
-    .processing-spinner {
-      width: 64px;
-      height: 64px;
-      border: 3px solid rgba(245,166,35,0.2);
-      border-top-color: var(--color-accent);
-      border-radius: 50%;
-      animation: rotateSlow 0.8s linear infinite;
-    }
-    .processing-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 100%;
-      max-width: 320px;
-    }
-    .processing-step {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,0.03);
-      transition: all var(--transition-normal);
-    }
-    .processing-step.active {
-      color: var(--color-accent);
-      background: rgba(245,166,35,0.08);
-      border: 1px solid rgba(245,166,35,0.2);
-    }
-    .processing-step.done {
-      color: var(--color-green);
-      background: rgba(34,197,94,0.06);
-    }
-    .processing-step i { width: 16px; flex-shrink: 0; }
-    @media (max-width: 1024px) {
-      .predictor-layout { grid-template-columns: 1fr; }
-      .input-panel { position: static; }
-    }
+    .form-input:focus, .form-select:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(168,85,247,0.08); }
+    .form-input::placeholder { color:var(--text-900); }
+    .form-select option { background:#0d1b2e; }
+    .form-range { width:100%; accent-color:var(--purple); cursor:pointer; }
+    .range-row { display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+    .range-val { font-family:var(--font-mono); font-size:0.78rem; color:var(--purple); font-weight:700; }
+
+    /* Buttons */
+    .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; font-family:var(--font-body); font-size:0.78rem; font-weight:700; cursor:pointer; border:1px solid var(--border); background:rgba(255,255,255,0.04); color:var(--text-500); text-decoration:none; transition:all 0.18s ease; }
+    .btn:hover { background:rgba(255,255,255,0.07); color:var(--text-300); }
+    .btn-purple { background:linear-gradient(135deg,#A855F7,#7C3AED); border-color:transparent; color:#fff; font-size:0.88rem; padding:11px 22px; border-radius:10px; }
+    .btn-purple:hover { opacity:0.9; transform:translateY(-1px); }
+    .btn-purple:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .btn-sm { padding:5px 10px; font-size:0.72rem; }
+    .btn-full { width:100%; justify-content:center; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .spin { animation:spin 0.8s linear infinite; display:inline-block; }
+
+    /* Result panel */
+    .result-panel { background:linear-gradient(135deg,rgba(168,85,247,0.06),rgba(0,212,255,0.04)); border:1px solid rgba(168,85,247,0.18); border-radius:14px; padding:20px; }
+    .result-metric { text-align:center; padding:14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; }
+    .result-val { font-family:var(--font-head); font-size:1.4rem; font-weight:800; line-height:1; margin-bottom:4px; }
+    .result-lbl { font-size:0.65rem; color:var(--text-700); text-transform:uppercase; letter-spacing:0.08em; }
+
+    /* Confidence bar */
+    .conf-bar { height:6px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; margin-top:6px; }
+    .conf-fill { height:100%; border-radius:99px; transition:width 1.2s cubic-bezier(0.4,0,0.2,1); }
+
+    /* AI typing effect */
+    .ai-text { font-size:0.8rem; color:var(--text-300); line-height:1.7; }
+    .cursor { display:inline-block; width:2px; height:14px; background:var(--purple); animation:blink 1s step-end infinite; vertical-align:middle; margin-left:2px; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* Model card */
+    .model-card { padding:14px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; cursor:pointer; transition:all 0.18s ease; }
+    .model-card:hover { background:rgba(168,85,247,0.05); border-color:rgba(168,85,247,0.15); }
+    .model-card.selected { background:rgba(168,85,247,0.08); border-color:rgba(168,85,247,0.3); }
+
+    /* History table */
+    .hist-table { width:100%; border-collapse:collapse; }
+    .hist-table th { padding:8px 10px; font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-700); border-bottom:1px solid var(--border); text-align:left; }
+    .hist-table td { padding:9px 10px; font-size:0.78rem; border-bottom:1px solid rgba(255,255,255,0.03); vertical-align:middle; }
+    .hist-table tr:last-child td { border-bottom:none; }
+    .hist-table tr:hover td { background:var(--bg-hover); }
+
+    /* Badge */
+    .badge { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:99px; font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; white-space:nowrap; }
+
+    /* Fade */
+    .fade-up { animation:fadeUp 0.4s ease both; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Toast */
+    #toastWrap { position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
+    .toast { padding:11px 16px; border-radius:10px; font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:8px; box-shadow:0 8px 24px rgba(0,0,0,0.4); animation:toastIn 0.3s ease both; max-width:300px; }
+    .toast-success { background:#0d2b1a; border:1px solid rgba(34,197,94,0.3); color:#86EFAC; }
+    .toast-info    { background:#0a1f30; border:1px solid rgba(0,212,255,0.3); color:#67E8F9; }
+    .toast-warn    { background:#2b1a08; border:1px solid rgba(249,115,22,0.3); color:#FED7AA; }
+    @keyframes toastIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+
+    @media(max-width:960px) { .layout{grid-template-columns:1fr} .sidebar{display:none} .grid-2,.grid-3,.grid-6040{grid-template-columns:1fr} }
   </style>
 </head>
-<body class="bg-primary">
+<body>
+<div class="layout">
 
-  <div class="app-layout">
-
-    <!-- Sidebar (reused) -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <a href="../index.html" class="nav-logo">
-          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
-          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
-        </a>
-      </div>
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Overview</div>
-          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
-          <a href="../dashboard/analytics.html" class="sidebar-link"><i class="fas fa-chart-bar"></i> Analytics</a>
-          <a href="../dashboard/esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Products</div>
-          <a href="ai-predictor.html" class="sidebar-link active"><i class="fas fa-brain"></i> AI Predictor</a>
-          <a href="cost-calculator.html" class="sidebar-link"><i class="fas fa-calculator"></i> Cost Calculator</a>
-          <a href="equipment-database.html" class="sidebar-link"><i class="fas fa-database"></i> Equipment DB</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Hubs</div>
-          <a href="../hubs/engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
-          <a href="../hubs/safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
-          <a href="../hubs/sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
-          <a href="../hubs/procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
-          <a href="../hubs/innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
-          <a href="../hubs/economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
-        </div>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="user-avatar">JS</div>
-          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
-        </div>
-      </div>
-    </aside>
-
-    <div class="main-content">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-          <div>
-            <div class="topbar-title">AI Cost Predictor</div>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <span style="font-size:0.8rem; color:var(--color-green); display:flex; align-items:center; gap:6px;">
-            <span style="width:7px;height:7px;border-radius:50%;background:var(--color-green);animation:pulse 2s infinite;"></span>
-            Model v3.2 Active — 94.2% Accuracy
-          </span>
-          <button class="topbar-btn"><i class="fas fa-history"></i></button>
-          <button class="topbar-btn"><i class="fas fa-question-circle"></i></button>
-        </div>
-      </header>
-
-      <main class="page-content">
-
-        <!-- Page Header -->
-        <div style="margin-bottom:28px;">
-          <h1 style="font-size:1.6rem; margin-bottom:6px;">AI Cost Predictor</h1>
-          <p style="color:var(--text-muted); font-size:0.9rem;">
-            Configure your project parameters and let our ML engine generate a precise cost forecast in seconds.
-          </p>
-        </div>
-
-        <div class="predictor-layout">
-
-          <!-- INPUT PANEL -->
-          <div class="input-panel animate-fade-up">
-            <div class="input-panel-header">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <div class="feature-icon icon-blue" style="width:36px;height:36px;font-size:0.9rem;margin:0;">
-                  <i class="fas fa-brain"></i>
-                </div>
-                <div>
-                  <div style="font-weight:700; font-size:0.95rem;">Project Configuration</div>
-                  <div style="font-size:0.75rem; color:var(--text-muted);">Fill all fields for best accuracy</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="input-panel-body">
-              <!-- Step Indicator -->
-              <div class="step-indicator">
-                <div class="step active" id="step1Indicator">
-                  <div class="step-num">1</div>
-                  <div class="step-label">Project</div>
-                </div>
-                <div class="step-line"></div>
-                <div class="step" id="step2Indicator">
-                  <div class="step-num">2</div>
-                  <div class="step-label">Variables</div>
-                </div>
-                <div class="step-line"></div>
-                <div class="step" id="step3Indicator">
-                  <div class="step-num">3</div>
-                  <div class="step-label">Results</div>
-                </div>
-              </div>
-
-              <form id="predictorForm">
-                <!-- Step 1: Project Info -->
-                <div id="formStep1">
-                  <div class="form-group">
-                    <label class="form-label">Project Name</label>
-                    <input type="text" class="form-input" id="projectName" placeholder="e.g. Alpha Gold Mine Phase 2" required />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Mine Type</label>
-                    <select class="form-select" id="mineType" required>
-                      <option value="">Select mine type...</option>
-                      <option value="open-pit">Open-pit</option>
-                      <option value="underground">Underground</option>
-                      <option value="placer">Placer</option>
-                      <option value="strip">Strip Mining</option>
-                      <option value="mountaintop">Mountaintop Removal</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Primary Commodity</label>
-                    <select class="form-select" id="commodity" required>
-                      <option value="">Select commodity...</option>
-                      <option value="gold">Gold</option>
-                      <option value="copper">Copper</option>
-                      <option value="iron">Iron Ore</option>
-                      <option value="lithium">Lithium</option>
-                      <option value="nickel">Nickel</option>
-                      <option value="coal">Coal</option>
-                      <option value="silver">Silver</option>
-                      <option value="zinc">Zinc</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                    <div class="form-group" style="margin-bottom:0;">
-                      <label class="form-label">Country</label>
-                      <select class="form-select" id="country" required>
-                        <option value="">Country...</option>
-                        <option>Australia</option>
-                        <option>Canada</option>
-                        <option>Chile</option>
-                        <option>South Africa</option>
-                        <option>USA</option>
-                        <option>China</option>
-                        <option>Brazil</option>
-                        <option>Russia</option>
-                        <option>Peru</option>
-                        <option>Other</option>
-                      </select>
-                    </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                      <label class="form-label">Duration (months)</label>
-                      <input type="number" class="form-input" id="duration" placeholder="36" min="1" max="360" required />
-                    </div>
-                  </div>
-                  <div class="form-group" style="margin-top:16px;">
-                    <label class="form-label">
-                      Daily Throughput (tonnes/day)
-                      <span style="float:right; color:var(--color-accent); font-weight:700;" id="throughputDisplay">5,000 t/d</span>
-                    </label>
-                    <input type="range" class="range-slider" id="throughput"
-                      min="100" max="100000" step="100" value="5000"
-                      data-range-display="throughput" data-suffix=" t/d" />
-                  </div>
-                  <button type="button" class="btn btn-primary btn-full" onclick="goToStep(2)">
-                    Next: Configure Variables <i class="fas fa-arrow-right"></i>
-                  </button>
-                </div>
-
-                <!-- Step 2: Variables -->
-                <div id="formStep2" style="display:none;">
-                  <div class="form-group">
-                    <label class="form-label">
-                      Fuel Price ($/litre)
-                      <span style="float:right; color:var(--color-accent); font-weight:700;" id="fuelDisplay">$1.80/L</span>
-                    </label>
-                    <input type="range" class="range-slider" id="fuelPrice"
-                      min="0.5" max="5" step="0.05" value="1.80" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">
-                      Labor Cost Index
-                      <span style="float:right; color:var(--color-accent); font-weight:700;" id="laborDisplay">Medium</span>
-                    </label>
-                    <input type="range" class="range-slider" id="laborCost"
-                      min="1" max="3" step="1" value="2" />
-                    <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-muted); margin-top:4px;">
-                      <span>Low</span><span>Medium</span><span>High</span>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Market Volatility</label>
-                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-                      <label style="cursor:pointer;">
-                        <input type="radio" name="volatility" value="low" style="display:none;" />
-                        <div class="volatility-btn" data-val="low"
-                          style="padding:10px; text-align:center; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.8rem; transition:all 0.2s; cursor:pointer;">
-                          <i class="fas fa-water" style="display:block; margin-bottom:4px; color:var(--color-green);"></i>
-                          Low
-                        </div>
-                      </label>
-                      <label style="cursor:pointer;">
-                        <input type="radio" name="volatility" value="medium" checked style="display:none;" />
-                        <div class="volatility-btn active" data-val="medium"
-                          style="padding:10px; text-align:center; border:1px solid var(--color-accent); border-radius:var(--radius-sm); font-size:0.8rem; background:rgba(245,166,35,0.1); cursor:pointer; color:var(--color-accent);">
-                          <i class="fas fa-wind" style="display:block; margin-bottom:4px;"></i>
-                          Medium
-                        </div>
-                      </label>
-                      <label style="cursor:pointer;">
-                        <input type="radio" name="volatility" value="high" style="display:none;" />
-                        <div class="volatility-btn" data-val="high"
-                          style="padding:10px; text-align:center; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.8rem; transition:all 0.2s; cursor:pointer;">
-                          <i class="fas fa-bolt" style="display:block; margin-bottom:4px; color:var(--color-red);"></i>
-                          High
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">
-                      Contingency Reserve (%)
-                      <span style="float:right; color:var(--color-accent); font-weight:700;" id="contingencyDisplay">10%</span>
-                    </label>
-                    <input type="range" class="range-slider" id="contingency"
-                      min="5" max="30" step="1" value="10" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Infrastructure Access</label>
-                    <select class="form-select" id="infrastructure">
-                      <option value="excellent">Excellent — Paved roads, grid power</option>
-                      <option value="good" selected>Good — Gravel roads, reliable power</option>
-                      <option value="fair">Fair — Seasonal access, partial power</option>
-                      <option value="poor">Poor — Remote, off-grid</option>
-                    </select>
-                  </div>
-                  <div style="display:flex; gap:10px;">
-                    <button type="button" class="btn btn-ghost btn-full" onclick="goToStep(1)">
-                      <i class="fas fa-arrow-left"></i> Back
-                    </button>
-                    <button type="button" class="btn btn-primary btn-full" onclick="runPrediction()">
-                      <i class="fas fa-brain"></i> Run AI Prediction
-                    </button>
-                  </div>
-                </div>
-              </form>
-
-              <!-- Processing State -->
-              <div class="ai-processing" id="aiProcessing">
-                <div class="processing-spinner"></div>
-                <div>
-                  <div style="font-weight:700; font-size:1rem; margin-bottom:4px;">Analyzing your project...</div>
-                  <div style="font-size:0.82rem; color:var(--text-muted);">This takes about 3 seconds</div>
-                </div>
-                <div class="processing-steps" id="processingSteps">
-                  <div class="processing-step active" id="pStep1">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    Analyzing 10,247 equipment profiles...
-                  </div>
-                  <div class="processing-step" id="pStep2">
-                    <i class="fas fa-circle"></i>
-                    Cross-referencing 500+ similar projects...
-                  </div>
-                  <div class="processing-step" id="pStep3">
-                    <i class="fas fa-circle"></i>
-                    Applying market volatility models...
-                  </div>
-                  <div class="processing-step" id="pStep4">
-                    <i class="fas fa-circle"></i>
-                    Generating confidence intervals...
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- RESULTS PANEL -->
-          <div class="results-panel" id="resultsPanel">
-
-            <!-- Empty State -->
-            <div id="emptyState" style="
-              background:rgba(255,255,255,0.02);
-              border:2px dashed var(--border-color);
-              border-radius:var(--radius-lg);
-              padding:80px 40px;
-              text-align:center;
-              display:flex;
-              flex-direction:column;
-              align-items:center;
-              gap:16px;">
-              <div style="width:72px;height:72px;background:rgba(245,166,35,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--color-accent);">
-                <i class="fas fa-brain"></i>
-              </div>
-              <h3 style="font-size:1.2rem;">Ready to predict</h3>
-              <p style="color:var(--text-muted); max-width:320px; font-size:0.9rem; line-height:1.6;">
-                Configure your project parameters on the left and click
-                <strong style="color:var(--color-accent);">Run AI Prediction</strong>
-                to generate a detailed cost forecast.
-              </p>
-              <div style="display:flex; gap:24px; margin-top:8px;">
-                <div style="text-align:center;">
-                  <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--color-accent);">94.2%</div>
-                  <div style="font-size:0.75rem;color:var(--text-muted);">Accuracy Rate</div>
-                </div>
-                <div style="text-align:center;">
-                  <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--color-blue);">500+</div>
-                  <div style="font-size:0.75rem;color:var(--text-muted);">Training Projects</div>
-                </div>
-                <div style="text-align:center;">
-                  <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--color-green);">±5.8%</div>
-                  <div style="font-size:0.75rem;color:var(--text-muted);">Avg. Error Margin</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Results (hidden until prediction runs) -->
-            <div id="predictionResults" style="display:none; display:flex; flex-direction:column; gap:20px;">
-
-              <!-- Main Result -->
-              <div class="result-card highlight animate-fade-up">
-                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-                  <div>
-                    <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em;">
-                      Predicted Total CAPEX
-                    </div>
-                    <div class="result-main-value" id="resultCapex">$42.3M</div>
-                    <div class="result-range" id="resultRange">Range: $39.8M – $45.1M</div>
-                  </div>
-                  <div style="display:flex; gap:10px;">
-                    <button class="btn btn-ghost" onclick="window.SESMine.exportToPDF('predictionResults','ai-prediction.pdf')">
-                      <i class="fas fa-file-pdf"></i> PDF
-                    </button>
-                    <button class="btn btn-primary" onclick="saveScenario()">
-                      <i class="fas fa-save"></i> Save Scenario
-                    </button>
-                  </div>
-                </div>
-
-                <div class="confidence-gauge">
-                  <div class="confidence-header">
-                    <span class="confidence-label">AI Confidence Score</span>
-                    <span class="confidence-value" id="resultConfidence">94.2%</span>
-                  </div>
-                  <div class="confidence-bar">
-                    <div class="confidence-fill" id="confidenceFill" style="width:94.2%;"></div>
-                  </div>
-                </div>
-
-                <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                  <div style="padding:8px 14px; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); border-radius:100px; font-size:0.78rem; color:var(--color-green);">
-                    <i class="fas fa-check-circle"></i> High confidence prediction
-                  </div>
-                  <div style="padding:8px 14px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); border-radius:100px; font-size:0.78rem; color:var(--color-blue);">
-                    <i class="fas fa-database"></i> Based on 847 similar projects
-                  </div>
-                </div>
-              </div>
-
-              <!-- CAPEX Breakdown -->
-              <div class="result-card animate-fade-up delay-1">
-                <div style="font-weight:700; font-size:1rem; margin-bottom:16px;">
-                  <i class="fas fa-chart-pie" style="color:var(--color-accent); margin-right:8px;"></i>
-                  CAPEX Breakdown
-                </div>
-                <div class="breakdown-grid">
-                  <div class="breakdown-card">
-                    <div class="breakdown-card-label">Equipment</div>
-                    <div class="breakdown-card-value" style="color:var(--color-accent);" id="brkEquipment">$19.0M</div>
-                    <div class="breakdown-card-pct">45% of total</div>
-                    <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:8px;overflow:hidden;">
-                      <div style="width:45%;height:100%;background:var(--color-accent);border-radius:2px;"></div>
-                    </div>
-                  </div>
-                  <div class="breakdown-card">
-                    <div class="breakdown-card-label">Labor</div>
-                    <div class="breakdown-card-value" style="color:var(--color-blue);" id="brkLabor">$11.8M</div>
-                    <div class="breakdown-card-pct">28% of total</div>
-                    <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:8px;overflow:hidden;">
-                      <div style="width:28%;height:100%;background:var(--color-blue);border-radius:2px;"></div>
-                    </div>
-                  </div>
-                  <div class="breakdown-card">
-                    <div class="breakdown-card-label">Infrastructure</div>
-                    <div class="breakdown-card-value" style="color:var(--color-green);" id="brkInfra">$7.6M</div>
-                    <div class="breakdown-card-pct">18% of total</div>
-                    <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:8px;overflow:hidden;">
-                      <div style="width:18%;height:100%;background:var(--color-green);border-radius:2px;"></div>
-                    </div>
-                  </div>
-                  <div class="breakdown-card">
-                    <div class="breakdown-card-label">Contingency</div>
-                    <div class="breakdown-card-value" style="color:var(--color-purple);" id="brkContingency">$3.8M</div>
-                    <div class="breakdown-card-pct">9% of total</div>
-                    <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:8px;overflow:hidden;">
-                      <div style="width:9%;height:100%;background:var(--color-purple);border-radius:2px;"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- OPEX + ROI -->
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                <div class="result-card animate-fade-up delay-2">
-                  <div style="font-weight:700; font-size:1rem; margin-bottom:16px;">
-                    <i class="fas fa-sync-alt" style="color:var(--color-blue); margin-right:8px;"></i>
-                    Annual OPEX
-                  </div>
-                  <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--color-blue);margin-bottom:8px;" id="resultOpex">$8.4M/yr</div>
-                  <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
-                    Estimated annual operating expenditure including fuel, labor, maintenance, and overhead.
-                  </div>
-                </div>
-                <div class="result-card animate-fade-up delay-2">
-                  <div style="font-weight:700; font-size:1rem; margin-bottom:16px;">
-                    <i class="fas fa-chart-line" style="color:var(--color-green); margin-right:8px;"></i>
-                    ROI Projection
-                  </div>
-                  <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--color-green);margin-bottom:8px;" id="resultRoi">18 months</div>
-                  <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
-                    Estimated payback period based on current commodity prices and projected throughput.
-                  </div>
-                </div>
-              </div>
-
-              <!-- Risk Factors -->
-              <div class="result-card animate-fade-up delay-3">
-                <div style="font-weight:700; font-size:1rem; margin-bottom:16px;">
-                  <i class="fas fa-shield-alt" style="color:var(--color-orange); margin-right:8px;"></i>
-                  Risk Assessment
-                </div>
-                <div class="risk-item risk-medium">
-                  <i class="fas fa-exclamation-triangle" style="color:var(--color-accent); flex-shrink:0; margin-top:2px;"></i>
-                  <div>
-                    <strong style="font-size:0.85rem;">Commodity Price Volatility — Medium</strong>
-                    <p style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">
-                      Current market conditions show moderate price fluctuation. Consider                      hedging strategies for copper and fuel inputs over the project duration.
-                    </p>
-                  </div>
-                </div>
-                <div class="risk-item risk-low">
-                  <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0; margin-top:2px;"></i>
-                  <div>
-                    <strong style="font-size:0.85rem;">Regulatory Compliance — Low Risk</strong>
-                    <p style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">
-                      Selected jurisdiction has stable mining regulations. Environmental permits typically approved within 6–9 months.
-                    </p>
-                  </div>
-                </div>
-                <div class="risk-item risk-low">
-                  <i class="fas fa-check-circle" style="color:var(--color-green); flex-shrink:0; margin-top:2px;"></i>
-                  <div>
-                    <strong style="font-size:0.85rem;">Labor Availability — Low Risk</strong>
-                    <p style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">
-                      Region has adequate skilled mining workforce. Recommend early contractor engagement 6 months prior to mobilization.
-                    </p>
-                  </div>
-                </div>
-                <div class="risk-item risk-high">
-                  <i class="fas fa-times-circle" style="color:var(--color-red); flex-shrink:0; margin-top:2px;"></i>
-                  <div>
-                    <strong style="font-size:0.85rem;">Infrastructure Access — High Risk</strong>
-                    <p style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">
-                      Remote site location adds 12–18% to logistics costs. Road construction budget of $2.1M recommended before equipment mobilization.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Scenario Comparison -->
-              <div class="result-card animate-fade-up delay-4">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
-                  <div style="font-weight:700; font-size:1rem;">
-                    <i class="fas fa-code-branch" style="color:var(--color-purple); margin-right:8px;"></i>
-                    Scenario Comparison
-                  </div>
-                  <button class="btn btn-ghost" style="padding:6px 12px; font-size:0.8rem;" onclick="addScenario()">
-                    <i class="fas fa-plus"></i> Add Scenario
-                  </button>
-                </div>
-                <div style="overflow-x:auto;">
-                  <table class="data-table" id="scenarioTable">
-                    <thead>
-                      <tr>
-                        <th>Scenario</th>
-                        <th>CAPEX</th>
-                        <th>OPEX/yr</th>
-                        <th>ROI</th>
-                        <th>Confidence</th>
-                        <th>Volatility</th>
-                      </tr>
-                    </thead>
-                    <tbody id="scenarioBody">
-                      <tr>
-                        <td><strong style="color:var(--color-accent);">Base Case ★</strong></td>
-                        <td style="color:var(--color-accent); font-weight:600;">$42.3M</td>
-                        <td>$8.4M</td>
-                        <td style="color:var(--color-green);">18 months</td>
-                        <td><span class="status-badge status-active">94.2%</span></td>
-                        <td>Medium</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-      </main>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" alt="SESMine" />
+      <span class="logo-text">SES<em>MINE</em></span>
     </div>
-  </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <a href="../dashboard/main-dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="../dashboard/analytics.html"      class="nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+      <a href="../dashboard/esg-dashboard.html"  class="nav-item"><i class="fas fa-leaf"></i> ESG Dashboard</a>
+      <div class="nav-section">Intelligence Hubs</div>
+      <a href="../hubs/economics-hub.html"      class="nav-item"><i class="fas fa-chart-bar"  style="color:#00D4FF;"></i> Economics</a>
+      <a href="../hubs/engineering-hub.html"    class="nav-item"><i class="fas fa-cogs"       style="color:#F97316;"></i> Engineering</a>
+      <a href="../hubs/procurement-hub.html"    class="nav-item"><i class="fas fa-boxes"      style="color:#A855F7;"></i> Procurement</a>
+      <a href="../hubs/safety-hub.html"         class="nav-item"><i class="fas fa-hard-hat"   style="color:#EF4444;"></i> Safety</a>
+      <a href="../hubs/sustainability-hub.html" class="nav-item"><i class="fas fa-seedling"   style="color:#22C55E;"></i> Sustainability</a>
+      <a href="../hubs/innovation-hub.html"     class="nav-item"><i class="fas fa-lightbulb"  style="color:#D4AF37;"></i> Innovation</a>
+      <div class="nav-section">Tools</div>
+      <a href="ai-predictor.html"        class="nav-item active"><i class="fas fa-brain"      style="color:var(--purple);"></i> AI Predictor</a>
+      <a href="cost-calculator.html"     class="nav-item"><i class="fas fa-calculator"        style="color:var(--cyan);"></i> Cost Calculator</a>
+      <a href="equipment-database.html"  class="nav-item"><i class="fas fa-database"          style="color:var(--orange);"></i> Equipment DB</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div id="sbAvatar" style="width:30px;height:30px;border-radius:50%;background:rgba(168,85,247,0.15);border:1.5px solid rgba(168,85,247,0.25);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:var(--purple);flex-shrink:0;">U</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.76rem;font-weight:700;color:var(--text-100);" id="sbName">User</div>
+          <div style="font-size:0.62rem;color:var(--text-700);" id="sbRole">Member</div>
+        </div>
+      </div>
+      <a href="../dashboard/main-dashboard.html" class="nav-item" style="margin-bottom:2px;"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      <button onclick="doLogout()" class="nav-item" style="width:100%;background:none;border:none;cursor:pointer;font-family:var(--font-body);text-align:left;color:var(--text-700);">
+        <i class="fas fa-sign-out-alt" style="color:var(--red);"></i> Sign Out
+      </button>
+    </div>
+  </aside>
 
-  <script src="../js/main.js"></script>
-  <script>
-    'use strict';
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="topbar-icon"><i class="fas fa-brain"></i></div>
+        <div>
+          <div style="font-family:var(--font-head);font-size:0.92rem;font-weight:800;">AI Predictor</div>
+          <div style="font-size:0.65rem;color:var(--text-700);">ML-powered commodity forecasting · Price prediction · Market signals</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:0.65rem;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:5px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--purple);animation:blink 2s infinite;"></span>
+          MODEL ACTIVE
+        </span>
+        <button class="btn btn-sm" onclick="clearHistory()"><i class="fas fa-trash"></i> Clear History</button>
+        <div id="tbAvatar" style="width:34px;height:34px;border-radius:50%;background:rgba(168,85,247,0.15);border:2px solid rgba(168,85,247,0.2);display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:0.72rem;font-weight:800;cursor:pointer;">U</div>
+      </div>
+    </div>
 
-    let currentStep = 1;
-    let scenarioCount = 1;
+    <div class="content">
 
-    document.addEventListener('DOMContentLoaded', () => {
-      window.SESMine.initSidebar();
-      initSliders();
-      initVolatilityBtns();
-    });
+      <!-- Hero -->
+      <div class="hero fade-up">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+          <div style="flex:1;min-width:260px;">
+            <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:var(--purple);margin-bottom:8px;">
+              <i class="fas fa-brain" style="margin-right:5px;"></i>AI Predictor v3.2
+            </div>
+            <h1 style="font-family:var(--font-head);font-size:1.3rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:8px;line-height:1.3;">
+              ML-Powered Commodity<br/>Price Intelligence
+            </h1>
+            <p style="font-size:0.82rem;color:var(--text-500);line-height:1.7;max-width:480px;">
+              Trained on 20+ years of commodity price data, macroeconomic indicators, supply/demand
+              fundamentals, and geopolitical signals. Generate 1–24 month price forecasts with
+              confidence intervals in seconds.
+            </p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;min-width:260px;">
+            <div style="padding:12px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.15);border-radius:12px;">
+              <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--purple);">94.2%</div>
+              <div style="font-size:0.62rem;color:var(--text-700);margin-top:2px;">Directional accuracy</div>
+            </div>
+            <div style="padding:12px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.12);border-radius:12px;">
+              <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--cyan);">47</div>
+              <div style="font-size:0.62rem;color:var(--text-700);margin-top:2px;">Commodities</div>
+            </div>
+            <div style="padding:12px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.12);border-radius:12px;">
+              <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--green);">2.1s</div>
+              <div style="font-size:0.62rem;color:var(--text-700);margin-top:2px;">Avg inference</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    function initSliders() {
-      const throughput   = document.getElementById('throughput');
-      const throughputDp = document.getElementById('throughputDisplay');
-      const fuel         = document.getElementById('fuelPrice');
-      const fuelDp       = document.getElementById('fuelDisplay');
-      const labor        = document.getElementById('laborCost');
-      const laborDp      = document.getElementById('laborDisplay');
-      const contingency  = document.getElementById('contingency');
-      const contingencyDp= document.getElementById('contingencyDisplay');
+      <!-- Model selector + Predictor form -->
+      <div class="grid-6040 mb-5">
 
-      const laborLabels = { 1:'Low', 2:'Medium', 3:'High' };
+        <!-- Left: form -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
 
-      if (throughput && throughputDp) {
-        throughput.addEventListener('input', () => {
-          throughputDp.textContent = parseInt(throughput.value).toLocaleString() + ' t/d';
-        });
+          <!-- Model selector -->
+          <div class="card fade-up">
+            <div class="card-title">Select Prediction Model</div>
+            <div class="card-sub">Choose the AI model best suited to your use case</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="modelCards">
+              <!-- rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Input form -->
+          <div class="card fade-up">
+            <div class="card-title">Prediction Parameters</div>
+            <div class="card-sub">Configure inputs for your forecast run</div>
+
+            <div class="form-group">
+              <label class="form-label">Commodity</label>
+              <select class="form-select" id="pCommodity">
+                <option value="iron_ore">Iron Ore (USD/t)</option>
+                <option value="copper">Copper (USD/t)</option>
+                <option value="gold">Gold (USD/oz)</option>
+                <option value="lithium">Lithium (USD/t)</option>
+                <option value="nickel">Nickel (USD/t)</option>
+                <option value="silver">Silver (USD/oz)</option>
+                <option value="zinc">Zinc (USD/t)</option>
+                <option value="coal">Thermal Coal (USD/t)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Forecast Horizon</label>
+              <select class="form-select" id="pHorizon">
+                <option value="1">1 Month</option>
+                <option value="3">3 Months</option>
+                <option value="6" selected>6 Months</option>
+                <option value="12">12 Months</option>
+                <option value="24">24 Months</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                USD Strength Index
+                <span style="float:right;" class="range-val" id="usdVal">102</span>
+              </label>
+              <input type="range" class="form-range" id="pUSD" min="85" max="120" value="102"
+                     oninput="document.getElementById('usdVal').textContent=this.value" />
+              <div class="range-row">
+                <span style="font-size:0.62rem;color:var(--text-900);">Weak (85)</span>
+                <span style="font-size:0.62rem;color:var(--text-900);">Strong (120)</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                China PMI
+                <span style="float:right;" class="range-val" id="pmiVal">51.2</span>
+              </label>
+              <input type="range" class="form-range" id="pPMI" min="44" max="58" value="51.2" step="0.1"
+                     oninput="document.getElementById('pmiVal').textContent=parseFloat(this.value).toFixed(1)" />
+              <div class="range-row">
+                <span style="font-size:0.62rem;color:var(--text-900);">Contraction (44)</span>
+                <span style="font-size:0.62rem;color:var(--text-900);">Expansion (58)</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Global Supply Pressure
+                <span style="float:right;" class="range-val" id="supplyVal">Medium</span>
+              </label>
+              <select class="form-select" id="pSupply" onchange="updateSupplyLabel()">
+                <option value="low">Low — Surplus conditions</option>
+                <option value="medium" selected>Medium — Balanced market</option>
+                <option value="high">High — Supply deficit</option>
+                <option value="critical">Critical — Severe shortage</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Geopolitical Risk Score
+                <span style="float:right;" class="range-val" id="geoVal">42</span>
+              </label>
+              <input type="range" class="form-range" id="pGeo" min="0" max="100" value="42"
+                     oninput="document.getElementById('geoVal').textContent=this.value" />
+              <div class="range-row">
+                <span style="font-size:0.62rem;color:var(--text-900);">Low Risk (0)</span>
+                <span style="font-size:0.62rem;color:var(--text-900);">High Risk (100)</span>
+              </div>
+            </div>
+
+            <button class="btn btn-purple btn-full" id="runBtn" onclick="runPrediction()">
+              <i class="fas fa-brain"></i>
+              <span id="runLabel">Run AI Prediction</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: results -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <!-- Result panel -->
+          <div class="card fade-up" id="resultCard">
+            <div class="card-title">Prediction Output</div>
+            <div class="card-sub" id="resultSubtitle">Configure parameters and run a prediction</div>
+
+            <div id="resultEmpty" style="text-align:center;padding:40px 20px;">
+              <i class="fas fa-brain" style="font-size:2.5rem;color:rgba(168,85,247,0.2);display:block;margin-bottom:12px;"></i>
+              <div style="font-size:0.82rem;color:var(--text-700);">No prediction yet</div>
+              <div style="font-size:0.72rem;color:var(--text-900);margin-top:4px;">Set parameters and click Run</div>
+            </div>
+
+            <div id="resultOutput" style="display:none;">
+              <div class="grid-2 mb-4" style="gap:10px;">
+                <div class="result-metric">
+                  <div class="result-val" id="rPrice" style="color:var(--purple);">—</div>
+                  <div class="result-lbl">Predicted Price</div>
+                </div>
+                <div class="result-metric">
+                  <div class="result-val" id="rChange" style="color:var(--green);">—</div>
+                  <div class="result-lbl">Expected Change</div>
+                </div>
+                <div class="result-metric">
+                  <div class="result-val" id="rLow" style="color:var(--text-500);">—</div>
+                  <div class="result-lbl">Bear Case</div>
+                </div>
+                <div class="result-metric">
+                  <div class="result-val" id="rHigh" style="color:var(--text-500);">—</div>
+                  <div class="result-lbl">Bull Case</div>
+                </div>
+              </div>
+
+              <!-- Confidence -->
+              <div style="margin-bottom:14px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                  <span style="font-size:0.72rem;color:var(--text-700);">Model Confidence</span>
+                  <span style="font-size:0.72rem;font-weight:800;color:var(--purple);" id="rConf">—</span>
+                </div>
+                <div class="conf-bar"><div class="conf-fill" id="rConfBar" style="width:0%;background:var(--purple);"></div></div>
+              </div>
+
+              <!-- Signal -->
+              <div style="padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:14px;">
+                <div style="font-size:0.68rem;font-weight:700;color:var(--text-700);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">AI Signal</div>
+                <div class="ai-text" id="rSignal">—</div>
+              </div>
+
+              <!-- Key drivers -->
+              <div style="font-size:0.68rem;font-weight:700;color:var(--text-700);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Key Drivers</div>
+              <div id="rDrivers"></div>
+            </div>
+          </div>
+
+          <!-- Forecast chart -->
+          <div class="card fade-up" id="chartCard" style="display:none;">
+            <div class="card-title">Price Forecast Chart</div>
+            <div class="card-sub" id="chartSubtitle">Predicted price path with confidence band</div>
+            <div style="height:200px;"><canvas id="forecastChart"></canvas></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Prediction history -->
+      <div class="card fade-up">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div>
+            <div class="card-title">Prediction History</div>
+            <div class="card-sub" style="margin-bottom:0;">Your recent AI forecast runs this session</div>
+          </div>
+          <button class="btn btn-sm" onclick="exportHistory()"><i class="fas fa-download"></i> Export</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="hist-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th><th>Commodity</th><th>Horizon</th>
+                <th>Current</th><th>Predicted</th><th>Change</th>
+                <th>Confidence</th><th>Signal</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr><td colspan="8" style="text-align:center;padding:28px;color:var(--text-700);">
+                <i class="fas fa-history" style="font-size:1.4rem;display:block;margin-bottom:8px;opacity:0.3;"></i>
+                No predictions yet this session
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+<div id="toastWrap"></div>
+
+<script>
+'use strict';
+
+/* ── Auth ── */
+const SESSION_KEY = 'sesmine_session_v5';
+const ADMIN_KEY   = 'sesmine_admin_session_v5';
+function getSession() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SESSION_KEY)||'null');
+    if (s && s.expires > Date.now()) return s;
+    const a = JSON.parse(localStorage.getItem(ADMIN_KEY)||'null');
+    if (a && a.expires > Date.now()) return a;
+  } catch(e) {}
+  return null;
+}
+const currentUser = getSession();
+if (!currentUser) window.location.replace('../auth/login.html');
+
+/* ── Populate user ── */
+function populateUser() {
+  const name     = currentUser.name || `${currentUser.firstName||''} ${currentUser.lastName||''}`.trim() || 'User';
+  const role     = currentUser.role || 'member';
+  const initials = name.split(' ').map(n=>n[0]||'').join('').slice(0,2).toUpperCase()||'U';
+  document.getElementById('sbName').textContent = name;
+  document.getElementById('sbRole').textContent = role.charAt(0).toUpperCase()+role.slice(1);
+  document.getElementById('sbAvatar').textContent = initials;
+  document.getElementById('tbAvatar').textContent = initials;
+}
+
+/* ── Models ── */
+const MODELS = [
+  { id:'lstm',      name:'LSTM Neural Net',    desc:'Deep learning · best for long-horizon',  icon:'fa-network-wired', color:'#A855F7', accuracy:'94.2%' },
+  { id:'xgboost',   name:'XGBoost Ensemble',   desc:'Tree-based · fast & interpretable',       icon:'fa-tree',          color:'#22C55E', accuracy:'91.8%' },
+  { id:'transformer',name:'Transformer',       desc:'Attention-based · captures macro shifts', icon:'fa-bolt',          color:'#00D4FF', accuracy:'93.1%' },
+  { id:'hybrid',    name:'Hybrid Ensemble',    desc:'Combines all models · highest accuracy',  icon:'fa-layer-group',   color:'#D4AF37', accuracy:'96.4%' }
+];
+let selectedModel = 'hybrid';
+
+function renderModelCards() {
+  const el = document.getElementById('modelCards');
+  if (!el) return;
+  el.innerHTML = MODELS.map(m => `
+    <div class="model-card ${m.id===selectedModel?'selected':''}" onclick="selectModel('${m.id}')">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
+        <div style="width:28px;height:28px;border-radius:7px;background:rgba(${hexRgb(m.color)},0.12);border:1px solid rgba(${hexRgb(m.color)},0.2);display:flex;align-items:center;justify-content:center;color:${m.color};font-size:0.72rem;flex-shrink:0;">
+          <i class="fas ${m.icon}"></i>
+        </div>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text-100);">${m.name}</div>
+        ${m.id===selectedModel?`<i class="fas fa-check-circle" style="color:var(--purple);margin-left:auto;font-size:0.75rem;"></i>`:''}
+      </div>
+      <div style="font-size:0.68rem;color:var(--text-700);margin-bottom:5px;">${m.desc}</div>
+      <div style="font-size:0.65rem;color:${m.color};font-weight:700;">Accuracy: ${m.accuracy}</div>
+    </div>
+  `).join('');
+}
+
+function selectModel(id) {
+  selectedModel = id;
+  renderModelCards();
+}
+
+/* ── Commodity data ── */
+const COMM_DATA = {
+  iron_ore:  { name:'Iron Ore',  price:108.40, unit:'USD/t',  symbol:'Fe' },
+  copper:    { name:'Copper',    price:9840,   unit:'USD/t',  symbol:'Cu' },
+  gold:      { name:'Gold',      price:3240,   unit:'USD/oz', symbol:'Au' },
+  lithium:   { name:'Lithium',   price:14200,  unit:'USD/t',  symbol:'Li' },
+  nickel:    { name:'Nickel',    price:18600,  unit:'USD/t',  symbol:'Ni' },
+  silver:    { name:'Silver',    price:32.40,  unit:'USD/oz', symbol:'Ag' },
+  zinc:      { name:'Zinc',      price:2840,   unit:'USD/t',  symbol:'Zn' },
+  coal:      { name:'Thermal Coal',price:142,  unit:'USD/t',  symbol:'C'  }
+};
+
+/* ── Prediction history ── */
+let history = [];
+let forecastChartInst = null;
+
+/* ── Run prediction ── */
+async function runPrediction() {
+  const btn   = document.getElementById('runBtn');
+  const label = document.getElementById('runLabel');
+  btn.disabled = true;
+  label.innerHTML = '<i class="fas fa-circle-notch spin"></i> Running model...';
+
+  await sleep(1800 + Math.random() * 800);
+
+  const commId  = document.getElementById('pCommodity').value;
+  const horizon = parseInt(document.getElementById('pHorizon').value);
+  const usd     = parseInt(document.getElementById('pUSD').value);
+  const pmi     = parseFloat(document.getElementById('pPMI').value);
+  const supply  = document.getElementById('pSupply').value;
+  const geo     = parseInt(document.getElementById('pGeo').value);
+  const comm    = COMM_DATA[commId];
+  const model   = MODELS.find(m => m.id === selectedModel);
+
+  /* Simulate prediction logic */
+  const supplyMult = { low:-0.06, medium:0, high:0.08, critical:0.16 }[supply];
+  const usdEffect  = (102 - usd) * 0.003;
+  const pmiEffect  = (pmi - 50) * 0.012;
+  const geoEffect  = geo * 0.0008;
+  const horizonMult = 1 + (horizon / 12) * 0.04;
+
+  const rawChange  = (supplyMult + usdEffect + pmiEffect + geoEffect) * horizonMult;
+  const changeAdj  = rawChange + (Math.random() - 0.48) * 0.04;
+  const predicted  = +(comm.price * (1 + changeAdj)).toFixed(2);
+  const bear       = +(predicted * (1 - 0.08 - Math.random()*0.04)).toFixed(2);
+  const bull       = +(predicted * (1 + 0.08 + Math.random()*0.04)).toFixed(2);
+  const confidence = Math.min(98, Math.max(72, 88 + (Math.random()-0.5)*12));
+  const pctChange  = +((predicted - comm.price) / comm.price * 100).toFixed(1);
+  const direction  = pctChange >= 2 ? 'bullish' : pctChange <= -2 ? 'bearish' : 'neutral';
+
+  const signals = {
+    bullish: [
+      `${model.name} detects a high-probability upside breakout for ${comm.name} over the next ${horizon} month${horizon>1?'s':''}. Supply constraints combined with improving Chinese PMI (${pmi.toFixed(1)}) are the primary drivers. USD weakness at ${usd} provides additional tailwind. Recommend overweight positioning.`,
+      `Strong buy signal identified. ${comm.name} fundamentals remain robust — deficit conditions are tightening the market. Geopolitical risk score of ${geo} adds a risk premium. Model projects ${pctChange}% upside with ${confidence.toFixed(0)}% confidence.`
+    ],
+    bearish: [
+      `${model.name} signals caution for ${comm.name}. Supply surplus conditions and USD strength at ${usd} are creating headwinds. PMI reading of ${pmi.toFixed(1)} suggests softening demand. Recommend reducing exposure over the ${horizon}-month horizon.`,
+      `Downside risk elevated. ${comm.name} faces pressure from inventory builds and macro headwinds. Model projects ${Math.abs(pctChange)}% decline. Consider hedging strategies.`
+    ],
+    neutral: [
+      `${model.name} projects range-bound trading for ${comm.name} over ${horizon} month${horizon>1?'s':''}. Macro inputs are broadly balanced — PMI at ${pmi.toFixed(1)} and USD at ${usd} offset each other. Monitor for catalyst events that could break the range.`,
+      `Neutral outlook. ${comm.name} is fairly valued at current levels. Supply/demand balance is tight but not stressed. Hold positions and reassess in 30 days.`
+    ]
+  };
+
+  const drivers = [
+    { label:'Supply/Demand Balance', impact: supply==='high'||supply==='critical'?'Bullish':'Bearish', weight: 35 },
+    { label:'USD Index',             impact: usd < 100 ? 'Bullish' : 'Bearish',                        weight: 25 },
+    { label:'China PMI',             impact: pmi > 50 ? 'Bullish' : 'Bearish',                         weight: 22 },
+    { label:'Geopolitical Risk',     impact: geo > 50 ? 'Bullish' : 'Neutral',                         weight: 18 }
+  ];
+
+  /* Render results */
+  document.getElementById('resultEmpty').style.display  = 'none';
+  document.getElementById('resultOutput').style.display = 'block';
+  document.getElementById('chartCard').style.display    = 'block';
+  document.getElementById('resultSubtitle').textContent = `${comm.name} · ${horizon}-month forecast · ${model.name}`;
+  document.getElementById('chartSubtitle').textContent  = `${comm.name} · ${horizon}-month forecast path`;
+
+  document.getElementById('rPrice').textContent  = `$${predicted.toLocaleString()}`;
+  document.getElementById('rChange').textContent = `${pctChange >= 0 ? '+' : ''}${pctChange}%`;
+  document.getElementById('rChange').style.color = pctChange >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('rLow').textContent    = `$${bear.toLocaleString()}`;
+  document.getElementById('rHigh').textContent   = `$${bull.toLocaleString()}`;
+  document.getElementById('rConf').textContent   = `${confidence.toFixed(0)}%`;
+
+  /* Animate confidence bar */
+  setTimeout(() => {
+    document.getElementById('rConfBar').style.width = `${confidence}%`;
+    document.getElementById('rConfBar').style.background =
+      confidence >= 90 ? 'var(--green)' : confidence >= 80 ? 'var(--purple)' : 'var(--gold)';
+  }, 100);
+
+  /* AI signal text */
+  const signalArr = signals[direction];
+  const signalText = signalArr[Math.floor(Math.random() * signalArr.length)];
+  typeText('rSignal', signalText);
+
+  /* Drivers */
+  const driverColors = { Bullish:'#4ADE80', Bearish:'#FCA5A5', Neutral:'#D4AF37' };
+  document.getElementById('rDrivers').innerHTML = drivers.map(d => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
+      <div style="font-size:0.72rem;color:var(--text-500);flex:1;">${d.label}</div>
+      <span class="badge" style="background:rgba(${hexRgb(driverColors[d.impact]||'#D4AF37')},0.1);border:1px solid rgba(${hexRgb(driverColors[d.impact]||'#D4AF37')},0.2);color:${driverColors[d.impact]||'#D4AF37'};">${d.impact}</span>
+      <div style="font-size:0.65rem;color:var(--text-900);width:28px;text-align:right;">${d.weight}%</div>
+    </div>
+  `).join('');
+
+  /* Forecast chart */
+  renderForecastChart(comm, horizon, predicted, bear, bull);
+
+  /* Add to history */
+  history.unshift({
+    ts:         new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'}),
+    commodity:  comm.name,
+    horizon:    `${horizon}mo`,
+    current:    `$${comm.price.toLocaleString()}`,
+    predicted:  `$${predicted.toLocaleString()}`,
+    change:     `${pctChange>=0?'+':''}${pctChange}%`,
+    confidence: `${confidence.toFixed(0)}%`,
+    direction
+  });
+  renderHistory();
+
+  btn.disabled = false;
+  label.innerHTML = '<i class="fas fa-brain"></i> Run AI Prediction';
+  toast(`Prediction complete: ${comm.name} ${pctChange>=0?'+':''}${pctChange}% over ${horizon} months`, 'success');
+}
+
+/* ── Forecast chart ── */
+function renderForecastChart(comm, horizon, predicted, bear, bull) {
+  const labels = ['Now'];
+  for (let i = 1; i <= horizon; i++) {
+    const d = new Date();
+    d.setMonth(d.getMonth() + i);
+    labels.push(d.toLocaleDateString('en-AU',{month:'short',year:'2-digit'}));
+  }
+
+  /* Generate smooth path */
+  const mainPath = [comm.price];
+  const bearPath = [comm.price];
+  const bullPath = [comm.price];
+  for (let i = 1; i <= horizon; i++) {
+    const t = i / horizon;
+    mainPath.push(+(comm.price + (predicted - comm.price) * t + (Math.random()-0.5)*comm.price*0.01).toFixed(2));
+    bearPath.push(+(comm.price + (bear - comm.price) * t).toFixed(2));
+    bullPath.push(+(comm.price + (bull - comm.price) * t).toFixed(2));
+  }
+  mainPath[mainPath.length-1] = predicted;
+  bearPath[bearPath.length-1] = bear;
+  bullPath[bullPath.length-1] = bull;
+
+  if (forecastChartInst) forecastChartInst.destroy();
+  const ctx = document.getElementById('forecastChart').getContext('2d');
+  forecastChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label:'Bull Case',  data:bullPath, borderColor:'rgba(34,197,94,0.4)',  borderWidth:1, borderDash:[4,3], backgroundColor:'rgba(34,197,94,0.04)', fill:false, tension:0.4, pointRadius:0 },
+        { label:'Predicted',  data:mainPath, borderColor:'#A855F7', borderWidth:2.5, backgroundColor:'rgba(168,85,247,0.08)', fill:false, tension:0.4, pointRadius:3, pointBackgroundColor:'#A855F7', pointBorderColor:'#020810', pointBorderWidth:1.5 },
+        { label:'Bear Case',  data:bearPath, borderColor:'rgba(239,68,68,0.4)',  borderWidth:1, borderDash:[4,3], backgroundColor:'rgba(239,68,68,0.04)', fill:false, tension:0.4, pointRadius:0 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: {
+        legend: { display:true, position:'top', labels:{ color:'#8BA4BC', font:{size:10}, boxWidth:10, padding:10 } },
+        tooltip: { backgroundColor:'#0d1b2e', borderColor:'rgba(168,85,247,0.3)', borderWidth:1, titleColor:'#8BA4BC', bodyColor:'#F0F6FF' }
+      },
+      scales: {
+        x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#6688A0',font:{size:9}} },
+        y: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#6688A0',font:{size:10},maxTicksLimit:5,callback:v=>`$${v.toLocaleString()}`} }
       }
-      if (fuel && fuelDp) {
-        fuel.addEventListener('input', () => {
-          fuelDp.textContent = '$' + parseFloat(fuel.value).toFixed(2) + '/L';
-        });
-      }
-      if (labor && laborDp) {
-        labor.addEventListener('input', () => {
-          laborDp.textContent = laborLabels[labor.value] || 'Medium';
-        });
-      }
-      if (contingency && contingencyDp) {
-        contingency.addEventListener('input', () => {
-          contingencyDp.textContent = contingency.value + '%';
-        });
-      }
     }
+  });
+}
 
-    function initVolatilityBtns() {
-      const btns = document.querySelectorAll('.volatility-btn');
-      btns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          btns.forEach(b => {
-            b.style.borderColor = 'var(--border-color)';
-            b.style.background  = 'transparent';
-            b.style.color       = 'var(--text-secondary)';
-          });
-          btn.style.borderColor = 'var(--color-accent)';
-          btn.style.background  = 'rgba(245,166,35,0.1)';
-          btn.style.color       = 'var(--color-accent)';
-          const radio = btn.previousElementSibling;
-          if (radio) radio.checked = true;
-        });
-      });
-    }
+/* ── History ── */
+function renderHistory() {
+  const tbody = document.getElementById('historyBody');
+  if (!tbody) return;
+  if (!history.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--text-700);"><i class="fas fa-history" style="font-size:1.4rem;display:block;margin-bottom:8px;opacity:0.3;"></i>No predictions yet</td></tr>`;
+    return;
+  }
+  const dirCfg = {
+    bullish:{ color:'#4ADE80', bg:'rgba(34,197,94,0.1)',  border:'rgba(34,197,94,0.2)',  icon:'fa-arrow-trend-up' },
+    bearish:{ color:'#FCA5A5', bg:'rgba(239,68,68,0.1)',  border:'rgba(239,68,68,0.2)',  icon:'fa-arrow-trend-down' },
+    neutral:{ color:'#D4AF37', bg:'rgba(212,175,55,0.1)', border:'rgba(212,175,55,0.2)', icon:'fa-minus' }
+  };
+  tbody.innerHTML = history.map(h => {
+    const dc = dirCfg[h.direction];
+    const up = h.change.startsWith('+');
+    return `
+      <tr>
+        <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-700);">${h.ts}</td>
+        <td style="font-weight:700;color:var(--text-100);">${h.commodity}</td>
+        <td style="color:var(--text-500);">${h.horizon}</td>
+        <td style="font-family:var(--font-mono);color:var(--text-300);">${h.current}</td>
+        <td style="font-family:var(--font-mono);font-weight:700;color:var(--purple);">${h.predicted}</td>
+        <td style="font-family:var(--font-mono);font-weight:700;color:${up?'#4ADE80':'#FCA5A5'};">${h.change}</td>
+        <td style="font-family:var(--font-mono);color:var(--text-300);">${h.confidence}</td>
+        <td><span class="badge" style="background:${dc.bg};border:1px solid ${dc.border};color:${dc.color};"><i class="fas ${dc.icon}" style="font-size:0.55rem;"></i> ${h.direction}</span></td>
+      </tr>
+    `;
+  }).join('');
+}
 
-    function goToStep(step) {
-      // Validate step 1 before proceeding
-      if (step === 2) {
-        const required = ['projectName','mineType','commodity','country','duration'];
-        let valid = true;
-        required.forEach(id => {
-          const el = document.getElementById(id);
-          if (!el || !el.value.trim()) {
-            valid = false;
-            if (el) {
-              el.style.borderColor = 'var(--color-red)';
-              el.addEventListener('input', () => el.style.borderColor = '', { once: true });
-            }
-          }
-        });
-        if (!valid) {
-          window.SESMine.showToast('Please fill in all required fields', 'error');
-          return;
-        }
-      }
+function clearHistory() {
+  history = [];
+  renderHistory();
+  toast('Prediction history cleared.', 'info');
+}
 
-      currentStep = step;
+function exportHistory() {
+  if (!history.length) { toast('No history to export.', 'warn'); return; }
+  const headers = ['Timestamp','Commodity','Horizon','Current','Predicted','Change','Confidence','Signal'];
+  const rows    = history.map(h => [h.ts,h.commodity,h.horizon,h.current,h.predicted,h.change,h.confidence,h.direction].join(','));
+  const csv     = [headers.join(','),...rows].join('\n');
+  const blob    = new Blob([csv],{type:'text/csv'});
+  const url     = URL.createObjectURL(blob);
+  const a       = document.createElement('a');
+  a.href=url; a.download=`sesmine-ai-predictions-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  toast('History exported.','success');
+}
 
-      document.getElementById('formStep1').style.display = step === 1 ? 'block' : 'none';
-      document.getElementById('formStep2').style.display = step === 2 ? 'block' : 'none';
+/* ── Helpers ── */
+function updateSupplyLabel() {
+  const map = { low:'Low', medium:'Medium', high:'High', critical:'Critical' };
+  document.getElementById('supplyVal').textContent = map[document.getElementById('pSupply').value]||'Medium';
+}
 
-      // Update step indicators
-      ['step1Indicator','step2Indicator','step3Indicator'].forEach((id, i) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.className = 'step';
-        if (i + 1 < step) el.classList.add('done');
-        if (i + 1 === step) el.classList.add('active');
-      });
-    }
+async function typeText(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '<span class="cursor"></span>';
+  for (let i = 0; i < text.length; i++) {
+    el.innerHTML = text.slice(0,i+1) + '<span class="cursor"></span>';
+    await sleep(18);
+  }
+  el.innerHTML = text;
+}
 
-    async function runPrediction() {
-      // Hide form, show processing
-      document.getElementById('formStep2').style.display = 'none';
-      document.getElementById('aiProcessing').classList.add('active');
-      document.getElementById('emptyState') && (document.getElementById('emptyState').style.display = 'none');
+function hexRgb(hex) {
+  const c = hex.replace('#','');
+  return `${parseInt(c.slice(0,2),16)},${parseInt(c.slice(2,4),16)},${parseInt(c.slice(4,6),16)}`;
+}
+function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
+function toast(msg,type='info') {
+  const icons={success:'fa-check-circle',info:'fa-info-circle',warn:'fa-exclamation-triangle'};
+  const wrap=document.getElementById('toastWrap');
+  const el=document.createElement('div');
+  el.className=`toast toast-${type}`;
+  el.innerHTML=`<i class="fas ${icons[type]||icons.info}"></i><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity 0.3s ease';el.style.opacity='0';setTimeout(()=>el.remove(),320);},3200);
+}
+function doLogout() {
+  try{localStorage.removeItem(SESSION_KEY);localStorage.removeItem(ADMIN_KEY);}catch(e){}
+  window.location.replace('../auth/login.html');
+}
 
-      // Animate processing steps
-      const steps = ['pStep1','pStep2','pStep3','pStep4'];
-      for (let i = 0; i < steps.length; i++) {
-        await delay(700);
-        const el = document.getElementById(steps[i]);
-        if (el) {
-          el.classList.remove('active');
-          el.classList.add('done');
-          el.querySelector('i').className = 'fas fa-check-circle';
-        }
-        if (steps[i + 1]) {
-          const next = document.getElementById(steps[i + 1]);
-          if (next) {
-            next.classList.add('active');
-            next.querySelector('i').className = 'fas fa-spinner fa-spin';
-          }
-        }
-      }
-
-      await delay(600);
-
-      // Calculate results based on inputs
-      const results = calculatePrediction();
-      displayResults(results);
-
-      // Hide processing, show results
-      document.getElementById('aiProcessing').classList.remove('active');
-      document.getElementById('predictionResults').style.display = 'flex';
-
-      // Update step 3 indicator
-      goToStep(3);
-      window.SESMine.showToast('AI prediction complete — 94.2% confidence', 'success');
-    }
-
-    function calculatePrediction() {
-      const throughput   = parseFloat(document.getElementById('throughput').value)   || 5000;
-      const duration     = parseFloat(document.getElementById('duration').value)     || 36;
-      const fuel         = parseFloat(document.getElementById('fuelPrice').value)    || 1.8;
-      const contingency  = parseFloat(document.getElementById('contingency').value)  || 10;
-      const mineType     = document.getElementById('mineType').value;
-      const infra        = document.getElementById('infrastructure').value;
-      const volatility   = document.querySelector('input[name="volatility"]:checked')?.value || 'medium';
-
-      // Base cost per tonne/day (simplified ML simulation)
-      const baseRates = { 'open-pit': 4200, 'underground': 8500, 'placer': 2100, 'strip': 3800, 'mountaintop': 5200 };
-      const infraMult = { 'excellent': 1.0, 'good': 1.08, 'fair': 1.18, 'poor': 1.32 };
-      const volMult   = { 'low': 0.95, 'medium': 1.0, 'high': 1.12 };
-      const fuelMult  = 1 + (fuel - 1.5) * 0.04;
-
-      const baseRate   = baseRates[mineType] || 4200;
-      const baseCAPEX  = (throughput * baseRate * (duration / 36) * infraMult[infra] * volMult[volatility] * fuelMult) / 1_000_000;
-      const contAmt    = baseCAPEX * (contingency / 100);
-      const totalCAPEX = baseCAPEX + contAmt;
-
-      const equipment  = totalCAPEX * 0.45;
-      const labor      = totalCAPEX * 0.28;
-      const infraAmt   = totalCAPEX * 0.18;
-      const opex       = totalCAPEX * 0.20;
-      const roi        = Math.round(totalCAPEX / (opex * 1.4) * 12);
-      const confidence = Math.max(78, Math.min(97, 94.2 - (volatility === 'high' ? 4 : 0) + (throughput > 10000 ? -2 : 1)));
-      const rangeMin   = totalCAPEX * 0.94;
-      const rangeMax   = totalCAPEX * 1.065;
-
-      return { totalCAPEX, equipment, labor, infraAmt, contAmt, opex, roi, confidence, rangeMin, rangeMax };
-    }
-
-    function displayResults(r) {
-      const fmt = (v) => '$' + (v >= 1000 ? (v/1000).toFixed(1) + 'B' : v.toFixed(1) + 'M');
-
-      document.getElementById('resultCapex').textContent     = fmt(r.totalCAPEX);
-      document.getElementById('resultRange').textContent     = `Range: ${fmt(r.rangeMin)} – ${fmt(r.rangeMax)}`;
-      document.getElementById('resultConfidence').textContent= r.confidence.toFixed(1) + '%';
-      document.getElementById('confidenceFill').style.width  = r.confidence + '%';
-      document.getElementById('brkEquipment').textContent    = fmt(r.equipment);
-      document.getElementById('brkLabor').textContent        = fmt(r.labor);
-      document.getElementById('brkInfra').textContent        = fmt(r.infraAmt);
-      document.getElementById('brkContingency').textContent  = fmt(r.contAmt);
-      document.getElementById('resultOpex').textContent      = fmt(r.opex) + '/yr';
-      document.getElementById('resultRoi').textContent       = r.roi + ' months';
-    }
-
-    function saveScenario() {
-      const results = calculatePrediction();
-      const fmt = (v) => '$' + v.toFixed(1) + 'M';
-      const volatility = document.querySelector('input[name="volatility"]:checked')?.value || 'medium';
-      scenarioCount++;
-
-      const tbody = document.getElementById('scenarioBody');
-      const row   = document.createElement('tr');
-      row.innerHTML = `
-        <td><strong>Scenario ${scenarioCount}</strong></td>
-        <td style="color:var(--color-accent);font-weight:600;">${fmt(results.totalCAPEX)}</td>
-        <td>${fmt(results.opex)}</td>
-        <td style="color:var(--color-green);">${results.roi} months</td>
-        <td><span class="status-badge status-active">${results.confidence.toFixed(1)}%</span></td>
-        <td style="text-transform:capitalize;">${volatility}</td>
-      `;
-      tbody.appendChild(row);
-      window.SESMine.showToast(`Scenario ${scenarioCount} saved`, 'success');
-    }
-
-    function addScenario() {
-      goToStep(1);
-      document.getElementById('formStep1').style.display = 'block';
-      document.getElementById('formStep2').style.display = 'none';
-      document.getElementById('aiProcessing').classList.remove('active');
-      // Reset processing steps
-      ['pStep1','pStep2','pStep3','pStep4'].forEach((id, i) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.className = 'processing-step' + (i === 0 ? ' active' : '');
-        el.querySelector('i').className = i === 0 ? 'fas fa-spinner fa-spin' : 'fas fa-circle';
-      });
-      window.SESMine.showToast('Configure a new scenario', 'info');
-    }
-
-    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
-  </script>
+document.addEventListener('DOMContentLoaded',()=>{
+  populateUser();
+  renderModelCards();
+});
+</script>
 </body>
 </html>
-
