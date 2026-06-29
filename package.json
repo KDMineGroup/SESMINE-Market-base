@@ -1,0 +1,19 @@
+{
+  "name": "sesmine-market-base",
+  "version": "1.0.0",
+  "description": "SESMine Intelligence - Mining Intelligence Platform",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Static HTML site - no build required'",
+    "dev": "npx http-server -p 3000"
+  },
+  "keywords": ["mining", "intelligence", "analytics"],
+  "author": "SESMINE",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
