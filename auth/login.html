@@ -207,9 +207,6 @@
       <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop&facepad=2"
            style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(0,212,255,0.2);" />
       <div>
-        <div style="font-size:0.82rem;font-weight:700;color:#F0F6FF;">James Whitfield</div>
-        <div style="font-size:0.7rem;color:#6688A0;">Chief Engineer · Rio Tinto</div>
-      </div>
     </div>
   </div>
 </div>
@@ -329,18 +326,8 @@
       </a>
     </form>
 
-    <!-- Divider -->
-    <div style="display:flex;align-items:center;gap:12px;margin:20px 0;">
-      <div style="flex:1;height:1px;background:var(--border-default);"></div>
-      <span style="font-size:0.72rem;color:#4A6478;font-weight:600;">DEMO ACCOUNTS</span>
-      <div style="flex:1;height:1px;background:var(--border-default);"></div>
-    </div>
-
-    <!-- Demo accounts -->
-    <div id="demoAccounts"></div>
 
   </div>
-</div>
 
 <!-- Forgot Password Modal -->
 <div class="forgot-modal" id="forgotModal">
@@ -402,48 +389,10 @@ let lockTimer  = null;
   if (user) window.location.href = '../dashboard/main-dashboard.html';
 })();
 
-/* ── Render demo accounts ── */
-function renderDemoAccounts() {
-  const el    = document.getElementById('demoAccounts');
-  const users = SESAuth.getAllUsers().filter(u => u.approved).slice(0, 4);
-  if (!el || !users.length) return;
 
-  el.innerHTML = users.map(u => {
-    const colors = ['#2563EB','#7C3AED','#DC2626','#059669'];
-    const color  = colors[users.indexOf(u) % colors.length];
-    const role   = SESAuth.getRoleInfo(u.role);
-    return `
-      <div class="demo-account" onclick="fillDemo('${u.email}')">
-        <div class="demo-account-avatar" style="background:${color};">
-          ${u.firstName[0]}${u.lastName[0]}
-        </div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:0.82rem;font-weight:700;color:#F0F6FF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-            ${u.firstName} ${u.lastName}
-          </div>
-          <div style="font-size:0.7rem;color:#6688A0;">${u.company} · ${role.label}</div>
-        </div>
-        <span style="
-          font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:99px;
-          background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);
-          color:#00D4FF;white-space:nowrap;
-        ">Fill</span>
-      </div>
-    `;
-  }).join('');
-
-  el.innerHTML += `
-    <div style="font-size:0.7rem;color:#4A6478;text-align:center;margin-top:8px;">
-      Demo password: <code style="color:#8BA4BC;background:rgba(255,255,255,0.05);padding:1px 6px;border-radius:4px;">Demo@2026</code>
-    </div>
-  `;
 }
 
-function fillDemo(email) {
-  document.getElementById('loginEmail').value    = email;
-  document.getElementById('loginPassword').value = 'Demo@2026';
-  clearErrors();
-}
+
 
 /* ── Form submit ── */
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
