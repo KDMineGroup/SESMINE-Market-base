@@ -1,658 +1,819 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Equipment Database — SESMine</title>
-  <link rel="stylesheet" href="../assets/css/main.css" />
-  <link rel="stylesheet" href="../assets/css/animations.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Equipment Database — SESMine Intelligence Platform</title>
+  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .equip-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      transition: all var(--transition-normal);
-      cursor: pointer;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#020810;--bg-card:rgba(8,18,38,0.96);--bg-hover:rgba(255,255,255,0.025);
+      --border:rgba(255,255,255,0.07);--orange:#F97316;--orange-dim:rgba(249,115,22,0.1);
+      --cyan:#00D4FF;--gold:#D4AF37;--green:#22C55E;--red:#EF4444;--purple:#A855F7;
+      --text-100:#F0F6FF;--text-300:#D4E0F0;--text-500:#8BA4BC;--text-700:#6688A0;--text-900:#4A6478;
+      --font-body:'Inter',sans-serif;--font-head:'Space Grotesk',sans-serif;--font-mono:'JetBrains Mono',monospace;
+      --sidebar-w:240px;
     }
-    .equip-card:hover {
-      border-color: rgba(245,166,35,0.3);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
-    }
-    .equip-card-img {
-      height: 140px;
-      background: linear-gradient(135deg, rgba(245,166,35,0.08), rgba(59,130,246,0.05));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      border-bottom: 1px solid var(--border-color);
-      position: relative;
-    }
-    .equip-card-body { padding: 16px; }
-    .equip-card-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
-    .equip-card-maker { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px; }
-    .equip-card-specs { display: flex; flex-direction: column; gap: 4px; }
-    .equip-spec-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; }
-    .equip-spec-label { color: var(--text-muted); }
-    .equip-spec-val   { font-weight: 600; color: var(--text-secondary); }
-    .equip-card-footer {
-      padding: 12px 16px;
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .equip-price { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: var(--color-accent); }
-    .compare-bar {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(15,23,42,0.97);
-      border-top: 1px solid var(--border-color);
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      z-index: 500;
-      transform: translateY(100%);
-      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-      backdrop-filter: blur(12px);
-    }
-    .compare-bar.active { transform: translateY(0); }
-    .compare-slot {
-      width: 140px;
-      height: 48px;
-      border: 2px dashed var(--border-color);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      flex-shrink: 0;
-    }
-    .compare-slot.filled {
-      border-style: solid;
-      border-color: var(--color-accent);
-      background: rgba(245,166,35,0.08);
-      color: var(--color-accent);
-      font-weight: 600;
-    }
-    .view-toggle { display: flex; gap: 4px; }
-    .view-btn {
-      width: 34px; height: 34px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
-      background: transparent;
-      color: var(--text-muted);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 0.85rem;
-      transition: all var(--transition-fast);
-    }
-    .view-btn.active {
-      background: rgba(245,166,35,0.12);
-      border-color: rgba(245,166,35,0.3);
-      color: var(--color-accent);
-    }
-    /* Detail Modal */
-    .spec-table { width: 100%; }
-    .spec-table tr td { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.875rem; }
-    .spec-table tr:last-child td { border-bottom: none; }
-    .spec-table td:first-child { color: var(--text-muted); width: 50%; }
-    .spec-table td:last-child  { font-weight: 600; color: var(--text-primary); }
+    html,body{height:100%;font-family:var(--font-body);color:var(--text-100);background:var(--bg);font-size:14px;}
+    ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:99px}
+    .layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh}
+    .sidebar{background:rgba(3,8,20,0.98);border-right:1px solid rgba(249,115,22,0.06);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:50}
+    .sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:9px;flex-shrink:0}
+    .sidebar-logo img{height:28px;filter:drop-shadow(0 0 8px rgba(249,115,22,0.2))}
+    .logo-text{font-family:var(--font-head);font-size:0.88rem;font-weight:800;letter-spacing:0.06em;color:var(--text-100)}
+    .logo-text em{color:var(--cyan);font-style:normal}
+    .nav{padding:8px;flex:1}
+    .nav-section{font-size:0.56rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-900);padding:10px 8px 5px}
+    .nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:0.8rem;font-weight:600;color:var(--text-700);text-decoration:none;transition:all 0.18s ease;margin-bottom:1px;border:1px solid transparent}
+    .nav-item:hover{background:var(--bg-hover);color:var(--text-300)}
+    .nav-item.active{background:var(--orange-dim);color:var(--orange);border-color:rgba(249,115,22,0.12)}
+    .nav-item i{width:15px;text-align:center;font-size:0.78rem;flex-shrink:0}
+    .sidebar-footer{padding:10px 8px;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0}
+    .user-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,0.03);margin-bottom:6px}
+    .main{background:var(--bg);min-height:100vh}
+    .topbar{height:60px;background:rgba(3,8,20,0.96);border-bottom:1px solid rgba(255,255,255,0.05);padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;backdrop-filter:blur(16px)}
+    .topbar-icon{width:34px;height:34px;border-radius:9px;background:var(--orange-dim);border:1px solid rgba(249,115,22,0.2);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:0.85rem}
+    .content{padding:22px}
+    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px}
+    .card-title{font-size:0.84rem;font-weight:700;color:var(--text-100);margin-bottom:3px}
+    .card-sub{font-size:0.68rem;color:var(--text-700);margin-bottom:14px}
+    .hero{background:linear-gradient(135deg,rgba(249,115,22,0.07),rgba(239,68,68,0.04));border:1px solid rgba(249,115,22,0.14);border-radius:18px;padding:28px;margin-bottom:22px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(ellipse,rgba(249,115,22,0.07),transparent 65%);pointer-events:none}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .mb-4{margin-bottom:16px}.mb-5{margin-bottom:20px}
+    /* Filter bar */
+    .filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+    .search-wrap{position:relative;display:flex;align-items:center;flex:1;min-width:200px}
+    .search-wrap i{position:absolute;left:10px;color:var(--text-900);font-size:0.75rem;pointer-events:none}
+    .search-input{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:9px;padding:8px 12px 8px 30px;font-family:var(--font-body);font-size:0.8rem;color:var(--text-300);outline:none;transition:border-color 0.18s ease}
+    .search-input:focus{border-color:var(--orange)}
+    .search-input::placeholder{color:var(--text-900)}
+    .filter-select{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:9px;padding:8px 12px;font-family:var(--font-body);font-size:0.78rem;color:var(--text-300);outline:none;cursor:pointer;transition:border-color 0.18s ease}
+    .filter-select:focus{border-color:var(--orange)}
+    .filter-select option{background:#0d1b2e}
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-family:var(--font-body);font-size:0.78rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text-500);text-decoration:none;transition:all 0.18s ease}
+    .btn:hover{background:rgba(255,255,255,0.07);color:var(--text-300)}
+    .btn-orange{background:linear-gradient(135deg,#F97316,#EA580C);border-color:transparent;color:#fff;font-weight:800}
+    .btn-orange:hover{opacity:0.9;transform:translateY(-1px)}
+    .btn-sm{padding:5px 10px;font-size:0.72rem}
+    /* Data table */
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{padding:9px 12px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-700);border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;cursor:pointer;user-select:none;transition:color 0.18s ease}
+    .data-table th:hover{color:var(--text-300)}
+    .data-table th.sorted{color:var(--orange)}
+    .data-table td{padding:10px 12px;font-size:0.78rem;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle}
+    .data-table tr:last-child td{border-bottom:none}
+    .data-table tr:hover td{background:var(--bg-hover);cursor:pointer}
+    /* Badge */
+    .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap}
+    /* Stat card */
+    .stat-card{padding:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;text-align:center}
+    .stat-val{font-family:var(--font-head);font-size:1.2rem;font-weight:800;line-height:1;margin-bottom:4px}
+    .stat-lbl{font-size:0.62rem;color:var(--text-700);text-transform:uppercase;letter-spacing:0.08em}
+    /* Modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.25s ease}
+    .modal-overlay.open{opacity:1;pointer-events:all}
+    .modal{background:rgba(8,18,38,0.98);border:1px solid rgba(249,115,22,0.2);border-radius:20px;width:100%;max-width:680px;max-height:85vh;overflow-y:auto;padding:28px;position:relative;transform:translateY(20px);transition:transform 0.25s ease}
+    .modal-overlay.open .modal{transform:translateY(0)}
+    .modal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.06);border:none;border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-500);transition:all 0.18s ease}
+    .modal-close:hover{background:rgba(255,255,255,0.1);color:var(--text-100)}
+    /* Spec grid */
+    .spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+    .spec-item{padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:9px}
+    .spec-label{font-size:0.62rem;color:var(--text-700);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+    .spec-val{font-family:var(--font-mono);font-size:0.84rem;font-weight:700;color:var(--text-100)}
+    /* Compare panel */
+    .compare-bar{position:fixed;bottom:0;left:var(--sidebar-w);right:0;background:rgba(8,18,38,0.98);border-top:1px solid rgba(249,115,22,0.2);padding:12px 24px;display:flex;align-items:center;gap:12px;z-index:200;transform:translateY(100%);transition:transform 0.3s ease}
+    .compare-bar.show{transform:translateY(0)}
+    /* Fade */
+    .fade-up{animation:fadeUp 0.4s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    /* Toast */
+    #toastWrap{position:fixed;bottom:80px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+    .toast{padding:11px 16px;border-radius:10px;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:toastIn 0.3s ease both;max-width:300px}
+    .toast-success{background:#0d2b1a;border:1px solid rgba(34,197,94,0.3);color:#86EFAC}
+    .toast-info{background:#0a1f30;border:1px solid rgba(0,212,255,0.3);color:#67E8F9}
+    .toast-warn{background:#2b1a08;border:1px solid rgba(249,115,22,0.3);color:#FED7AA}
+    @keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+    @media(max-width:960px){.layout{grid-template-columns:1fr}.sidebar{display:none}.compare-bar{left:0}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
   </style>
 </head>
-<body class="bg-primary">
-  <div class="app-layout">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <a href="../index.html" class="nav-logo">
-          <div class="logo-icon"><i class="fas fa-mountain"></i></div>
-          <span class="logo-text">SES<span class="logo-accent">MINE</span></span>
-        </a>
-      </div>
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Overview</div>
-          <a href="../dashboard/main-dashboard.html" class="sidebar-link"><i class="fas fa-th-large"></i> Dashboard</a>
-          <a href="../dashboard/analytics.html" class="sidebar-link"><i class="fas fa-chart-bar"></i> Analytics</a>
-          <a href="../dashboard/esg-dashboard.html" class="sidebar-link"><i class="fas fa-leaf"></i> ESG Dashboard</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Products</div>
-          <a href="ai-predictor.html" class="sidebar-link"><i class="fas fa-brain"></i> AI Predictor</a>
-          <a href="cost-calculator.html" class="sidebar-link"><i class="fas fa-calculator"></i> Cost Calculator</a>
-          <a href="equipment-database.html" class="sidebar-link active"><i class="fas fa-database"></i> Equipment DB</a>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-section-label">Hubs</div>
-          <a href="../hubs/engineering-hub.html" class="sidebar-link"><i class="fas fa-drafting-compass"></i> Engineering</a>
-          <a href="../hubs/safety-hub.html" class="sidebar-link"><i class="fas fa-hard-hat"></i> Safety</a>
-          <a href="../hubs/sustainability-hub.html" class="sidebar-link"><i class="fas fa-seedling"></i> Sustainability</a>
-          <a href="../hubs/procurement-hub.html" class="sidebar-link"><i class="fas fa-truck"></i> Procurement</a>
-          <a href="../hubs/innovation-hub.html" class="sidebar-link"><i class="fas fa-lightbulb"></i> Innovation</a>
-          <a href="../hubs/economics-hub.html" class="sidebar-link"><i class="fas fa-chart-line"></i> Economics</a>
-        </div>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="user          -avatar">JS</div>
-          <div class="user-info"><strong>John Smith</strong><span>Professional Plan</span></div>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" alt="SESMine" />
+      <span class="logo-text">SES<em>MINE</em></span>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <a href="../dashboard/main-dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="../dashboard/analytics.html"      class="nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+      <a href="../dashboard/esg-dashboard.html"  class="nav-item"><i class="fas fa-leaf"></i> ESG Dashboard</a>
+      <div class="nav-section">Intelligence Hubs</div>
+      <a href="../hubs/economics-hub.html"      class="nav-item"><i class="fas fa-chart-bar"  style="color:#00D4FF;"></i> Economics</a>
+      <a href="../hubs/engineering-hub.html"    class="nav-item"><i class="fas fa-cogs"       style="color:#F97316;"></i> Engineering</a>
+      <a href="../hubs/procurement-hub.html"    class="nav-item"><i class="fas fa-boxes"      style="color:#A855F7;"></i> Procurement</a>
+      <a href="../hubs/safety-hub.html"         class="nav-item"><i class="fas fa-hard-hat"   style="color:#EF4444;"></i> Safety</a>
+      <a href="../hubs/sustainability-hub.html" class="nav-item"><i class="fas fa-seedling"   style="color:#22C55E;"></i> Sustainability</a>
+      <a href="../hubs/innovation-hub.html"     class="nav-item"><i class="fas fa-lightbulb"  style="color:#D4AF37;"></i> Innovation</a>
+      <div class="nav-section">Tools</div>
+      <a href="ai-predictor.html"       class="nav-item"><i class="fas fa-brain"       style="color:#A855F7;"></i> AI Predictor</a>
+      <a href="cost-calculator.html"    class="nav-item"><i class="fas fa-calculator"  style="color:#00D4FF;"></i> Cost Calculator</a>
+      <a href="equipment-database.html" class="nav-item active"><i class="fas fa-database" style="color:var(--orange);"></i> Equipment DB</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div id="sbAvatar" style="width:30px;height:30px;border-radius:50%;background:rgba(249,115,22,0.15);border:1.5px solid rgba(249,115,22,0.25);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:var(--orange);flex-shrink:0;">U</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.76rem;font-weight:700;color:var(--text-100);" id="sbName">User</div>
+          <div style="font-size:0.62rem;color:var(--text-700);" id="sbRole">Member</div>
         </div>
       </div>
-    </aside>
+      <a href="../dashboard/main-dashboard.html" class="nav-item" style="margin-bottom:2px;"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      <button onclick="doLogout()" class="nav-item" style="width:100%;background:none;border:none;cursor:pointer;font-family:var(--font-body);text-align:left;color:var(--text-700);">
+        <i class="fas fa-sign-out-alt" style="color:var(--red);"></i> Sign Out
+      </button>
+    </div>
+  </aside>
 
-    <div class="main-content">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-          <div class="topbar-title">Equipment Database</div>
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="topbar-icon"><i class="fas fa-database"></i></div>
+        <div>
+          <div style="font-family:var(--font-head);font-size:0.92rem;font-weight:800;">Equipment Database</div>
+          <div style="font-size:0.65rem;color:var(--text-700);">2,400+ specs · OEM benchmarks · Compare · Filter · Export</div>
         </div>
-        <div class="topbar-right">
-          <span style="font-size:0.8rem;color:var(--text-muted);">1,247 items</span>
-          <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="window.SESMine.exportToCSV(allEquipment,'equipment.csv')">
-            <i class="fas fa-download"></i> Export
-          </button>
-          <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="openAddEquipModal()">
-            <i class="fas fa-plus"></i> Add Equipment
-          </button>
-        </div>
-      </header>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-sm" onclick="exportDB()"><i class="fas fa-download"></i> Export CSV</button>
+        <button class="btn btn-sm btn-orange" onclick="toggleCompare()" id="compareBtn" style="display:none;">
+          <i class="fas fa-balance-scale"></i> Compare (<span id="compareCount">0</span>)
+        </button>
+        <div id="tbAvatar" style="width:34px;height:34px;border-radius:50%;background:rgba(249,115,22,0.15);border:2px solid rgba(249,115,22,0.2);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:0.72rem;font-weight:800;cursor:pointer;">U</div>
+      </div>
+    </div>
 
-      <main class="page-content">
+    <div class="content">
 
-        <div style="margin-bottom:24px;">
-          <h1 style="font-size:1.6rem;margin-bottom:6px;">Equipment Database</h1>
-          <p style="color:var(--text-muted);font-size:0.9rem;">Browse 1,247 mining equipment specifications, pricing benchmarks, and maintenance cost data from 80+ global manufacturers.</p>
-        </div>
-
-        <!-- Search & Filters -->
-        <div style="display:flex;gap:12px;align-items:center;margin-bottom:24px;flex-wrap:wrap;" class="animate-fade-up">
-          <div style="position:relative;flex:1;min-width:240px;">
-            <input type="text" id="equipSearch" placeholder="Search by name, manufacturer, or category..."
-              style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px 14px 10px 38px;color:var(--text-primary);font-size:0.875rem;outline:none;width:100%;"
-              onfocus="this.style.borderColor='var(--color-accent)'"
-              onblur="this.style.borderColor='var(--border-color)'"
-              oninput="filterEquipment()" />
-            <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.8rem;pointer-events:none;"></i>
+      <!-- Hero -->
+      <div class="hero fade-up">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+          <div>
+            <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:var(--orange);margin-bottom:8px;"><i class="fas fa-database" style="margin-right:5px;"></i>Equipment Database</div>
+            <h1 style="font-family:var(--font-head);font-size:1.2rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:8px;">Global Mining Equipment Specifications</h1>
+            <p style="font-size:0.8rem;color:var(--text-500);line-height:1.7;max-width:500px;">
+              Comprehensive OEM specifications, performance benchmarks, fuel consumption data,
+              and maintenance metrics for 2,400+ pieces of mining equipment across all major categories.
+            </p>
           </div>
-          <select class="form-select" id="categoryFilter" style="width:auto;" onchange="filterEquipment()">
+          <div class="grid-4" style="min-width:280px;">
+            <div class="stat-card"><div class="stat-val" style="color:var(--orange);">2,400+</div><div class="stat-lbl">Equipment specs</div></div>
+            <div class="stat-card"><div class="stat-val" style="color:var(--cyan);">48</div><div class="stat-lbl">OEM brands</div></div>
+            <div class="stat-card"><div class="stat-val" style="color:var(--green);">12</div><div class="stat-lbl">Categories</div></div>
+            <div class="stat-card"><div class="stat-val" style="color:var(--gold);">Live</div><div class="stat-lbl">Price feeds</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="grid-3 mb-5 fade-up" id="statsRow"></div>
+
+      <!-- Filter bar + table -->
+      <div class="card fade-up mb-5">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div class="card-title">Equipment Specifications</div>
+            <div class="card-sub" style="margin-bottom:0;" id="tableInfo">Loading...</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-sm" onclick="setView('table')" id="viewTable" style="color:var(--orange);border-color:rgba(249,115,22,0.2);background:rgba(249,115,22,0.08);">
+              <i class="fas fa-table"></i> Table
+            </button>
+            <button class="btn btn-sm" onclick="setView('cards')" id="viewCards">
+              <i class="fas fa-th"></i> Cards
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search equipment, OEM, model..." oninput="applyFilters()" />
+          </div>
+          <select class="filter-select" id="catFilter" onchange="applyFilters()">
             <option value="">All Categories</option>
-            <option value="Haul Truck">Haul Trucks</option>
-            <option value="Excavator">Excavators</option>
-            <option value="Drill Rig">Drill Rigs</option>
-            <option value="Loader">Loaders</option>
-            <option value="Dozer">Dozers</option>
-            <option value="Crusher">Crushers</option>
-            <option value="Conveyor">Conveyors</option>
-            <option value="Pump">Pumps</option>
+            <option value="Haulage">Haulage</option>
+            <option value="Loading">Loading</option>
+            <option value="Drilling">Drilling</option>
+            <option value="Earthworks">Earthworks</option>
+            <option value="Processing">Processing</option>
+            <option value="Underground">Underground</option>
+            <option value="Auxiliary">Auxiliary</option>
           </select>
-          <select class="form-select" id="makerFilter" style="width:auto;" onchange="filterEquipment()">
-            <option value="">All Manufacturers</option>
+          <select class="filter-select" id="oemFilter" onchange="applyFilters()">
+            <option value="">All OEMs</option>
             <option value="Caterpillar">Caterpillar</option>
             <option value="Komatsu">Komatsu</option>
             <option value="Sandvik">Sandvik</option>
-            <option value="Atlas Copco">Atlas Copco</option>
+            <option value="Epiroc">Epiroc</option>
             <option value="Liebherr">Liebherr</option>
             <option value="Hitachi">Hitachi</option>
-            <option value="Epiroc">Epiroc</option>
+            <option value="FLSmidth">FLSmidth</option>
+            <option value="Metso">Metso</option>
+            <option value="Volvo">Volvo</option>
           </select>
-          <select class="form-select" id="sortFilter" style="width:auto;" onchange="filterEquipment()">
-            <option value="name">Sort: Name A–Z</option>
-            <option value="price-asc">Sort: Price Low–High</option>
-            <option value="price-desc">Sort: Price High–Low</option>
-            <option value="payload">Sort: Payload</option>
+          <select class="filter-select" id="sortField" onchange="applyFilters()">
+            <option value="name">Sort: Name</option>
+            <option value="oee">Sort: OEE %</option>
+            <option value="kw">Sort: Power kW</option>
+            <option value="mtbf">Sort: MTBF hrs</option>
+            <option value="price">Sort: Price $M</option>
           </select>
-          <div class="view-toggle">
-            <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')" title="Grid view"><i class="fas fa-th"></i></button>
-            <button class="view-btn" id="listViewBtn" onclick="setView('list')" title="List view"><i class="fas fa-list"></i></button>
-          </div>
+          <button class="btn btn-sm" onclick="clearFilters()"><i class="fas fa-times"></i> Clear</button>
         </div>
 
-        <!-- Results count -->
-        <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px;" id="equipResultCount">
-          Showing 12 of 1,247 items
+        <!-- Table view -->
+        <div id="tableView" style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:30px;"></th>
+                <th onclick="sortBy('name')">Equipment <i class="fas fa-sort" style="font-size:0.55rem;opacity:0.4;"></i></th>
+                <th onclick="sortBy('cat')">Category</th>
+                <th onclick="sortBy('oem')">OEM</th>
+                <th onclick="sortBy('kw')">Power kW <i class="fas fa-sort" style="font-size:0.55rem;opacity:0.4;"></i></th>
+                <th>Capacity</th>
+                <th onclick="sortBy('oee')">OEE % <i class="fas fa-sort" style="font-size:0.55rem;opacity:0.4;"></i></th>
+                <th onclick="sortBy('mtbf')">MTBF hrs <i class="fas fa-sort" style="font-size:0.55rem;opacity:0.4;"></i></th>
+                <th>Fuel L/hr</th>
+                <th onclick="sortBy('price')">Price $M <i class="fas fa-sort" style="font-size:0.55rem;opacity:0.4;"></i></th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="equipBody"></tbody>
+          </table>
         </div>
 
-        <!-- Grid View -->
-        <div id="equipGridView" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:24px;" class="animate-fade-up delay-1">
-          <!-- Populated by JS -->
-        </div>
-
-        <!-- List View -->
-        <div id="equipListView" style="display:none;margin-bottom:24px;" class="animate-fade-up delay-1">
-          <div class="data-table-card">
-            <div style="overflow-x:auto;">
-              <table class="data-table" id="equipListTable">
-                <thead>
-                  <tr>
-                    <th><input type="checkbox" style="accent-color:var(--color-accent);" /></th>
-                    <th>Equipment</th>
-                    <th>Category</th>
-                    <th>Manufacturer</th>
-                    <th>Payload / Power</th>
-                    <th>Engine</th>
-                    <th>List Price</th>
-                    <th>Maint. Cost/yr</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="equipListBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <!-- Cards view -->
+        <div id="cardsView" style="display:none;"></div>
 
         <!-- Pagination -->
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;" class="animate-fade-up delay-2">
-          <span style="font-size:0.8rem;color:var(--text-muted);" id="equipPageInfo">Page 1 of 104</span>
-          <div style="display:flex;gap:6px;" id="equipPagination">
-            <button class="topbar-btn" disabled><i class="fas fa-chevron-left"></i></button>
-            <button class="topbar-btn" style="background:rgba(245,166,35,0.15);border-color:rgba(245,166,35,0.3);color:var(--color-accent);">1</button>
-            <button class="topbar-btn">2</button>
-            <button class="topbar-btn">3</button>
-            <button class="topbar-btn">…</button>
-            <button class="topbar-btn">104</button>
-            <button class="topbar-btn"><i class="fas fa-chevron-right"></i></button>
-          </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border);margin-top:4px;">
+          <div style="font-size:0.72rem;color:var(--text-700);" id="pageInfo">—</div>
+          <div style="display:flex;gap:5px;" id="pagination"></div>
         </div>
+      </div>
 
-      </main>
+      <!-- Charts row -->
+      <div class="grid-2 mb-5">
+        <div class="card fade-up">
+          <div class="card-title">OEE Distribution by Category</div>
+          <div class="card-sub">Average Overall Equipment Effectiveness</div>
+          <div style="height:200px;"><canvas id="oeeChart"></canvas></div>
+        </div>
+        <div class="card fade-up">
+          <div class="card-title">Equipment Count by OEM</div>
+          <div class="card-sub">Database coverage by manufacturer</div>
+          <div style="height:200px;"><canvas id="oemChart"></canvas></div>
+        </div>
+      </div>
+
     </div>
-  </div>
+  </main>
+</div>
 
-  <!-- Compare Bar -->
-  <div class="compare-bar" id="compareBar">
-    <span style="font-size:0.82rem;font-weight:700;color:var(--text-muted);white-space:nowrap;">Compare:</span>
-    <div class="compare-slot" id="compareSlot1">+ Add item</div>
-    <div class="compare-slot" id="compareSlot2">+ Add item</div>
-    <div class="compare-slot" id="compareSlot3">+ Add item</div>
-    <div style="margin-left:auto;display:flex;gap:8px;flex-shrink:0;">
-      <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.82rem;" onclick="clearCompare()">Clear</button>
-      <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="runCompare()">
-        <i class="fas fa-balance-scale"></i> Compare Now
-      </button>
-    </div>
-  </div>
-
-  <!-- Equipment Detail Modal -->
+<!-- Equipment detail modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal" id="equipModal">
-    <div class="modal-overlay" onclick="window.SESMine.closeModal('equipModal')"></div>
-    <div class="modal-content" style="max-width:680px;">
-      <div style="padding:20px 24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;">
-        <h2 style="font-size:1.1rem;" id="equipModalTitle">Equipment Details</h2>
-        <button class="modal-close" onclick="window.SESMine.closeModal('equipModal')"><i class="fas fa-times"></i></button>
-      </div>
-      <div style="padding:24px;" id="equipModalBody"><!-- Populated by JS --></div>
-    </div>
+    <button class="modal-close" onclick="closeModalDirect()"><i class="fas fa-times"></i></button>
+    <div id="modalContent"></div>
   </div>
+</div>
 
-  <!-- Add Equipment Modal -->
-  <div class="modal" id="addEquipModal">
-    <div class="modal-overlay" onclick="window.SESMine.closeModal('addEquipModal')"></div>
-    <div class="modal-content" style="max-width:560px;">
-      <div style="padding:20px 24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;">
-        <h2 style="font-size:1.1rem;"><i class="fas fa-plus" style="color:var(--color-accent);margin-right:8px;"></i>Add New Equipment</h2>
-        <button class="modal-close" onclick="window.SESMine.closeModal('addEquipModal')"><i class="fas fa-times"></i></button>
+<!-- Compare bar -->
+<div class="compare-bar" id="compareBar">
+  <i class="fas fa-balance-scale" style="color:var(--orange);flex-shrink:0;"></i>
+  <span style="font-size:0.8rem;font-weight:700;color:var(--text-300);">Comparing: </span>
+  <div id="compareItems" style="display:flex;gap:6px;flex:1;flex-wrap:wrap;"></div>
+  <button class="btn btn-sm btn-orange" onclick="runComparison()"><i class="fas fa-chart-bar"></i> Compare Now</button>
+  <button class="btn btn-sm" onclick="clearCompare()"><i class="fas fa-times"></i> Clear</button>
+</div>
+
+<div id="toastWrap"></div>
+
+<script>
+'use strict';
+
+/* ── Auth ── */
+const SESSION_KEY='sesmine_session_v5',ADMIN_KEY='sesmine_admin_session_v5';
+function getSession(){try{const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');if(s&&s.expires>Date.now())return s;const a=JSON.parse(localStorage.getItem(ADMIN_KEY)||'null');if(a&&a.expires>Date.now())return a;}catch(e){}return null;}
+const currentUser=getSession();
+if(!currentUser)window.location.replace('../auth/login.html');
+
+function populateUser(){
+  const name=currentUser.name||`${currentUser.firstName||''} ${currentUser.lastName||''}`.trim()||'User';
+  const role=currentUser.role||'member';
+  const initials=name.split(' ').map(n=>n[0]||'').join('').slice(0,2).toUpperCase()||'U';
+  document.getElementById('sbName').textContent=name;
+  document.getElementById('sbRole').textContent=role.charAt(0).toUpperCase()+role.slice(1);
+  document.getElementById('sbAvatar').textContent=initials;
+  document.getElementById('tbAvatar').textContent=initials;
+}
+
+/* ── Equipment data ── */
+const EQUIPMENT=[
+  {id:1,  name:'CAT 793F Haul Truck',       cat:'Haulage',    oem:'Caterpillar', kw:2013, cap:'227t',    oee:82, mtbf:420, fuel:185, price:5.2,  weight:'388t',   year:2019, auto:true,  elec:false, desc:'Industry-leading 227-tonne payload haul truck with Cat C175-16 engine. Proven in the world\'s largest open-cut operations.'},
+  {id:2,  name:'Komatsu 930E-5 Haul Truck', cat:'Haulage',    oem:'Komatsu',     kw:2611, cap:'290t',    oee:80, mtbf:400, fuel:210, price:6.1,  weight:'430t',   year:2021, auto:true,  elec:true,  desc:'Electric drive ultra-class haul truck with 290t payload. Features Komatsu AC electric drive system for superior efficiency.'},
+  {id:3,  name:'Liebherr T 284',            cat:'Haulage',    oem:'Liebherr',    kw:2700, cap:'363t',    oee:79, mtbf:390, fuel:215, price:7.4,  weight:'496t',   year:2020, auto:false, elec:true,  desc:'World\'s largest two-axle mining truck with 363t payload capacity. MTU/Liebherr diesel-electric drive system.'},
+  {id:4,  name:'CAT 6060 Hydraulic Shovel', cat:'Loading',    oem:'Caterpillar', kw:3000, cap:'38m³',    oee:78, mtbf:360, fuel:290, price:12.8, weight:'1,270t', year:2022, auto:false, elec:false, desc:'Ultra-class hydraulic mining shovel with 38m³ bucket capacity. Designed for high-production loading of 240-360t trucks.'},
+  {id:5,  name:'Komatsu PC8000-11 Shovel',  cat:'Loading',    oem:'Komatsu',     kw:3000, cap:'45m³',    oee:76, mtbf:340, fuel:310, price:14.2, weight:'1,400t', year:2021, auto:false, elec:false, desc:'Largest hydraulic mining excavator in the Komatsu range. 45m³ bucket capacity for ultra-class truck loading.'},
+  {id:6,  name:'Hitachi EX8000-7 Shovel',   cat:'Loading',    oem:'Hitachi',     kw:3360, cap:'45m³',    oee:77, mtbf:350, fuel:305, price:13.9, weight:'1,390t', year:2022, auto:false, elec:false, desc:'Ultra-class backhoe excavator with 45m³ bucket. Advanced TRIAS hydraulic system for maximum digging force.'},
+  {id:7,  name:'Sandvik DR580 Blasthole',   cat:'Drilling',   oem:'Sandvik',     kw:895,  cap:'311mm',   oee:86, mtbf:560, fuel:92,  price:2.8,  weight:'142t',   year:2020, auto:true,  elec:false, desc:'Large rotary blasthole drill for open-pit mining. 311mm maximum hole diameter with AutoMine capability.'},
+  {id:8,  name:'Epiroc PV351 Blasthole',    cat:'Drilling',   oem:'Epiroc',      kw:746,  cap:'270mm',   oee:84, mtbf:520, fuel:88,  price:2.4,  weight:'118t',   year:2021, auto:true,  elec:false, desc:'Rotary blasthole drill with 270mm capacity. Features Rig Control System (RCS) for semi-autonomous operation.'},
+  {id:9,  name:'CAT MD6310 Blasthole',      cat:'Drilling',   oem:'Caterpillar', kw:820,  cap:'311mm',   oee:85, mtbf:540, fuel:90,  price:2.6,  weight:'138t',   year:2022, auto:true,  elec:false, desc:'Rotary blasthole drill with Cat C27 engine. Designed for high-production drilling in open-pit environments.'},
+  {id:10, name:'CAT D11T Dozer',            cat:'Earthworks', oem:'Caterpillar', kw:634,  cap:'—',       oee:88, mtbf:640, fuel:78,  price:1.8,  weight:'104t',   year:2020, auto:false, elec:false, desc:'Largest Cat dozer for heavy pushing and ripping. Semi-U blade with 43.7m³ capacity. Ideal for overburden removal.'},
+  {id:11, name:'Komatsu D475A-8 Dozer',     cat:'Earthworks', oem:'Komatsu',     kw:664,  cap:'—',       oee:87, mtbf:620, fuel:80,  price:1.9,  weight:'108t',   year:2021, auto:false, elec:false, desc:'Ultra-class crawler dozer with 664kW engine. Features Komatsu Intelligent Machine Control for semi-autonomous operation.'},
+  {id:12, name:'FLSmidth SAG Mill 36×18ft', cat:'Processing', oem:'FLSmidth',    kw:13400,cap:'2,800tph',oee:91, mtbf:720, fuel:0,   price:28.4, weight:'2,100t', year:2019, auto:false, elec:true,  desc:'Large semi-autogenous grinding mill for primary comminution. 13.4MW drive with variable speed capability.'},
+  {id:13, name:'Metso HP800 Cone Crusher',  cat:'Processing', oem:'Metso',       kw:450,  cap:'580tph',  oee:89, mtbf:680, fuel:0,   price:1.4,  weight:'52t',    year:2021, auto:false, elec:true,  desc:'High-performance cone crusher for secondary and tertiary crushing. Hydraulic adjustment and overload protection.'},
+  {id:14, name:'Sandvik TH663i UG Truck',   cat:'Underground',oem:'Sandvik',     kw:373,  cap:'63t',     oee:84, mtbf:480, fuel:62,  price:1.6,  weight:'92t',    year:2022, auto:true,  elec:false, desc:'63-tonne underground articulated haul truck with AutoMine capability. Designed for 5.5m × 5.5m drives.'},
+  {id:15, name:'Epiroc Boomer M2 Jumbo',    cat:'Underground',oem:'Epiroc',      kw:110,  cap:'2-boom',  oee:82, mtbf:440, fuel:28,  price:0.9,  weight:'22t',    year:2021, auto:true,  elec:false, desc:'Two-boom face drilling jumbo for underground development. RCS automation-ready with drill plan import.'},
+  {id:16, name:'Volvo A60H Articulated ADT',cat:'Earthworks', oem:'Volvo',       kw:460,  cap:'55t',     oee:86, mtbf:580, fuel:58,  price:0.95, weight:'74t',    year:2022, auto:false, elec:false, desc:'60-tonne articulated dump truck for earthmoving and civil works. Volvo D13 engine with OptiShift transmission.'},
+  {id:17, name:'CAT 24M Motor Grader',      cat:'Auxiliary',  oem:'Caterpillar', kw:309,  cap:'7.3m',    oee:90, mtbf:700, fuel:42,  price:0.72, weight:'62t',    year:2020, auto:false, elec:false, desc:'Largest Cat motor grader for haul road maintenance. 7.3m blade with all-wheel drive and cross-slope control.'},
+  {id:18, name:'Komatsu WA1200-6 Loader',   cat:'Loading',    oem:'Komatsu',     kw:1491, cap:'19m³',    oee:83, mtbf:460, fuel:145, price:4.8,  weight:'325t',   year:2021, auto:false, elec:false, desc:'Ultra-class wheel loader with 19m³ bucket. Designed for high-production truck loading and stockpile management.'},
+  {id:19, name:'Metso Nordberg MP1250',      cat:'Processing', oem:'Metso',       kw:930,  cap:'1,200tph',oee:88, mtbf:660, fuel:0,   price:2.1,  weight:'180t',   year:2020, auto:false, elec:true,  desc:'High-capacity cone crusher for secondary crushing duties. Hydraulic setting adjustment and tramp relief.'},
+  {id:20, name:'Epiroc Scooptram ST18',      cat:'Underground',oem:'Epiroc',      kw:194,  cap:'18t',     oee:83, mtbf:460, fuel:38,  price:0.68, weight:'34t',    year:2022, auto:true,  elec:false, desc:'18-tonne underground loader (LHD) with AutoMine Loader capability. Designed for 4.5m × 4.5m drives.'}
+];
+
+/* ── State ── */
+let filtered    = [...EQUIPMENT];
+let currentPage = 1;
+const PAGE_SIZE = 10;
+let sortField   = 'name';
+let sortAsc     = true;
+let viewMode    = 'table';
+let compareList = [];
+
+/* ── Category colours ── */
+const CAT_CFG={
+  Haulage:   {color:'#00D4FF',bg:'rgba(0,212,255,0.1)',   border:'rgba(0,212,255,0.2)'},
+  Loading:   {color:'#F97316',bg:'rgba(249,115,22,0.1)',  border:'rgba(249,115,22,0.2)'},
+  Drilling:  {color:'#A855F7',bg:'rgba(168,85,247,0.1)',  border:'rgba(168,85,247,0.2)'},
+  Earthworks:{color:'#D4AF37',bg:'rgba(212,175,55,0.1)',  border:'rgba(212,175,55,0.2)'},
+  Processing:{color:'#22C55E',bg:'rgba(34,197,94,0.1)',   border:'rgba(34,197,94,0.2)'},
+  Underground:{color:'#60A5FA',bg:'rgba(96,165,250,0.1)', border:'rgba(96,165,250,0.2)'},
+  Auxiliary: {color:'#94A3B8',bg:'rgba(148,163,184,0.1)', border:'rgba(148,163,184,0.2)'}
+};
+
+/* ── Filters ── */
+function applyFilters(){
+  const q   = document.getElementById('searchInput').value.toLowerCase();
+  const cat = document.getElementById('catFilter').value;
+  const oem = document.getElementById('oemFilter').value;
+  const sf  = document.getElementById('sortField').value;
+  sortField = sf;
+
+  filtered = EQUIPMENT.filter(e=>{
+    const mQ  = !q   || `${e.name} ${e.oem} ${e.cat} ${e.cap}`.toLowerCase().includes(q);
+    const mC  = !cat || e.cat===cat;
+    const mO  = !oem || e.oem===oem;
+    return mQ && mC && mO;
+  });
+
+  filtered.sort((a,b)=>{
+    let av=a[sortField]||a.name, bv=b[sortField]||b.name;
+    if(typeof av==='string') return sortAsc?av.localeCompare(bv):bv.localeCompare(av);
+    return sortAsc?av-bv:bv-av;
+  });
+
+  currentPage=1;
+  renderTable();
+}
+
+function sortBy(field){
+  if(sortField===field) sortAsc=!sortAsc;
+  else { sortField=field; sortAsc=true; }
+  document.getElementById('sortField').value=field;
+  applyFilters();
+}
+
+function clearFilters(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('catFilter').value='';
+  document.getElementById('oemFilter').value='';
+  document.getElementById('sortField').value='name';
+  sortField='name'; sortAsc=true;
+  applyFilters();
+}
+
+/* ── Render table ── */
+function renderTable(){
+  const start = (currentPage-1)*PAGE_SIZE;
+  const page  = filtered.slice(start, start+PAGE_SIZE);
+  const info  = document.getElementById('tableInfo');
+  const pi    = document.getElementById('pageInfo');
+  if(info) info.textContent=`${filtered.length} equipment found`;
+  if(pi)   pi.textContent=`Showing ${start+1}–${Math.min(start+PAGE_SIZE,filtered.length)} of ${filtered.length}`;
+
+  if(viewMode==='table'){
+    const tbody=document.getElementById('equipBody');
+    if(!tbody)return;
+    if(!page.length){
+      tbody.innerHTML=`<tr><td colspan="11" style="text-align:center;padding:32px;color:var(--text-700);"><i class="fas fa-search" style="font-size:1.4rem;display:block;margin-bottom:8px;opacity:0.3;"></i>No equipment matches your filter</td></tr>`;
+    } else {
+      tbody.innerHTML=page.map(e=>{
+        const cc=CAT_CFG[e.cat]||CAT_CFG.Auxiliary;
+        const oeeColor=e.oee>=88?'#4ADE80':e.oee>=80?'#D4AF37':'#FCA5A5';
+        const inCompare=compareList.includes(e.id);
+        return`
+          <tr onclick="openModal(${e.id})">
+            <td onclick="event.stopPropagation()">
+              <input type="checkbox" ${inCompare?'checked':''} onchange="toggleCompareItem(${e.id},this.checked)"
+                style="accent-color:var(--orange);cursor:pointer;width:14px;height:14px;" />
+            </td>
+            <td style="font-weight:700;color:var(--text-100);min-width:180px;">${e.name}</td>
+            <td><span class="badge" style="background:${cc.bg};border:1px solid ${cc.border};color:${cc.color};">${e.cat}</span></td>
+            <td style="color:var(--text-500);">${e.oem}</td>
+            <td style="font-family:var(--font-mono);color:var(--text-300);">${e.kw.toLocaleString()}</td>
+            <td style="font-family:var(--font-mono);color:var(--text-300);">${e.cap}</td>
+            <td style="font-family:var(--font-mono);font-weight:700;color:${oeeColor};">${e.oee}%</td>
+            <td style="font-family:var(--font-mono);color:var(--text-300);">${e.mtbf}</td>
+            <td style="font-family:var(--font-mono);color:var(--text-300);">${e.fuel||'—'}</td>
+            <td style="font-family:var(--font-mono);font-weight:700;color:var(--orange);">$${e.price}M</td>
+            <td onclick="event.stopPropagation()">
+              <button class="btn btn-sm" onclick="openModal(${e.id})" style="color:var(--orange);border-color:rgba(249,115,22,0.2);background:rgba(249,115,22,0.06);">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+  } else {
+    const cv=document.getElementById('cardsView');
+    if(!cv)return;
+    cv.style.display='grid';
+    cv.style.gridTemplateColumns='repeat(auto-fill,minmax(220px,1fr))';
+    cv.style.gap='12px';
+    cv.innerHTML=page.map(e=>{
+      const cc=CAT_CFG[e.cat]||CAT_CFG.Auxiliary;
+      const oeeColor=e.oee>=88?'#4ADE80':e.oee>=80?'#D4AF37':'#FCA5A5';
+      return`
+        <div onclick="openModal(${e.id})" style="padding:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;cursor:pointer;transition:all 0.18s ease;"
+             onmouseover="this.style.background='rgba(249,115,22,0.04)';this.style.borderColor='rgba(249,115,22,0.15)'"
+             onmouseout="this.style.background='rgba(255,255,255,0.02)';this.style.borderColor='rgba(255,255,255,0.07)'">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <span class="badge" style="background:${cc.bg};border:1px solid ${cc.border};color:${cc.color};">${e.cat}</span>
+            <span style="font-family:var(--font-mono);font-size:0.72rem;font-weight:700;color:var(--orange);">$${e.price}M</span>
+          </div>
+          <div style="font-size:0.82rem;font-weight:700;color:var(--text-100);margin-bottom:4px;line-height:1.3;">${e.name}</div>
+          <div style="font-size:0.7rem;color:var(--text-700);margin-bottom:10px;">${e.oem} · ${e.year}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div style="text-align:center;padding:6px;background:rgba(255,255,255,0.02);border-radius:7px;">
+              <div style="font-family:var(--font-mono);font-size:0.82rem;font-weight:700;color:${oeeColor};">${e.oee}%</div>
+              <div style="font-size:0.58rem;color:var(--text-900);">OEE</div>
+            </div>
+            <div style="text-align:center;padding:6px;background:rgba(255,255,255,0.02);border-radius:7px;">
+              <div style="font-family:var(--font-mono);font-size:0.82rem;font-weight:700;color:var(--cyan);">${e.kw.toLocaleString()}</div>
+              <div style="font-size:0.58rem;color:var(--text-900);">kW</div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+  renderPagination();
+}
+
+function renderPagination(){
+  const pag=document.getElementById('pagination');
+  if(!pag)return;
+  const total=Math.ceil(filtered.length/PAGE_SIZE);
+  if(total<=1){pag.innerHTML='';return;}
+  let html=`<button onclick="changePage(${currentPage-1})" class="btn btn-sm" ${currentPage===1?'disabled style="opacity:0.3;"':''}>
+    <i class="fas fa-chevron-left"></i></button>`;
+  for(let i=1;i<=total;i++){
+    html+=`<button onclick="changePage(${i})" class="btn btn-sm" style="${i===currentPage?'background:rgba(249,115,22,0.1);border-color:rgba(249,115,22,0.2);color:var(--orange);':''}">${i}</button>`;
+  }
+  html+=`<button onclick="changePage(${currentPage+1})" class="btn btn-sm" ${currentPage===total?'disabled style="opacity:0.3;"':''}>
+    <i class="fas fa-chevron-right"></i></button>`;
+  pag.innerHTML=html;
+}
+
+function changePage(p){
+  const total=Math.ceil(filtered.length/PAGE_SIZE);
+  if(p<1||p>total)return;
+  currentPage=p;
+  renderTable();
+}
+
+/* ── View toggle ── */
+function setView(mode){
+  viewMode=mode;
+  document.getElementById('tableView').style.display=mode==='table'?'block':'none';
+  document.getElementById('cardsView').style.display=mode==='cards'?'grid':'none';
+  document.getElementById('viewTable').style.cssText=mode==='table'?'color:var(--orange);border-color:rgba(249,115,22,0.2);background:rgba(249,115,22,0.08);':'';
+  document.getElementById('viewCards').style.cssText=mode==='cards'?'color:var(--orange);border-color:rgba(249,115,22,0.2);background:rgba(249,115,22,0.08);':'';
+  renderTable();
+}
+
+/* ── Modal ── */
+function openModal(id){
+  const e=EQUIPMENT.find(x=>x.id===id);
+  if(!e)return;
+  const cc=CAT_CFG[e.cat]||CAT_CFG.Auxiliary;
+  const oeeColor=e.oee>=88?'#4ADE80':e.oee>=80?'#D4AF37':'#FCA5A5';
+  document.getElementById('modalContent').innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;flex-wrap:wrap;">
+      <div style="width:52px;height:52px;border-radius:12px;background:${cc.bg};border:1px solid ${cc.border};display:flex;align-items:center;justify-content:center;color:${cc.color};font-size:1.2rem;flex-shrink:0;">
+        <i class="fas ${e.cat==='Haulage'?'fa-truck':e.cat==='Loading'?'fa-hard-hat':e.cat==='Drilling'?'fa-circle-dot':e.cat==='Processing'?'fa-cog':e.cat==='Underground'?'fa-mountain':e.cat==='Earthworks'?'fa-tractor':'fa-tools'}"></i>
       </div>
-      <form id="addEquipForm" style="padding:24px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Equipment Name *</label>
-            <input type="text" class="form-input" id="eName" placeholder="e.g. CAT 793F" required />
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Manufacturer *</label>
-            <input type="text" class="form-input" id="eMaker" placeholder="e.g. Caterpillar" required />
-          </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:800;margin-bottom:5px;">${e.name}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span class="badge" style="background:${cc.bg};border:1px solid ${cc.border};color:${cc.color};">${e.cat}</span>
+          <span style="font-size:0.75rem;color:var(--text-500);">${e.oem}</span>
+          <span style="font-size:0.75rem;color:var(--text-700);">Model Year ${e.year}</span>
+          ${e.auto?`<span class="badge" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);color:#A855F7;"><i class="fas fa-robot" style="font-size:0.55rem;"></i> Autonomous</span>`:''}
+          ${e.elec?`<span class="badge" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#22C55E;"><i class="fas fa-bolt" style="font-size:0.55rem;"></i> Electric</span>`:''}
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Category *</label>
-            <select class="form-select" id="eCategory" required>
-              <option value="">Select...</option>
-              <option>Haul Truck</option>
-              <option>Excavator</option>
-              <option>Drill Rig</option>
-              <option>Loader</option>
-              <option>Dozer</option>
-              <option>Crusher</option>
-              <option>Conveyor</option>
-              <option>Pump</option>
-            </select>
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">List Price (USD) *</label>
-            <input type="number" class="form-input" id="ePrice" placeholder="4200000" required />
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Payload (tonnes)</label>
-            <input type="text" class="form-input" id="ePayload" placeholder="227" />
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Engine Power (kW)</label>
-            <input type="text" class="form-input" id="ePower" placeholder="2013" />
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Fuel Consumption (L/hr)</label>
-            <input type="text" class="form-input" id="eFuel" placeholder="185" />
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Maint. Cost/yr (USD)</label>
-            <input type="number" class="form-input" id="eMaint" placeholder="280000" />
-          </div>
-        </div>
-        <div class="form-group" style="margin-top:16px;">
-          <label class="form-label">Notes</label>
-          <textarea class="form-textarea" id="eNotes" placeholder="Additional specifications, availability, lead time..." style="min-height:70px;"></textarea>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:8px;">
-          <button type="button" class="btn btn-ghost btn-full" onclick="window.SESMine.closeModal('addEquipModal')">Cancel</button>
-          <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-save"></i> Save Equipment</button>
-        </div>
-      </form>
+      </div>
+      <div style="font-family:var(--font-head);font-size:1.3rem;font-weight:800;color:var(--orange);">$${e.price}M</div>
     </div>
-  </div>
+    <p style="font-size:0.8rem;color:var(--text-500);line-height:1.7;margin-bottom:18px;">${e.desc}</p>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-label">Engine Power</div><div class="spec-val">${e.kw.toLocaleString()} kW</div></div>
+      <div class="spec-item"><div class="spec-label">Capacity</div><div class="spec-val">${e.cap}</div></div>
+      <div class="spec-item"><div class="spec-label">OEE</div><div class="spec-val" style="color:${oeeColor};">${e.oee}%</div></div>
+      <div class="spec-item"><div class="spec-label">MTBF</div><div class="spec-val">${e.mtbf} hrs</div></div>
+      <div class="spec-item"><div class="spec-label">Fuel Consumption</div><div class="spec-val">${e.fuel?e.fuel+' L/hr':'Electric'}</div></div>
+      <div class="spec-item"><div class="spec-label">Operating Weight</div><div class="spec-val">${e.weight}</div></div>
+      <div class="spec-item"><div class="spec-label">Autonomous Ready</div><div class="spec-val" style="color:${e.auto?'#22C55E':'#6688A0'};">${e.auto?'Yes':'No'}</div></div>
+      <div class="spec-item"><div class="spec-label">Electric Drive</div><div class="spec-val" style="color:${e.elec?'#22C55E':'#6688A0'};">${e.elec?'Yes':'No'}</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;">
+      <button class="btn btn-sm btn-orange" onclick="toast('Spec sheet download started.','success')"><i class="fas fa-file-pdf"></i> Download Spec Sheet</button>
+      <button class="btn btn-sm" onclick="toggleCompareItem(${e.id},true);toast('Added to comparison.','info')"><i class="fas fa-balance-scale"></i> Add to Compare</button>
+      <button class="btn btn-sm" onclick="toast('Saved to watchlist.','success')"><i class="fas fa-bookmark"></i> Save</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
 
-  <script src="../js/main.js"></script>
-  <script>
-    'use strict';
+function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalDirect();}
+function closeModalDirect(){document.getElementById('modalOverlay').classList.remove('open');}
 
-    const allEquipment = [
-      { id:1,  name:'CAT 793F',           maker:'Caterpillar', category:'Haul Truck', payload:'227t',  power:'2013 kW', fuel:'185 L/hr', price:4200000,  maint:280000,  icon:'🚛', color:'#F5A623' },
-      { id:2,  name:'CAT 797F',           maker:'Caterpillar', category:'Haul Truck', payload:'363t',  power:'2983 kW', fuel:'310 L/hr', price:5800000,  maint:380000,  icon:'🚛', color:'#F5A623' },
-      { id:3,  name:'Komatsu 930E-5',     maker:'Komatsu',     category:'Haul Truck', payload:'291t',  power:'2240 kW', fuel:'220 L/hr', price:4600000,  maint:310000,  icon:'🚛', color:'#3B82F6' },
-      { id:4,  name:'Liebherr T 284',     maker:'Liebherr',    category:'Haul Truck', payload:'363t',  power:'3650 kW', fuel:'295 L/hr', price:6200000,  maint:420000,  icon:'🚛', color:'#22C55E' },
-      { id:5,  name:'Komatsu PC5500',     maker:'Komatsu',     category:'Excavator',  payload:'—',     power:'1491 kW', fuel:'145 L/hr', price:5800000,  maint:350000,  icon:'🏗️', color:'#3B82F6' },
-      { id:6,  name:'CAT 6060',           maker:'Caterpillar', category:'Excavator',  payload:'—',     power:'1715 kW', fuel:'168 L/hr', price:6400000,  maint:390000,  icon:'🏗️', color:'#F5A623' },
-      { id:7,  name:'Hitachi EX5600',     maker:'Hitachi',     category:'Excavator',  payload:'—',     power:'1491 kW', fuel:'142 L/hr', price:5600000,  maint:340000,  icon:'🏗️', color:'#EF4444' },
-      { id:8,  name:'Sandvik DD422i',     maker:'Sandvik',     category:'Drill Rig',  payload:'—',     power:'160 kW',  fuel:'28 L/hr',  price:1100000,  maint:95000,   icon:'⚙️', color:'#A855F7' },
-      { id:9,  name:'Epiroc Pit Viper 351',maker:'Epiroc',     category:'Drill Rig',  payload:'—',     power:'597 kW',  fuel:'82 L/hr',  price:2800000,  maint:180000,  icon:'⚙️', color:'#14B8A6' },
-      { id:10, name:'Atlas Copco ST14',   maker:'Atlas Copco', category:'Loader',     payload:'14t',   power:'186 kW',  fuel:'24 L/hr',  price:980000,   maint:72000,   icon:'🚜', color:'#F97316' },
-      { id:11, name:'CAT D11',            maker:'Caterpillar', category:'Dozer',      payload:'—',     power:'634 kW',  fuel:'95 L/hr',  price:1900000,  maint:140000,  icon:'🚧', color:'#F5A623' },
-      { id:12, name:'Metso HP500',        maker:'Metso',       category:'Crusher',    payload:'—',     power:'315 kW',  fuel:'—',        price:1400000,  maint:110000,  icon:'🔧', color:'#22C55E' }
-    ];
+/* ── Compare ── */
+function toggleCompareItem(id,add){
+  if(add){
+    if(compareList.length>=4){toast('Maximum 4 items for comparison.','warn');return;}
+    if(!compareList.includes(id))compareList.push(id);
+  } else {
+    compareList=compareList.filter(x=>x!==id);
+  }
+  updateCompareBar();
+  renderTable();
+}
 
-    let filteredEquipment = [...allEquipment];
-    let currentView       = 'grid';
-    let compareList       = [];
+function updateCompareBar(){
+  const bar=document.getElementById('compareBar');
+  const btn=document.getElementById('compareBtn');
+  const cnt=document.getElementById('compareCount');
+  const items=document.getElementById('compareItems');
+  if(compareList.length>0){
+    bar.classList.add('show');
+    if(btn){btn.style.display='flex';cnt.textContent=compareList.length;}
+    items.innerHTML=compareList.map(id=>{
+      const e=EQUIPMENT.find(x=>x.id===id);
+      return e?`<span style="padding:3px 8px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);border-radius:6px;font-size:0.7rem;color:var(--orange);">${e.name.split(' ').slice(0,2).join(' ')}</span>`:'';
+    }).join('');
+  } else {
+    bar.classList.remove('show');
+    if(btn)btn.style.display='none';
+  }
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-      window.SESMine.initSidebar();
-      renderEquipment();
-    });
+function toggleCompare(){document.getElementById('compareBar').classList.toggle('show');}
 
-    // ── Filters ──
-    function filterEquipment() {
-      const search   = document.getElementById('equipSearch').value.toLowerCase();
-      const category = document.getElementById('categoryFilter').value;
-      const maker    = document.getElementById('makerFilter').value;
-      const sort     = document.getElementById('sortFilter').value;
+function runComparison(){
+  if(compareList.length<2){toast('Select at least 2 items to compare.','warn');return;}
+  const items=compareList.map(id=>EQUIPMENT.find(e=>e.id===id)).filter(Boolean);
+  const fields=['kw','oee','mtbf','fuel','price'];
+  const labels=['Power kW','OEE %','MTBF hrs','Fuel L/hr','Price $M'];
+  const colors=['#F97316','#00D4FF','#A855F7','#22C55E'];
+  document.getElementById('modalContent').innerHTML=`
+    <div style="margin-bottom:18px;">
+      <div style="font-family:var(--font-head);font-size:1rem;font-weight:800;margin-bottom:4px;">Equipment Comparison</div>
+      <div style="font-size:0.72rem;color:var(--text-700);">${items.map(e=>e.name).join(' vs ')}</div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="padding:9px 12px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-700);border-bottom:1px solid var(--border);text-align:left;">Specification</th>
+            ${items.map((e,i)=>`<th style="padding:9px 12px;font-size:0.72rem;font-weight:800;color:${colors[i]};border-bottom:1px solid var(--border);text-align:left;">${e.name.split(' ').slice(0,3).join(' ')}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:9px 12px;font-size:0.72rem;color:var(--text-700);border-bottom:1px solid rgba(255,255,255,0.03);">Category</td>
+            ${items.map(e=>{const cc=CAT_CFG[e.cat]||CAT_CFG.Auxiliary;return`<td style="padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);"><span class="badge" style="background:${cc.bg};border:1px solid ${cc.border};color:${cc.color};">${e.cat}</span></td>`;}).join('')}
+          </tr>
+          ${fields.map((f,fi)=>`
+            <tr>
+              <td style="padding:9px 12px;font-size:0.72rem;color:var(--text-700);border-bottom:1px solid rgba(255,255,255,0.03);">${labels[fi]}</td>
+              ${items.map((e,ei)=>{
+                const val=e[f]||0;
+                const best=Math.max(...items.map(x=>parseFloat(x[f])||0));
+                const isBest=parseFloat(val)===best&&best>0;
+                return`<td style="padding:9px 12px;font-family:var(--font-mono);font-size:0.8rem;font-weight:${isBest?'800':'400'};color:${isBest?colors[ei]:'var(--text-300)'};border-bottom:1px solid rgba(255,255,255,0.03);">${val||'—'}${isBest?` <i class="fas fa-star" style="font-size:0.55rem;color:${colors[ei]};"></i>`:''}
+                </td>`;
+              }).join('')}
+            </tr>`).join('')}
+          <tr>
+            <td style="padding:9px 12px;font-size:0.72rem;color:var(--text-700);border-bottom:1px solid rgba(255,255,255,0.03);">Autonomous</td>
+            ${items.map(e=>`<td style="padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);"><span style="font-size:0.75rem;font-weight:700;color:${e.auto?'#22C55E':'#6688A0'};">${e.auto?'✓ Yes':'✗ No'}</span></td>`).join('')}
+          </tr>
+          <tr>
+            <td style="padding:9px 12px;font-size:0.72rem;color:var(--text-700);">Electric Drive</td>
+            ${items.map(e=>`<td style="padding:9px 12px;"><span style="font-size:0.75rem;font-weight:700;color:${e.elec?'#22C55E':'#6688A0'};">${e.elec?'✓ Yes':'✗ No'}</span></td>`).join('')}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:18px;">
+      <button class="btn btn-sm btn-orange" onclick="exportComparison()"><i class="fas fa-download"></i> Export Comparison</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
 
-      filteredEquipment = allEquipment.filter(e => {
-        const matchSearch   = !search   || e.name.toLowerCase().includes(search) || e.maker.toLowerCase().includes(search) || e.category.toLowerCase().includes(search);
-        const matchCategory = !category || e.category === category;
-        const matchMaker    = !maker    || e.maker === maker;
-        return matchSearch && matchCategory && matchMaker;
-      });
+function exportComparison(){
+  const items=compareList.map(id=>EQUIPMENT.find(e=>e.id===id)).filter(Boolean);
+  const headers=['Spec',...items.map(e=>e.name)];
+  const rows=[
+    ['Category',         ...items.map(e=>e.cat)],
+    ['OEM',              ...items.map(e=>e.oem)],
+    ['Power kW',         ...items.map(e=>e.kw)],
+    ['Capacity',         ...items.map(e=>e.cap)],
+    ['OEE %',            ...items.map(e=>e.oee)],
+    ['MTBF hrs',         ...items.map(e=>e.mtbf)],
+    ['Fuel L/hr',        ...items.map(e=>e.fuel||'Electric')],
+    ['Price $M',         ...items.map(e=>e.price)],
+    ['Autonomous Ready', ...items.map(e=>e.auto?'Yes':'No')],
+    ['Electric Drive',   ...items.map(e=>e.elec?'Yes':'No')]
+  ];
+  const csv=[headers.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`sesmine-equipment-comparison-${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  URL.revokeObjectURL(url);
+  toast('Comparison exported.','success');
+}
 
-      // Sort
-      filteredEquipment.sort((a, b) => {
-        if (sort === 'price-asc')  return a.price - b.price;
-        if (sort === 'price-desc') return b.price - a.price;
-        if (sort === 'payload')    return (parseFloat(b.payload) || 0) - (parseFloat(a.payload) || 0);
-        return a.name.localeCompare(b.name);
-      });
+function clearCompare(){
+  compareList=[];
+  updateCompareBar();
+  renderTable();
+  toast('Comparison cleared.','info');
+}
 
-      document.getElementById('equipResultCount').textContent =
-        `Showing ${filteredEquipment.length} of ${allEquipment.length} items`;
+/* ── Stats row ── */
+function renderStats(){
+  const el=document.getElementById('statsRow');
+  if(!el)return;
+  const avgOEE=(EQUIPMENT.reduce((s,e)=>s+e.oee,0)/EQUIPMENT.length).toFixed(1);
+  const avgMTBF=(EQUIPMENT.reduce((s,e)=>s+e.mtbf,0)/EQUIPMENT.length).toFixed(0);
+  const autoCount=EQUIPMENT.filter(e=>e.auto).length;
+  el.innerHTML=`
+    <div class="card fade-up" style="border-color:rgba(249,115,22,0.12);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:0.8rem;"><i class="fas fa-gauge-high"></i></div>
+        <div style="font-size:0.72rem;font-weight:700;color:var(--text-700);">Average Fleet OEE</div>
+      </div>
+      <div style="font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:var(--orange);margin-bottom:4px;">${avgOEE}%</div>
+      <div style="font-size:0.68rem;color:var(--text-900);">Across all ${EQUIPMENT.length} equipment types</div>
+    </div>
+    <div class="card fade-up" style="border-color:rgba(0,212,255,0.12);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:0.8rem;"><i class="fas fa-clock"></i></div>
+        <div style="font-size:0.72rem;font-weight:700;color:var(--text-700);">Average MTBF</div>
+      </div>
+      <div style="font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:var(--cyan);margin-bottom:4px;">${avgMTBF} hrs</div>
+      <div style="font-size:0.68rem;color:var(--text-900);">Mean time between failures</div>
+    </div>
+    <div class="card fade-up" style="border-color:rgba(168,85,247,0.12);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:0.8rem;"><i class="fas fa-robot"></i></div>
+        <div style="font-size:0.72rem;font-weight:700;color:var(--text-700);">Autonomous Ready</div>
+      </div>
+      <div style="font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:var(--purple);margin-bottom:4px;">${autoCount}/${EQUIPMENT.length}</div>
+      <div style="font-size:0.68rem;color:var(--text-900);">${(autoCount/EQUIPMENT.length*100).toFixed(0)}% of database supports automation</div>
+    </div>`;
+}
 
-      renderEquipment();
-    }
+/* ── Charts ── */
+function renderCharts(){
+  /* OEE by category */
+  const cats=[...new Set(EQUIPMENT.map(e=>e.cat))];
+  const avgBycat=cats.map(c=>{
+    const items=EQUIPMENT.filter(e=>e.cat===c);
+    return+(items.reduce((s,e)=>s+e.oee,0)/items.length).toFixed(1);
+  });
+  const catColors=cats.map(c=>(CAT_CFG[c]||CAT_CFG.Auxiliary).color);
 
-    // ── Render ──
-    function renderEquipment() {
-      if (currentView === 'grid') renderGrid();
-      else renderList();
-    }
-
-    function renderGrid() {
-      const container = document.getElementById('equipGridView');
-      container.innerHTML = filteredEquipment.map(e => `
-        <div class="equip-card animate-fade-up" onclick="openEquipDetail(${e.id})">
-          <div class="equip-card-img">
-            <span style="font-size:3.5rem;">${e.icon}</span>
-            <div style="position:absolute;top:10px;right:10px;">
-              <span class="status-badge" style="background:rgba(0,0,0,0.3);color:${e.color};border-color:${e.color}40;">${e.category}</span>
-            </div>
-            <button onclick="event.stopPropagation();toggleCompare(${e.id})"
-              style="position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.4);border:1px solid var(--border-color);color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.75rem;transition:all 0.2s;"
-              id="compareBtn-${e.id}" title="Add to compare">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
-          <div class="equip-card-body">
-            <div class="equip-card-name">${e.name}</div>
-            <div class="equip-card-maker">${e.maker}</div>
-            <div class="equip-card-specs">
-              <div class="equip-spec-row">
-                <span class="equip-spec-label">Payload</span>
-                <span class="equip-spec-val">${e.payload}</span>
-              </div>
-              <div class="equip-spec-row">
-                <span class="equip-spec-label">Engine Power</span>
-                <span class="equip-spec-val">${e.power}</span>
-              </div>
-              <div class="equip-spec-row">
-                <span class="equip-spec-label">Fuel Consumption</span>
-                <span class="equip-spec-val">${e.fuel}</span>
-              </div>
-            </div>
-          </div>
-          <div class="equip-card-footer">
-            <div>
-              <div class="equip-price">${formatPrice(e.price)}</div>
-              <div style="font-size:0.7rem;color:var(--text-muted);">Maint: ${formatPrice(e.maint)}/yr</div>
-            </div>
-            <button class="btn btn-ghost" style="padding:5px 12px;font-size:0.78rem;" onclick="event.stopPropagation();addToPredictor(${e.id})">
-              <i class="fas fa-brain"></i> Use in AI
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderList() {
-      const tbody = document.getElementById('equipListBody');
-      tbody.innerHTML = filteredEquipment.map(e => `
-        <tr style="cursor:pointer;" onclick="openEquipDetail(${e.id})">
-          <td onclick="event.stopPropagation()"><input type="checkbox" style="accent-color:var(--color-accent);" /></td>
-          <td>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span style="font-size:1.4rem;">${e.icon}</span>
-              <strong style="color:var(--text-primary);">${e.name}</strong>
-            </div>
-          </td>
-          <td><span class="status-badge" style="background:rgba(0,0,0,0.2);color:${e.color};border-color:${e.color}40;">${e.category}</span></td>
-          <td>${e.maker}</td>
-          <td style="font-weight:600;">${e.payload} / ${e.power}</td>
-          <td style="color:var(--text-muted);">${e.fuel}</td>
-          <td style="color:var(--color-accent);font-weight:700;">${formatPrice(e.price)}</td>
-          <td style="color:var(--text-muted);">${formatPrice(e.maint)}/yr</td>
-          <td onclick="event.stopPropagation()">
-            <div style="display:flex;gap:4px;">
-              <button class="topbar-btn" title="View details" onclick="openEquipDetail(${e.id})"><i class="fas fa-eye"></i></button>
-              <button class="topbar-btn" title="Add to compare" onclick="toggleCompare(${e.id})"><i class="fas fa-balance-scale"></i></button>
-              <button class="topbar-btn" title="Use in AI Predictor" onclick="addToPredictor(${e.id})" style="color:var(--color-accent);"><i class="fas fa-brain"></i></button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    // ── Detail Modal ──
-    function openEquipDetail(id) {
-      const e = allEquipment.find(eq => eq.id === id);
-      if (!e) return;
-
-      document.getElementById('equipModalTitle').innerHTML =
-        `<span style="margin-right:8px;">${e.icon}</span>${e.name} — ${e.maker}`;
-
-      document.getElementById('equipModalBody').innerHTML = `
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-          <div>
-            <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:12px;">Technical Specifications</div>
-            <table class="spec-table">
-              <tr><td>Category</td><td>${e.category}</td></tr>
-              <tr><td>Manufacturer</td><td>${e.maker}</td></tr>
-              <tr><td>Payload Capacity</td><td>${e.payload}</td></tr>
-              <tr><td>Engine Power</td><td>${e.power}</td></tr>
-              <tr><td>Fuel Consumption</td><td>${e.fuel}</td></tr>
-              <tr><td>Operating Weight</td><td>${e.payload !== '—' ? Math.round(parseFloat(e.payload)*1.4) + 't (est.)' : 'N/A'}</td></tr>
-            </table>
-          </div>
-          <div>
-            <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:12px;">Cost Data</div>
-            <table class="spec-table">
-              <tr><td>List Price</td><td style="color:var(--color-accent);">${formatPrice(e.price)}</td></tr>
-              <tr><td>Annual Maintenance</td><td style="color:var(--color-orange);">${formatPrice(e.maint)}/yr</td></tr>
-              <tr><td>5-yr Total Cost</td><td style="color:var(--color-blue);">${formatPrice(e.price + e.maint * 5)}</td></tr>
-              <tr><td>Fuel Cost/hr (@ $1.80/L)</td><td>${e.fuel !== '—' ? '$' + (parseFloat(e.fuel)*1.8).toFixed(0) : 'N/A'}</td></tr>
-              <tr><td>Typical Lead Time</td><td>12–18 months</td></tr>
-              <tr><td>Warranty</td><td>2 years / 10,000 hrs</td></tr>
-            </table>
-          </div>
-        </div>
-        <div style="margin-top:20px;padding:14px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:var(--radius-md);">
-          <div style="font-size:0.78rem;font-weight:700;color:var(--color-accent);margin-bottom:6px;"><i class="fas fa-brain"></i> AI Cost Insight</div>
-          <p style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
-            Based on 847 similar projects, the ${e.name} delivers an average productivity of
-            <strong style="color:var(--text-primary);">${e.payload !== '—' ? Math.round(parseFloat(e.payload)*0.85) + 't/hr' : '—'}</strong>
-            in open-pit operations. Total cost of ownership over 10 years is estimated at
-            <strong style="color:var(--color-accent);">${formatPrice(e.price + e.maint * 10)}</strong>.
-          </p>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:20px;">
-          <button class="btn btn-ghost btn-full" onclick="toggleCompare(${e.id});window.SESMine.closeModal('equipModal')">
-            <i class="fas fa-balance-scale"></i> Add to Compare
-          </button>
-          <button class="btn btn-primary btn-full" onclick="addToPredictor(${e.id});window.SESMine.closeModal('equipModal')">
-            <i class="fas fa-brain"></i> Use in AI Predictor
-          </button>
-        </div>
-      `;
-
-      window.SESMine.openModal('equipModal');
-    }
-
-    // ── Compare ──
-    function toggleCompare(id) {
-      const e   = allEquipment.find(eq => eq.id === id);
-      const btn = document.getElementById(`compareBtn-${id}`);
-      const idx = compareList.findIndex(c => c.id === id);
-
-      if (idx > -1) {
-        compareList.splice(idx, 1);
-        if (btn) { btn.style.background = 'rgba(0,0,0,0.4)'; btn.style.color = 'var(--text-muted)'; btn.innerHTML = '<i class="fas fa-plus"></i>'; }
-      } else {
-        if (compareList.length >= 3) { window.SESMine.showToast('Maximum 3 items for comparison', 'warning'); return; }
-        compareList.push(e);
-        if (btn) { btn.style.background = 'rgba(245,166,35,0.2)'; btn.style.color = 'var(--color-accent)'; btn.innerHTML = '<i class="fas fa-check"></i>'; }
+  const ctx1=document.getElementById('oeeChart').getContext('2d');
+  new Chart(ctx1,{
+    type:'bar',
+    data:{
+      labels:cats,
+      datasets:[{
+        label:'Avg OEE %',
+        data:avgBycat,
+        backgroundColor:catColors.map(c=>`${c}BB`),
+        borderColor:catColors,
+        borderWidth:1,
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#0d1b2e',borderColor:'rgba(249,115,22,0.2)',borderWidth:1,titleColor:'#8BA4BC',bodyColor:'#F0F6FF',callbacks:{label:ctx=>`OEE: ${ctx.parsed.y}%`}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#6688A0',font:{size:9}}},
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6688A0',font:{size:10},maxTicksLimit:5,callback:v=>`${v}%`},min:70,max:95}
       }
-
-      updateCompareBar();
     }
+  });
 
-    function updateCompareBar() {
-      const bar = document.getElementById('compareBar');
-      bar.classList.toggle('active', compareList.length > 0);
+  /* OEM count */
+  const oems=[...new Set(EQUIPMENT.map(e=>e.oem))];
+  const oemCounts=oems.map(o=>EQUIPMENT.filter(e=>e.oem===o).length);
+  const oemColors=['#F97316','#00D4FF','#A855F7','#22C55E','#D4AF37','#EF4444','#60A5FA','#94A3B8','#4ADE80'];
 
-      [1,2,3].forEach(i => {
-        const slot = document.getElementById(`compareSlot${i}`);
-        const item = compareList[i-1];
-        if (item) {
-          slot.textContent = item.name;
-          slot.classList.add('filled');
-        } else {
-          slot.textContent = '+ Add item';
-          slot.classList.remove('filled');
-        }
-      });
+  const ctx2=document.getElementById('oemChart').getContext('2d');
+  new Chart(ctx2,{
+    type:'doughnut',
+    data:{
+      labels:oems,
+      datasets:[{
+        data:oemCounts,
+        backgroundColor:oemColors.map(c=>`${c}BB`),
+        borderColor:oemColors,
+        borderWidth:1,
+        hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'60%',
+      plugins:{
+        legend:{display:true,position:'right',labels:{color:'#8BA4BC',font:{size:9},boxWidth:10,padding:6}},
+        tooltip:{backgroundColor:'#0d1b2e',borderColor:'rgba(249,115,22,0.2)',borderWidth:1,titleColor:'#8BA4BC',bodyColor:'#F0F6FF',callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} units`}}
+      }
     }
+  });
+}
 
-    function clearCompare() {
-      compareList = [];
-      updateCompareBar();
-      document.querySelectorAll('[id^="compareBtn-"]').forEach(btn => {
-        btn.style.background = 'rgba(0,0,0,0.4)';
-        btn.style.color      = 'var(--text-muted)';
-        btn.innerHTML        = '<i class="fas fa-plus"></i>';
-      });
-    }
+/* ── Export ── */
+function exportDB(){
+  const headers=['Name','Category','OEM','Power kW','Capacity','OEE %','MTBF hrs','Fuel L/hr','Price $M','Autonomous','Electric','Year'];
+  const rows=filtered.map(e=>[e.name,e.cat,e.oem,e.kw,e.cap,e.oee,e.mtbf,e.fuel||0,e.price,e.auto?'Yes':'No',e.elec?'Yes':'No',e.year].join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`sesmine-equipment-db-${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  URL.revokeObjectURL(url);
+  toast(`Exported ${filtered.length} equipment records.`,'success');
+}
 
-    function runCompare() {
-      if (compareList.length < 2) { window.SESMine.showToast('Select at least 2 items to compare', 'warning'); return; }
-      window.SESMine.showToast(`Comparing ${compareList.map(e => e.name).join(' vs ')}`, 'info');
-    }
+/* ── Helpers ── */
+function toast(msg,type='info'){
+  const icons={success:'fa-check-circle',info:'fa-info-circle',warn:'fa-exclamation-triangle'};
+  const wrap=document.getElementById('toastWrap');
+  const el=document.createElement('div');
+  el.className=`toast toast-${type}`;
+  el.innerHTML=`<i class="fas ${icons[type]||icons.info}"></i><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity 0.3s ease';el.style.opacity='0';setTimeout(()=>el.remove(),320);},3200);
+}
+function doLogout(){try{localStorage.removeItem(SESSION_KEY);localStorage.removeItem(ADMIN_KEY);}catch(e){}window.location.replace('../auth/login.html');}
 
-    // ── View Toggle ──
-    function setView(view) {
-      currentView = view;
-      document.getElementById('equipGridView').style.display = view === 'grid' ? 'grid' : 'none';
-      document.getElementById('equipListView').style.display = view === 'list' ? 'block' : 'none';
-      document.getElementById('gridViewBtn').classList.toggle('active', view === 'grid');
-      document.getElementById('listViewBtn').classList.toggle('active', view === 'list');
-      renderEquipment();
-    }
-
-    // ── Helpers ──
-    function formatPrice(val) {
-      if (val >= 1e6) return '$' + (val/1e6).toFixed(1) + 'M';
-      if (val >= 1e3) return '$' + (val/1e3).toFixed(0) + 'K';
-      return '$' + val;
-    }
-
-    function addToPredictor(id) {
-      const e = allEquipment.find(eq => eq.id === id);
-      if (!e) return;
-      window.SESMine.showToast(`${e.name} loaded into AI Predictor`, 'success');
-      setTimeout(() => window.location.href = 'ai-predictor.html', 1200);
-    }
-
-    function openAddEquipModal() { window.SESMine.openModal('addEquipModal'); }
-
-    document.getElementById('addEquipForm')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name  = document.getElementById('eName').value.trim();
-      const maker = document.getElementById('eMaker').value.trim();
-      const cat   = document.getElementById('eCategory').value;
-      const price = parseFloat(document.getElementById('ePrice').value);
-      if (!name || !maker || !cat || !price) { window.SESMine.showToast('Please fill all required fields','error'); return; }
-
-      allEquipment.unshift({
-        id: allEquipment.length + 1,
-        name, maker, category: cat,
-        payload: document.getElementById('ePayload').value || '—',
-        power:   document.getElementById('ePower').value   || '—',
-        fuel:    document.getElementById('eFuel').value    || '—',
-        price,
-        maint:   parseFloat(document.getElementById('eMaint').value) || 0,
-        icon:    '⚙️', color:'#F5A623'
-      });
-
-      filteredEquipment = [...allEquipment];
-      renderEquipment();
-      window.SESMine.closeModal('addEquipModal');
-      window.SESMine.showToast(`${name} added to database`, 'success');
-    });
-  </script>
+document.addEventListener('DOMContentLoaded',()=>{
+  populateUser();
+  renderStats();
+  applyFilters();
+  renderCharts();
+});
+</script>
 </body>
 </html>
-
