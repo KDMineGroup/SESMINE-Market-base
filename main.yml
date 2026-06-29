@@ -1,0 +1,768 @@
+# ════════════════════════════════════════════════════════════════
+#  SESMine Intelligence Platform — CI/CD Pipeline
+#  File: .github/workflows/main.yml
+#  Triggers: push to main/develop, pull requests, manual dispatch
+# ════════════════════════════════════════════════════════════════
+
+name: SESMine CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'release/**'
+      - 'hotfix/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip test suite (emergency deploys only)'
+        required: false
+        default: false
+        type: boolean
+
+# ── Cancel redundant runs on same branch ──
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# ── Global environment variables ──
+env:
+  NODE_VERSION: '20.x'
+  PYTHON_VERSION: '3.11'
+  APP_NAME: sesmine
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 1 — CODE QUALITY & LINTING
+# ════════════════════════════════════════════════════════════════
+jobs:
+
+  lint:
+    name: 🔍 Lint & Code Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Run ESLint
+        run: npm run lint
+        continue-on-error: false
+
+      - name: Run Prettier check
+        run: npm run format:check
+
+      - name: Run Stylelint (CSS)
+        run: npm run lint:css
+
+      - name: Check TypeScript types
+        run: npm run type-check
+
+      - name: Audit dependencies for vulnerabilities
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Upload lint results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: reports/lint/
+          retention-days: 7
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 2 — UNIT & INTEGRATION TESTS
+# ════════════════════════════════════════════════════════════════
+
+  test:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: lint
+    if: ${{ !inputs.skip_tests }}
+
+    strategy:
+      matrix:
+        node-version: ['18.x', '20.x']
+        shard: [1, 2, 3]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Run unit tests (shard ${{ matrix.shard }}/3)
+        run: |
+          npm run test:unit -- \
+            --shard=${{ matrix.shard }}/3 \
+            --coverage \
+            --coverageReporters=lcov \
+            --forceExit
+        env:
+          CI: true
+          NODE_ENV: test
+
+      - name: Run integration tests
+        run: npm run test:integration
+        env:
+          CI: true
+          NODE_ENV: test
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+          REDIS_URL: redis://localhost:6379
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unit-tests-node${{ matrix.node-version }}
+          fail_ci_if_error: false
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-node${{ matrix.node-version }}-shard${{ matrix.shard }}
+          path: |
+            coverage/
+            test-results/
+          retention-days: 14
+
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: sesmine_test
+          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          POSTGRES_DB: sesmine_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 3 — END-TO-END TESTS (Playwright)
+# ════════════════════════════════════════════════════════════════
+
+  e2e:
+    name: 🎭 E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: test
+          NEXT_PUBLIC_API_URL: http://localhost:3000
+
+      - name: Start application
+        run: npm run start &
+        env:
+          NODE_ENV: test
+          PORT: 3000
+
+      - name: Wait for application to be ready
+        run: npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: Run Playwright E2E tests
+        run: npx playwright test
+        env:
+          BASE_URL: http://localhost:3000
+          CI: true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload Playwright screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: test-results/
+          retention-days: 7
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 4 — SECURITY SCANNING
+# ════════════════════════════════════════════════════════════════
+
+  security:
+    name: 🔐 Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: lint
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript, typescript
+          queries: security-extended
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript"
+
+      - name: Run Snyk vulnerability scan
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 5 — BUILD & DOCKER IMAGE
+# ════════════════════════════════════════════════════════════════
+
+  build:
+    name: 🏗️ Build & Package
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [test, security]
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build-push.outputs.digest }}
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate version number
+        id: version
+        run: |
+          VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "0.0.0-$(git rev-parse --short HEAD)")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Building version: $VERSION"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Build production bundle
+        run: npm run build
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_APP_VERSION: ${{ steps.version.outputs.version }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.PROD_API_URL }}
+          NEXT_PUBLIC_ANALYTICS_ID: ${{ secrets.ANALYTICS_ID }}
+
+      - name: Analyze bundle size
+        run: npm run analyze
+        continue-on-error: true
+
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: .next/analyze/
+          retention-days: 30
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push Docker image
+        id: build-push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            APP_VERSION=${{ steps.version.outputs.version }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            GIT_COMMIT=${{ github.sha }}
+
+      - name: Generate SBOM (Software Bill of Materials)
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+          artifact-name: sbom-${{ github.sha }}.spdx
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 6 — DEPLOY TO STAGING
+# ════════════════════════════════════════════════════════════════
+
+  deploy-staging:
+    name: 🚀 Deploy → Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build
+    if: |
+      github.ref == 'refs/heads/develop' ||
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
+    environment:
+      name: staging
+      url: https://staging.sesmine.com
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to staging server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_PORT }}
+          script: |
+            cd /opt/sesmine-staging
+            echo "🔄 Pulling latest image..."
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:develop
+            
+            echo "🛑 Stopping current containers..."
+            docker-compose -f docker-compose.staging.yml down --remove-orphans
+            
+            echo "🗄️ Running database migrations..."
+            docker-compose -f docker-compose.staging.yml run --rm app npm run db:migrate
+            
+            echo "🚀 Starting new containers..."
+            docker-compose -f docker-compose.staging.yml up -d
+            
+            echo "⏳ Waiting for health check..."
+            sleep 15
+            curl -f https://staging.sesmine.com/api/health || exit 1
+            
+            echo "✅ Staging deployment complete!"
+
+      - name: Run smoke tests against staging
+        run: |
+          npm ci --prefer-offline
+          npx playwright test --project=chromium tests/smoke/
+        env:
+          BASE_URL: https://staging.sesmine.com
+          CI: true
+
+      - name: Notify Slack — staging deployed
+        uses: slackapi/slack-github-action@v1.26.0
+        if: always()
+        with:
+          payload: |
+            {
+              "text": "${{ job.status == 'success' && '✅' || '❌' }} *SESMine Staging Deploy* — ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ job.status == 'success' && '✅' || '❌' }} *Staging Deployment ${{ job.status }}*\n*Version:* `${{ needs.build.outputs.version }}`\n*Branch:* `${{ github.ref_name }}`\n*Commit:* `${{ github.sha }}`\n*By:* ${{ github.actor }}\n*URL:* https://staging.sesmine.com"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 7 — DEPLOY TO PRODUCTION
+# ════════════════════════════════════════════════════════════════
+
+  deploy-production:
+    name: 🌐 Deploy → Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [build, deploy-staging]
+    if: |
+      github.ref == 'refs/heads/main' ||
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'production')
+    environment:
+      name: production
+      url: https://sesmine.com
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@v2
+        id: deployment
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: production
+          description: "Deploy ${{ needs.build.outputs.version }} to production"
+
+      - name: Blue-Green deployment to production
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ secrets.PROD_PORT }}
+          script: |
+            cd /opt/sesmine-production
+            
+            echo "🔄 Pulling production image..."
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            
+            echo "💾 Creating database backup..."
+            docker-compose exec -T postgres pg_dump \
+              -U sesmine sesmine_prod > \
+              /backups/pre-deploy-$(date +%Y%m%d-%H%M%S).sql
+            
+            echo "🔵 Starting blue environment..."
+            docker-compose -f docker-compose.blue.yml up -d
+            
+            echo "⏳ Health checking blue environment..."
+            for i in {1..12}; do
+              if curl -sf http://localhost:3001/api/health; then
+                echo "✅ Blue environment healthy"
+                break
+              fi
+              echo "Attempt $i/12 — waiting..."
+              sleep 5
+            done
+            
+            echo "🗄️ Running database migrations..."
+            docker-compose -f docker-compose.blue.yml run --rm app npm run db:migrate
+            
+            echo "🔀 Switching traffic to blue..."
+            nginx -s reload
+            
+            echo "🟢 Stopping green environment..."
+            docker-compose -f docker-compose.green.yml down
+            
+            echo "✅ Production deployment complete!"
+            echo "📦 Version: ${{ needs.build.outputs.version }}"
+
+      - name: Run production smoke tests
+        run: |
+          npm ci --prefer-offline
+          npx playwright test --project=chromium tests/smoke/
+        env:
+          BASE_URL: https://sesmine.com
+          CI: true
+
+      - name: Update deployment status — success
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: success
+          environment-url: https://sesmine.com
+
+      - name: Update deployment status — failure
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: failure
+
+      - name: Create GitHub Release
+        if: success()
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.build.outputs.version }}
+          name: "SESMine ${{ needs.build.outputs.version }}"
+          body: |
+            ## 🚀 SESMine ${{ needs.build.outputs.version }}
+            
+            **Deployed:** ${{ github.event.head_commit.timestamp }}
+            **Commit:** ${{ github.sha }}
+            **Author:** ${{ github.actor }}
+            
+            ### Changes
+            ${{ github.event.head_commit.message }}
+            
+            ### Docker Image
+            ```
+            ${{ needs.build.outputs.image-tag }}
+            ```
+            
+            ### Digest
+            ```
+            ${{ needs.build.outputs.image-digest }}
+            ```
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify Slack — production deployed
+        uses: slackapi/slack-github-action@v1.26.0
+        if: always()
+        with:
+          payload: |
+            {
+              "text": "${{ job.status == 'success' && '🎉' || '🚨' }} *SESMine Production Deploy* — ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ job.status == 'success' && '🎉 Production Deployed Successfully' || '🚨 Production Deployment FAILED' }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {"type": "mrkdwn", "text": "*Version:*\n`${{ needs.build.outputs.version }}`"},
+                    {"type": "mrkdwn", "text": "*Status:*\n${{ job.status }}"},
+                    {"type": "mrkdwn", "text": "*Deployed by:*\n${{ github.actor }}"},
+                    {"type": "mrkdwn", "text": "*Commit:*\n`${{ github.sha }}`"}
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {"type": "plain_text", "text": "🌐 View Production"},
+                      "url": "https://sesmine.com"
+                    },
+                    {
+                      "type": "button",
+                      "text": {"type": "plain_text", "text": "📋 View Workflow"},
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 8 — ROLLBACK (Manual trigger only)
+# ════════════════════════════════════════════════════════════════
+
+  rollback:
+    name: ⏪ Emergency Rollback
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.environment == 'production' &&
+      failure()
+    needs: deploy-production
+    environment:
+      name: production
+
+    steps:
+      - name: Execute rollback
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /opt/sesmine-production
+            echo "⏪ Initiating emergency rollback..."
+            
+            # Switch traffic back to previous version
+            docker-compose -f docker-compose.green.yml up -d
+            nginx -s reload
+            
+            # Stop the failed blue deployment
+            docker-compose -f docker-compose.blue.yml down
+            
+            echo "✅ Rollback complete. Traffic restored to previous version."
+
+      - name: Notify team of rollback
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "⏪ *EMERGENCY ROLLBACK EXECUTED* — SESMine Production\nTriggered by: ${{ github.actor }}\nRun: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 9 — PERFORMANCE AUDIT (Lighthouse)
+# ════════════════════════════════════════════════════════════════
+
+  lighthouse:
+    name: 🏎️ Performance Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            https://staging.sesmine.com
+            https://staging.sesmine.com/news
+            https://staging.sesmine.com/auth/login
+          budgetPath: ./lighthouse-budget.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Assert performance thresholds
+        run: |
+          echo "Checking Lighthouse scores..."
+          # Fail if performance < 85, accessibility < 90, SEO < 90
+          node scripts/check-lighthouse-scores.js
+
+# ════════════════════════════════════════════════════════════════
+#  JOB 10 — CLEANUP
+# ════════════════════════════════════════════════════════════════
+
+  cleanup:
+    name: 🧹 Cleanup
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [deploy-production, lighthouse]
+    if: always()
+    permissions:
+      packages: write
+
+    steps:
+      - name: Delete old container images
+        uses: actions/delete-package-versions@v4
+        with:
+          package-name: ${{ env.APP_NAME }}
+          package-type: container
+          min-versions-to-keep: 10
+          delete-only-untagged-versions: true
+
+      - name: Clean up old workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          retain_days: 30
+          keep_minimum_runs: 5
