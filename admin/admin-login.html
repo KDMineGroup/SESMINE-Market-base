@@ -1,798 +1,449 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Portal — SESMine Intelligence Platform</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <link rel="icon" type="image/png" href="https://cdn.grapesjs.com/workspaces/cmjdh0oo603xm12grpuiruk7p/assets/f6b95b3d-49d1-4e77-b952-49ed80c4befa__image-9-14-1404-ap-at-8.42-pm.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#020810">
+  <title>Admin Access — SESMine</title>
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --gold:        #D4AF37;
-      --gold-dim:    rgba(212,175,55,0.15);
-      --gold-glow:   rgba(212,175,55,0.08);
-      --orange:      #F97316;
-      --red:         #EF4444;
-      --green:       #22C55E;
       --bg:          #020810;
-      --card-bg:     rgba(7,18,36,0.97);
-      --text-main:   #F0F6FF;
-      --text-muted:  #8BA4BC;
-      --text-dim:    #6688A0;
-      --border:      rgba(212,175,55,0.15);
-      --input-bg:    rgba(255,255,255,0.04);
-      --input-border:rgba(255,255,255,0.12);
-      --font-body:   'Inter', sans-serif;
-      --font-head:   'Space Grotesk', sans-serif;
+      --bg2:         #071020;
+      --bg3:         #0a1628;
+      --bg4:         #0f1f3d;
+      --cyan:        #00D4FF;
+      --cyan2:       #00A8CC;
+      --cyan-dim:    rgba(0,212,255,0.10);
+      --cyan-border: rgba(0,212,255,0.18);
+      --red:         #FF4444;
+      --red-dim:     rgba(255,68,68,0.10);
+      --red-border:  rgba(255,68,68,0.25);
+      --green:       #00FF88;
+      --green-dim:   rgba(0,255,136,0.08);
+      --text:        #E8F4FD;
+      --text-muted:  #8BA3C7;
+      --border:      rgba(0,212,255,0.12);
+      --radius:      12px;
+      --radius-lg:   18px;
+      --radius-xl:   24px;
       --font-mono:   'JetBrains Mono', monospace;
-    }
-
-    html, body {
-      height: 100%;
-      font-family: var(--font-body);
-      color: var(--text-main);
-      background: var(--bg);
+      --font-head:   'Space Grotesk', sans-serif;
+      --transition:  0.22s cubic-bezier(0.4,0,0.2,1);
     }
 
     body {
+      font-family: var(--font-head);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
+      padding: 24px;
       position: relative;
       overflow: hidden;
     }
 
-    /* Grid */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
+    /* ── Background ── */
+    .bg-img {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: saturate(0.1) brightness(0.2);
+      z-index: 0;
+    }
+
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(2,8,16,0.97), rgba(7,16,32,0.95));
+      z-index: 1;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
       background-image:
-        linear-gradient(rgba(212,175,55,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(212,175,55,0.025) 1px, transparent 1px);
-      background-size: 48px 48px;
+        linear-gradient(rgba(0,212,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      z-index: 2;
+    }
+
+    .bg-glow {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
       pointer-events: none;
+      z-index: 2;
     }
 
-    /* Glows */
-    .glow {
-      position: fixed; border-radius: 50%;
-      pointer-events: none; filter: blur(120px); z-index: 0;
-    }
-    .glow-1 {
-      width: 700px; height: 700px; top: -250px; left: -250px;
-      background: radial-gradient(ellipse, rgba(212,175,55,0.07) 0%, transparent 60%);
-    }
-    .glow-2 {
-      width: 500px; height: 500px; bottom: -150px; right: -150px;
-      background: radial-gradient(ellipse, rgba(249,115,22,0.06) 0%, transparent 60%);
+    .bg-glow-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(255,68,68,0.04) 0%, transparent 70%);
+      top: -150px; right: -150px;
     }
 
-    /* Card */
-    .card {
-      position: relative; z-index: 1;
-      width: 100%; max-width: 420px;
-      background: var(--card-bg);
+    .bg-glow-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,212,255,0.04) 0%, transparent 70%);
+      bottom: -100px; left: -100px;
+    }
+
+    /* ── Card ── */
+    .admin-card {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 40px;
-      box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,175,55,0.04);
-      backdrop-filter: blur(24px);
-      animation: slideUp 0.4s cubic-bezier(0.4,0,0.2,1) both;
-    }
-    .card::before {
-      content: '';
-      position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent);
-      border-radius: 99px;
+      border-radius: var(--radius-xl);
+      padding: 44px 40px;
+      box-shadow:
+        0 0 0 1px rgba(0,212,255,0.04),
+        0 32px 80px rgba(0,0,0,0.6),
+        0 0 60px rgba(0,212,255,0.03);
     }
 
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* ── Header ── */
+    .card-header {
+      text-align: center;
+      margin-bottom: 28px;
     }
 
-    /* Shield icon */
-    .shield-icon {
-      width: 68px; height: 68px; border-radius: 50%;
-      background: var(--gold-glow);
-      border: 2px solid var(--gold-dim);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; color: var(--gold);
-      margin: 0 auto 22px;
-      box-shadow: 0 0 32px rgba(212,175,55,0.12);
+    .logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      text-decoration: none;
     }
 
-    /* Typography */
-    .label-restricted {
-      font-size: 0.62rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.18em;
-      color: var(--gold); text-align: center;
-      margin-bottom: 6px;
-    }
-    h1 {
-      font-family: var(--font-head);
-      font-size: 1.5rem; font-weight: 800;
-      letter-spacing: -0.02em;
-      text-align: center; margin-bottom: 5px;
-    }
-    .subtitle {
-      font-size: 0.78rem; color: var(--text-muted);
-      text-align: center; margin-bottom: 24px;
+    .logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(0,212,255,0.25);
     }
 
-    /* Security notice */
-    .notice {
-      display: flex; align-items: flex-start; gap: 9px;
-      background: rgba(249,115,22,0.06);
-      border: 1px solid rgba(249,115,22,0.18);
-      border-radius: 10px; padding: 11px 14px;
-      font-size: 0.74rem; color: #FDBA74;
-      line-height: 1.6; margin-bottom: 22px;
+    .logo-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
     }
-    .notice i { flex-shrink: 0; margin-top: 2px; color: var(--orange); }
 
-    /* Form elements */
+    .logo-name span { color: var(--cyan); }
+
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--red-dim);
+      border: 1px solid var(--red-border);
+      color: var(--red);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .admin-badge-dot {
+      width: 6px; height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      animation: pulse-red 2s infinite;
+    }
+
+    @keyframes pulse-red {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:0.5; transform:scale(0.8); }
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 5px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ── Security notice ── */
+    .security-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(255,68,68,0.05);
+      border: 1px solid var(--red-border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 24px;
+      font-size: 12px;
+      color: rgba(255,136,136,0.9);
+      line-height: 1.55;
+    }
+
+    .notice-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Alert ── */
+    .alert {
+      display: none;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 11px 13px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+      animation: slideDown 0.2s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity:0; transform:translateY(-6px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .alert.show { display: flex; }
+
+    .alert-error {
+      background: var(--red-dim);
+      border: 1px solid var(--red-border);
+      color: #FF8888;
+    }
+
+    .alert-success {
+      background: var(--green-dim);
+      border: 1px solid rgba(0,255,136,0.2);
+      color: var(--green);
+    }
+
+    /* ── Form ── */
     .form-group { margin-bottom: 16px; }
+
     .form-label {
       display: block;
-      font-size: 0.75rem; font-weight: 700;
-      color: var(--gold); margin-bottom: 7px;
-      letter-spacing: 0.02em;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+      font-family: var(--font-mono);
     }
-    .input-wrap {
-      position: relative;
+
+    .input-wrap { position: relative; }
+
+    .input-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      pointer-events: none;
+      opacity: 0.4;
     }
-    .input-wrap .icon-left {
-      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-      color: var(--text-dim); font-size: 0.8rem; pointer-events: none;
-    }
-    .input-wrap input {
+
+    .form-input {
       width: 100%;
-      background: var(--input-bg);
-      border: 1.5px solid var(--input-border);
-      border-radius: 10px;
-      padding: 11px 42px 11px 38px;
-      font-family: var(--font-body);
-      font-size: 0.88rem; color: var(--text-main);
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 42px 12px 40px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
       outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      -webkit-appearance: none;
     }
-    .input-wrap input:focus {
-      border-color: var(--gold);
-      background: rgba(212,175,55,0.04);
-      box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+
+    .form-input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px var(--cyan-dim);
     }
-    .input-wrap input.error {
+
+    .form-input.is-error {
       border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(239,68,68,0.08);
-    }
-    .input-wrap input::placeholder { color: var(--text-dim); }
-    .pw-toggle {
-      position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; cursor: pointer;
-      color: var(--text-dim); font-size: 0.82rem; padding: 4px;
-      transition: color 0.2s ease;
-    }
-    .pw-toggle:hover { color: var(--text-muted); }
-
-    /* Field error */
-    .field-err {
-      font-size: 0.7rem; color: #FCA5A5;
-      margin-top: 5px; display: none;
-      align-items: center; gap: 4px;
-    }
-    .field-err.show { display: flex; }
-
-    /* Alerts */
-    .alert {
-      display: none; align-items: center; gap: 9px;
-      padding: 11px 14px; border-radius: 10px;
-      font-size: 0.78rem; font-weight: 600;
-      margin-bottom: 16px; line-height: 1.5;
-    }
-    .alert.show { display: flex; }
-    .alert-error {
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.2);
-      color: #FCA5A5;
-    }
-    .alert-success {
-      background: rgba(34,197,94,0.08);
-      border: 1px solid rgba(34,197,94,0.2);
-      color: #86EFAC;
+      box-shadow: 0 0 0 3px var(--red-dim);
     }
 
-    /* Lockout bar */
-    .lockout {
+    .form-input::placeholder { color: rgba(139,163,199,0.3); }
+
+    .btn-toggle {
+      position: absolute;
+      right: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+      transition: color var(--transition);
+      line-height: 1;
+    }
+
+    .btn-toggle:hover { color: var(--cyan); }
+
+    /* ── 2FA ── */
+    .mfa-section {
       display: none;
-      background: rgba(239,68,68,0.07);
-      border: 1px solid rgba(239,68,68,0.2);
-      border-radius: 10px; padding: 12px 16px;
-      text-align: center; font-size: 0.78rem;
-      color: #FCA5A5; margin-bottom: 16px;
+      margin-bottom: 16px;
     }
-    .lockout.show { display: block; }
 
-    /* Attempt dots */
-    .dots-row {
-      display: flex; align-items: center;
+    .mfa-section.show { display: block; }
+
+    .mfa-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+    }
+
+    .mfa-digits {
+      display: flex;
+      gap: 7px;
+    }
+
+    .mfa-digit {
+      flex: 1;
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--cyan);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      -webkit-appearance: none;
+    }
+
+    .mfa-digit:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px var(--cyan-dim);
+    }
+
+    /* ── Options ── */
+    .options-row {
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
-    .dots-row span { font-size: 0.68rem; color: var(--text-dim); }
-    .dots { display: flex; gap: 5px; }
-    .dot {
-      width: 9px; height: 9px; border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.14);
-      transition: all 0.3s ease;
-    }
-    .dot.used { background: var(--red); border-color: var(--red); box-shadow: 0 0 6px rgba(239,68,68,0.4); }
 
-    /* Primary button */
-    .btn-primary {
-      width: 100%;
-      background: linear-gradient(135deg, #D4AF37 0%, #F97316 100%);
-      color: #020810; font-family: var(--font-body);
-      font-size: 0.92rem; font-weight: 800;
-      border: none; border-radius: 12px;
-      padding: 13px 20px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: opacity 0.2s ease, transform 0.15s ease;
-      margin-bottom: 18px;
-      position: relative; overflow: hidden;
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
     }
-    .btn-primary:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
-    .btn-primary:active:not(:disabled) { transform: translateY(0); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .btn-primary .spinner { display: none; }
-    .btn-primary.loading .label  { display: none; }
-    .btn-primary.loading .spinner { display: flex; align-items: center; gap: 7px; }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 14px; height: 14px;
+      accent-color: var(--cyan);
+      cursor: pointer;
+    }
+
+    .reset-link {
+      font-size: 12px;
+      color: var(--cyan);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      transition: opacity var(--transition);
+    }
+
+    .reset-link:hover { opacity: 0.7; }
+
+    /* ── Submit ── */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+      border: none;
+      border-radius: var(--radius);
+      padding: 14px;
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      color: #020810;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.2px;
+      margin-bottom: 8px;
+    }
+
+    .btn-submit:hover {
+      box-shadow: 0 8px 24px rgba(0,212,255,0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active { transform: scale(0.99); }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-submit .btn-text { transition: opacity 0.15s; }
+
+    .btn-submit .btn-loader {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-submit.loading .btn-text { opacity: 0; }
+    .btn-submit.loading .btn-loader { display: flex; }
+
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(2,8,16,0.3);
+      border-top-color: #020810;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
 
     @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { animation: spin 0.8s linear infinite; display: inline-block; }
 
-    /* Demo hint */
-    .demo-hint {
-      background: rgba(212,175,55,0.04);
-      border: 1px solid rgba(212,175,55,0.1);
-      border-radius: 10px; padding: 12px 14px;
-      font-size: 0.74rem; color: var(--text-muted);
+    /* ── Attempt counter ── */
+    .attempt-counter {
       text-align: center;
-    }
-    .demo-hint code {
-      color: var(--gold);
-      background: rgba(212,175,55,0.08);
-      padding: 1px 7px; border-radius: 5px;
-      font-family: var(--font-mono); font-size: 0.78rem;
-    }
-
-    /* MFA digits */
-    .mfa-row {
-      display: flex; gap: 8px;
-      justify-content: center; margin-bottom: 22px;
-    }
-    .mfa-digit {
-      width: 46px; height: 54px;
-      background: var(--input-bg);
-      border: 2px solid var(--input-border);
-      border-radius: 11px;
       font-family: var(--font-mono);
-      font-size: 1.3rem; font-weight: 700;
-      color: var(--text-main); text-align: center;
-      outline: none; caret-color: var(--gold);
-      transition: all 0.18s ease;
-    }
-    .mfa-digit:focus {
-      border-color: var(--gold);
-      background: rgba(212,175,55,0.05);
-      box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
-    }
-    .mfa-digit.filled { border-color: rgba(212,175,55,0.45); }
-
-    /* Back link */
-    .back-link {
-      display: block; width: 100%; text-align: center;
-      font-size: 0.76rem; color: var(--text-dim);
-      background: none; border: none; cursor: pointer;
-      font-family: var(--font-body); padding: 8px;
-      transition: color 0.2s ease;
-    }
-    .back-link:hover { color: var(--text-muted); }
-
-    /* Footer link */
-    .footer-link {
-      text-align: center; margin-top: 22px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-    }
-    .footer-link a {
-      font-size: 0.74rem; color: var(--text-dim);
-      text-decoration: none; transition: color 0.2s ease;
-    }
-    .footer-link a:hover { color: var(--text-muted); }
-
-    /* Step hidden */
-    .step { }
-    .step.hidden { display: none; }
-  </style>
-</head>
-<body>
-
-<div class="glow glow-1"></div>
-<div class="glow glow-2"></div>
-
-<div class="card">
-
-  <!-- Shield -->
-  <div class="shield-icon">
-    <i class="fas fa-shield-alt"></i>
-  </div>
-
-  <!-- Header -->
-  <div class="label-restricted">Restricted Access</div>
-  <h1>Admin Portal</h1>
-  <p class="subtitle">SESMine Intelligence Platform v5.0</p>
-
-  <!-- Security notice -->
-  <div class="notice">
-    <i class="fas fa-exclamation-triangle"></i>
-    <span>This portal is for authorised administrators only. All access attempts are logged and monitored.</span>
-  </div>
-
-  <!-- Lockout -->
-  <div class="lockout" id="lockoutBar">
-    <i class="fas fa-lock" style="margin-right:6px;"></i>
-    Account locked. Try again in <strong id="lockoutTimer">02:00</strong>
-  </div>
-
-  <!-- Alert: error -->
-  <div class="alert alert-error" id="alertError">
-    <i class="fas fa-exclamation-circle" style="flex-shrink:0;"></i>
-    <span id="alertErrorMsg">Invalid credentials.</span>
-  </div>
-
-  <!-- Alert: success -->
-  <div class="alert alert-success" id="alertSuccess">
-    <i class="fas fa-check-circle" style="flex-shrink:0;"></i>
-    <span>Authentication successful. Redirecting...</span>
-  </div>
-
-  <!-- ══════════════════════════════════
-       STEP 1 — Credentials
-  ══════════════════════════════════ -->
-  <div class="step" id="step1">
-
-    <form id="loginForm" novalidate autocomplete="off">
-
-      <!-- Email -->
-      <div class="form-group">
-        <label class="form-label" for="inputEmail">
-          <i class="fas fa-user-shield" style="margin-right:5px;"></i>Admin Email
-        </label>
-        <div class="input-wrap">
-          <i class="fas fa-envelope icon-left"></i>
-          <input type="email" id="inputEmail"
-                 placeholder="admin@sesmine.com"
-                 autocomplete="username"
-                 spellcheck="false" />
-        </div>
-        <div class="field-err" id="errEmail">
-          <i class="fas fa-exclamation-circle"></i> Valid email required
-        </div>
-      </div>
-
-      <!-- Password -->
-      <div class="form-group">
-        <label class="form-label" for="inputPassword">
-          <i class="fas fa-key" style="margin-right:5px;"></i>Admin Password
-        </label>
-        <div class="input-wrap">
-          <i class="fas fa-lock icon-left"></i>
-          <input type="password" id="inputPassword"
-                 placeholder="Enter admin password"
-                 autocomplete="current-password" />
-          <button type="button" class="pw-toggle" id="pwToggle"
-                  onclick="togglePassword()">
-            <i class="fas fa-eye" id="pwIcon"></i>
-          </button>
-        </div>
-        <div class="field-err" id="errPassword">
-          <i class="fas fa-exclamation-circle"></i> Password required
-        </div>
-      </div>
-
-      <!-- Attempt dots -->
-      <div class="dots-row">
-        <span>Attempts remaining:</span>
-        <div class="dots" id="dotsWrap">
-          <div class="dot" id="dot0"></div>
-          <div class="dot" id="dot1"></div>
-          <div class="dot" id="dot2"></div>
-        </div>
-      </div>
-
-      <!-- Submit -->
-      <button type="submit" class="btn-primary" id="btnLogin">
-        <span class="label">
-          <i class="fas fa-shield-alt"></i> Authenticate
-        </span>
-        <span class="spinner">
-          <i class="fas fa-circle-notch spin"></i> Verifying...
-        </span>
-      </button>
-
-    </form>
-
-
-  </div><!-- /#step1 -->
-
-  <!-- ══════════════════════════════════
-       STEP 2 — MFA
-  ══════════════════════════════════ -->
-  <div class="step hidden" id="step2">
-
-    <div style="text-align:center;margin-bottom:22px;">
-      <div style="width:54px;height:54px;border-radius:50%;background:rgba(212,175,55,0.1);border:2px solid rgba(212,175,55,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.2rem;color:var(--gold);">
-        <i class="fas fa-mobile-alt"></i>
-      </div>
-      <h3 style="font-family:var(--font-head);font-size:1rem;font-weight:800;margin-bottom:7px;">Two-Factor Authentication</h3>
-      <p style="font-size:0.78rem;color:var(--text-muted);line-height:1.6;">
-        Enter the 6-digit code from your authenticator app.
-      </p>
-      <p style="font-size:0.7rem;color:rgba(212,175,55,0.65);margin-top:5px;">
-        <i class="fas fa-info-circle" style="margin-right:3px;"></i>Demo: enter any 6 digits
-      </p>
-    </div>
-
-    <!-- OTP inputs -->
-    <div class="mfa-row" id="mfaRow">
-      <input class="mfa-digit" type="text" inputmode="numeric" maxlength="1" data-idx="0" />
-      <input class="mfa-digit" type="text" inputmode="numeric" maxlength="1" data-idx="1" />
-      <input class="mfa-digit" type="text" inputmode="numeric" maxlength="1" data-idx="2" />
-      <input class="mfa-digit" type="text" inputmode="numeric" maxlength="1" data-idx="3" />
-      <input class="mfa-digit" type="text" inputmode="numeric" maxlength="1" data-idx="4" />
-      <input class="mfa-digit" type="text" inputmode="numeric" maxlength="1" data-idx="5" />
-    </div>
-
-    <!-- Verify button -->
-    <button class="btn-primary" id="btnMFA" onclick="verifyMFA()">
-      <span class="label">
-        <i class="fas fa-check-circle"></i> Verify Code
-      </span>
-      <span class="spinner">
-        <i class="fas fa-circle-notch spin"></i> Verifying...
-      </span>
-    </button>
-
-    <button class="back-link" onclick="goToStep1()">
-      <i class="fas fa-arrow-left" style="margin-right:4px;"></i> Back to credentials
-    </button>
-
-  </div><!-- /#step2 -->
-
-  <!-- Footer -->
-  <div class="footer-link">
-    <a href="../index.html">
-      <i class="fas fa-arrow-left" style="margin-right:4px;"></i> Return to SESMine
-    </a>
-  </div>
-
-</div><!-- /.card -->
-
-<script>
-'use strict';
-
-/* ════════════════════════════════════════
-   INLINE AUTH — no external dependency
-   ════════════════════════════════════════ */
-
-const ADMIN_KEY     = 'sesmine_admin_session_v5';
-const AUDIT_KEY     = 'sesmine_audit_log_v5';
-const MAX_ATTEMPTS  = 3;
-const LOCKOUT_MS    = 120_000; /* 2 minutes */
-
-/* Hard-coded admin credentials (demo only — never do this in production) */
-const ADMIN_ACCOUNTS = [
-  { email: 'admin@sesmine.com',    password: 'Admin@2026!', name: 'Platform Admin',  role: 'superadmin' },
-  { email: 'manager@sesmine.com',  password: 'Manager@2026!', name: 'Site Manager', role: 'admin' }
-];
-
-/* ── State ── */
-let failCount       = 0;
-let lockoutEnd      = 0;
-let lockoutTick     = null;
-let pendingEmail    = '';
-let pendingName     = '';
-let pendingRole     = '';
-
-/* ── On load: check existing session ── */
-window.addEventListener('DOMContentLoaded', () => {
-  try {
-    const existing = JSON.parse(localStorage.getItem(ADMIN_KEY) || 'null');
-    if (existing && existing.expires > Date.now()) {
-      window.location.replace('admin-dashboard.html');
-      return;
-    }
-  } catch(e) {}
-
-  /* Wire MFA inputs */
-  wireMFAInputs();
-
-  /* Wire form submit */
-  document.getElementById('loginForm').addEventListener('submit', handleLogin);
-});
-
-/* ════════════════════════════════════════
-   STEP 1 — Login handler
-   ════════════════════════════════════════ */
-async function handleLogin(e) {
-  e.preventDefault();
-  clearAlerts();
-
-  /* Lockout check */
-  if (Date.now() < lockoutEnd) return;
-
-  const email = document.getElementById('inputEmail').value.trim().toLowerCase();
-  const pw    = document.getElementById('inputPassword').value;
-
-  /* Validate fields */
-  let ok = true;
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showFieldErr('errEmail', true);
-    document.getElementById('inputEmail').classList.add('error');
-    ok = false;
-  } else {
-    showFieldErr('errEmail', false);
-    document.getElementById('inputEmail').classList.remove('error');
-  }
-  if (!pw) {
-    showFieldErr('errPassword', true);
-    document.getElementById('inputPassword').classList.add('error');
-    ok = false;
-  } else {
-    showFieldErr('errPassword', false);
-    document.getElementById('inputPassword').classList.remove('error');
-  }
-  if (!ok) return;
-
-  /* Loading */
-  setBtnLoading('btnLogin', true);
-  await sleep(900);
-  setBtnLoading('btnLogin', false);
-
-  /* Check credentials */
-  const match = ADMIN_ACCOUNTS.find(
-    a => a.email === email && a.password === pw
-  );
-
-  if (match) {
-    /* Success — go to MFA */
-    pendingEmail = match.email;
-    pendingName  = match.name;
-    pendingRole  = match.role;
-    auditLog('admin_credentials_ok', { email });
-    showStep2();
-  } else {
-    /* Failure */
-    failCount++;
-    auditLog('admin_login_failed', { email, attempt: failCount });
-    markDot(failCount - 1);
-
-    if (failCount >= MAX_ATTEMPTS) {
-      startLockout();
-    } else {
-      const left = MAX_ATTEMPTS - failCount;
-      showError(`Invalid credentials. ${left} attempt${left !== 1 ? 's' : ''} remaining.`);
-    }
-  }
-}
-
-/* ════════════════════════════════════════
-   STEP 2 — MFA handler
-   ════════════════════════════════════════ */
-function wireMFAInputs() {
-  const inputs = [...document.querySelectorAll('.mfa-digit')];
-
-  inputs.forEach((inp, i) => {
-    inp.addEventListener('input', () => {
-      inp.value = inp.value.replace(/\D/g, '').slice(-1);
-      inp.classList.toggle('filled', !!inp.value);
-      if (inp.value && i < inputs.length - 1) inputs[i + 1].focus();
-      if (inputs.every(d => d.value)) verifyMFA();
-    });
-
-    inp.addEventListener('keydown', e => {
-      if (e.key === 'Backspace' && !inp.value && i > 0) {
-        inputs[i - 1].value = '';
-        inputs[i - 1].classList.remove('filled');
-        inputs[i - 1].focus();
-      }
-      if (e.key === 'ArrowLeft'  && i > 0)              inputs[i - 1].focus();
-      if (e.key === 'ArrowRight' && i < inputs.length - 1) inputs[i + 1].focus();
-    });
-
-    inp.addEventListener('paste', e => {
-      e.preventDefault();
-      const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-      digits.split('').forEach((ch, j) => {
-        if (inputs[j]) { inputs[j].value = ch; inputs[j].classList.add('filled'); }
-      });
-      const next = inputs[Math.min(digits.length, inputs.length - 1)];
-      if (next) next.focus();
-      if (digits.length === 6) verifyMFA();
-    });
-  });
-}
-
-async function verifyMFA() {
-  const inputs = [...document.querySelectorAll('.mfa-digit')];
-  const code   = inputs.map(d => d.value).join('');
-  if (code.length < 6) {
-    showError('Please enter all 6 digits.');
-    return;
-  }
-
-  clearAlerts();
-  setBtnLoading('btnMFA', true);
-  await sleep(1000);
-  setBtnLoading('btnMFA', false);
-
-  /* Demo: accept any 6 digits */
-  /* Production: validate TOTP against server */
-  createAdminSession();
-}
-
-function createAdminSession() {
-  const session = {
-    email:   pendingEmail,
-    name:    pendingName,
-    role:    pendingRole,
-    loginAt: new Date().toISOString(),
-    expires: Date.now() + 8 * 60 * 60 * 1000 /* 8 hours */
-  };
-
-  try {
-    localStorage.setItem(ADMIN_KEY, JSON.stringify(session));
-  } catch(e) {
-    showError('Storage unavailable. Please enable cookies/localStorage.');
-    return;
-  }
-
-  auditLog('admin_login_success', { email: pendingEmail, mfa: true });
-  pendingEmail = pendingName = pendingRole = '';
-
-  /* Show success then redirect */
-  document.getElementById('alertSuccess').classList.add('show');
-  setTimeout(() => {
-    window.location.replace('admin-dashboard.html');
-  }, 1200);
-}
-
-/* ════════════════════════════════════════
-   LOCKOUT
-   ════════════════════════════════════════ */
-function startLockout() {
-  lockoutEnd = Date.now() + LOCKOUT_MS;
-  const bar  = document.getElementById('lockoutBar');
-  const btn  = document.getElementById('btnLogin');
-  bar.classList.add('show');
-  if (btn) btn.disabled = true;
-  auditLog('admin_account_locked', { until: new Date(lockoutEnd).toISOString() });
-  tickLockout();
-}
-
-function tickLockout() {
-  const timer = document.getElementById('lockoutTimer');
-  lockoutTick = setInterval(() => {
-    const remaining = Math.max(0, lockoutEnd - Date.now());
-    const m = String(Math.floor(remaining / 60000)).padStart(2, '0');
-    const s = String(Math.floor((remaining % 60000) / 1000)).padStart(2, '0');
-    if (timer) timer.textContent = `${m}:${s}`;
-
-    if (remaining <= 0) {
-      clearInterval(lockoutTick);
-      document.getElementById('lockoutBar').classList.remove('show');
-      const btn = document.getElementById('btnLogin');
-      if (btn) btn.disabled = false;
-      failCount = 0;
-      resetDots();
-      lockoutEnd = 0;
-    }
-  }, 500);
-}
-
-/* ════════════════════════════════════════
-   UI HELPERS
-   ════════════════════════════════════════ */
-function showStep2() {
-  document.getElementById('step1').classList.add('hidden');
-  document.getElementById('step2').classList.remove('hidden');
-  clearAlerts();
-  setTimeout(() => {
-    const first = document.querySelector('.mfa-digit');
-    if (first) first.focus();
-  }, 100);
-}
-
-function goToStep1() {
-  document.getElementById('step2').classList.add('hidden');
-  document.getElementById('step1').classList.remove('hidden');
-  clearAlerts();
-  resetMFAInputs();
-  pendingEmail = pendingName = pendingRole = '';
-}
-
-function resetMFAInputs() {
-  document.querySelectorAll('.mfa-digit').forEach(d => {
-    d.value = '';
-    d.classList.remove('filled');
-  });
-}
-
-function showError(msg) {
-  document.getElementById('alertErrorMsg').textContent = msg;
-  document.getElementById('alertError').classList.add('show');
-}
-
-function clearAlerts() {
-  document.getElementById('alertError').classList.remove('show');
-  document.getElementById('alertSuccess').classList.remove('show');
-}
-
-function showFieldErr(id, show) {
-  document.getElementById(id).classList.toggle('show', show);
-}
-
-function markDot(index) {
-  const dot = document.getElementById(`dot${index}`);
-  if (dot) dot.classList.add('used');
-}
-
-function resetDots() {
-  [0,1,2].forEach(i => {
-    const d = document.getElementById(`dot${i}`);
-    if (d) d.classList.remove('used');
-  });
-}
-
-function setBtnLoading(id, state) {
-  const btn = document.getElementById(id);
-  if (!btn) return;
-  btn.disabled = state;
-  btn.classList.toggle('loading', state);
-}
-
-function togglePassword() {
-  const inp  = document.getElementById('inputPassword');
-  const icon = document.getElementById('pwIcon');
-  const show = inp.type === 'password';
-  inp.type   = show ? 'text' : 'password';
-  icon.className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
-}
-
-/* ════════════════════════════════════════
-   AUDIT LOG
-   ════════════════════════════════════════ */
-function auditLog(action, data) {
-  try {
-    const log  = JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]');
-    log.push({ action, data, timestamp: new Date().toISOString() });
-    /* Keep last 200 entries */
-    if (log.length > 200) log.splice(0, log.length - 200);
-    localStorage.setItem(AUDIT_KEY, JSON.stringify(log));
-  } catch(e) {}
-}
-
-function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms));
-}
-</script>
-</body>
-</html>
+      
